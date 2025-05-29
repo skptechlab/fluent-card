@@ -10,7 +10,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Supabase credentials not set' });
   }
 
-  // 🚀 Don’t worry – anon key is meant to be public (read access). It's fine to expose via API, but not directly in frontend.
   res.status(200).json({
     SUPABASE_URL,
     SUPABASE_ANON_KEY
