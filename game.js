@@ -795,7 +795,7 @@ export function startTurnTimer() {
       opponentQueueCard();
       if (!canComputerQueueMore()) {
         gameState.computerReady = true;
-        log("Computer has finished its turn");
+        log("Grok has finished its turn");
       }
     }
   }, 5000);
