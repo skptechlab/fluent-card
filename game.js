@@ -997,6 +997,58 @@ export function animate() {
   }
 }
 
+// window.endTheGame = async function() {
+//   const confirmEnd = confirm("Are you sure you want to end the game? This will count as a loss.");
+//   if (!confirmEnd) return;
+
+//   console.log("Game ended. Counting as player loss.");
+
+//   // Clear the scene and stop animations/timers
+//   if (window.cancelAnimationFrame) window.cancelAnimationFrame(window.animationFrameId);
+//   if (gameState.turnTimer) clearInterval(gameState.turnTimer);
+//   if (gameState.opponentQueueTimer) clearTimeout(gameState.opponentQueueTimer);
+
+//   // Update the player's loss stats in Supabase
+//   try {
+//     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+//     const supabase = createClient(
+//       "https://pklmlttcycefshwxqcwu.supabase.co",
+//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
+//     );
+
+//     const { data: user, error: userError } = await supabase.auth.getUser();
+//     if (userError || !user?.user) {
+//       console.warn("No user session found. Stats not updated.");
+//     } else {
+//       const userId = user.user.id;
+
+//       // Update local game state
+//       gameState.player.winStreak = 0;
+//       gameState.player.totalLosses += 1;
+
+//       // Update Supabase stats
+//       await updateUserStats(
+//         userId,
+//         gameState.player.totalWins,
+//         gameState.player.totalLosses,
+//         gameState.player.winStreak
+//       );
+
+//       console.log("Loss counted in database.");
+//     }
+//   } catch (error) {
+//     console.error("Failed to update loss in database:", error);
+//   }
+
+//   // Return to the main menu
+//   returnToMenu();
+
+//   // Refresh the stats on the menu after a short delay
+//   setTimeout(() => {
+//     refreshPlayerStats();
+//   }, 500);
+// };
+
 window.endTheGame = async function() {
   const confirmEnd = confirm("Are you sure you want to end the game? This will count as a loss.");
   if (!confirmEnd) return;
@@ -1008,13 +1060,9 @@ window.endTheGame = async function() {
   if (gameState.turnTimer) clearInterval(gameState.turnTimer);
   if (gameState.opponentQueueTimer) clearTimeout(gameState.opponentQueueTimer);
 
-  // Update the player's loss stats in Supabase
   try {
-    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-    const supabase = createClient(
-      "https://pklmlttcycefshwxqcwu.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
-    );
+    // 🟩 Dynamically get Supabase client via updated supabaseClient.js
+    const { supabase } = await import('./supabaseClient.js');
 
     const { data: user, error: userError } = await supabase.auth.getUser();
     if (userError || !user?.user) {
@@ -1049,16 +1097,49 @@ window.endTheGame = async function() {
   }, 500);
 };
 
+
 // Function to refresh the player stats displayed in the menu
+// async function refreshPlayerStats() {
+//   console.log("Refreshing player stats...");
+
+//   try {
+//     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+//     const supabase = createClient(
+//       "https://pklmlttcycefshwxqcwu.supabase.co",
+//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
+//     );
+
+//     const { data: user } = await supabase.auth.getUser();
+//     if (!user?.user) {
+//       console.warn("No user session. Skipping stats refresh.");
+//       return;
+//     }
+
+//     const userId = user.user.id;
+//     const { data: stats, error } = await supabase.from('users').select('total_wins, total_losses, win_streak').eq('id', userId).single();
+//     if (error) {
+//       console.error("Failed to fetch updated stats:", error);
+//       return;
+//     }
+
+//     console.log("Updated stats:", stats);
+
+//     // Update the DOM elements with latest stats
+//     document.getElementById('totalWins').textContent = `Wins: ${stats.total_wins}`;
+//     document.getElementById('totalLosses').textContent = `Losses: ${stats.total_losses}`;
+//     document.getElementById('winStreak').textContent = `Win Streak: ${stats.win_streak}`;
+//     console.log("Player stats refreshed in the menu!");
+//   } catch (error) {
+//     console.error("Error refreshing stats:", error);
+//   }
+// }
+
 async function refreshPlayerStats() {
   console.log("Refreshing player stats...");
 
   try {
-    const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-    const supabase = createClient(
-      "https://pklmlttcycefshwxqcwu.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
-    );
+    // 🟩 Use dynamically loaded supabase client
+    const { supabase } = await import('./supabaseClient.js');
 
     const { data: user } = await supabase.auth.getUser();
     if (!user?.user) {
@@ -1075,7 +1156,6 @@ async function refreshPlayerStats() {
 
     console.log("Updated stats:", stats);
 
-    // Update the DOM elements with latest stats
     document.getElementById('totalWins').textContent = `Wins: ${stats.total_wins}`;
     document.getElementById('totalLosses').textContent = `Losses: ${stats.total_losses}`;
     document.getElementById('winStreak').textContent = `Win Streak: ${stats.win_streak}`;
@@ -1084,6 +1164,7 @@ async function refreshPlayerStats() {
     console.error("Error refreshing stats:", error);
   }
 }
+
 
 
       
