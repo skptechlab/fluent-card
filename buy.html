@@ -29,12 +29,17 @@
     font-size: 2rem;
   }
 
-  main { text-align: center; z-index: 1; margin-top: 20px; }
+  main {
+    text-align: center;
+    z-index: 1;
+    margin-top: 20px;
+  }
+
   button {
     font-family: 'Orbitron', sans-serif;
     margin: 10px;
     padding: 12px 30px;
-    background: rgba(255,215,0,0.9);
+    background: rgba(255, 215, 0, 0.9);
     border: none;
     border-radius: 8px;
     color: #000;
@@ -45,43 +50,100 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+
   button:hover {
     background: #FF0000;
     color: #FFD700;
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 0 20px #FFD700, 0 0 10px #FF0000 inset;
   }
-  p { margin: 8px 0; font-size: 0.9rem; color: #FFD700; text-shadow: 0 0 3px #FF0000; }
-  #userInfo p { margin: 4px 0; font-size: 0.8rem; }
-  .header {
-    position: fixed; top: 10px; left: 10px;
-    display: flex; align-items: center; z-index: 10;
+
+  p {
+    margin: 8px 0;
+    font-size: 0.9rem;
+    color: #FFD700;
+    text-shadow: 0 0 3px #FF0000;
   }
-  .header img { width: 50px; margin-right: 10px; }
-  .header .title-container { text-align: left; }
+
+  #userInfo p {
+    margin: 4px 0;
+    font-size: 0.8rem;
+  }
+
+  .header {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .header img {
+    width: 50px;
+    margin-right: 10px;
+  }
+
+  .header .title-container {
+    text-align: left;
+  }
+
   .header .title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.2rem; color: #FFD700;
+    font-size: 1.2rem;
+    color: #FFD700;
   }
+
   .header .subtitle {
     font-family: 'Cinzel', serif;
-    font-size: 0.9rem; color: #FF0000;
+    font-size: 0.9rem;
+    color: #FF0000;
   }
+
   video.video-bg {
-    position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    z-index: -1; opacity: 0.8;
+    z-index: -1;
+    opacity: 0.8;
   }
+
+  #buyPackBtn {
+    display: none; /* Initially hidden */
+  }
+
   #status, #balance, #ownedSets, #userInfo {
-    background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 4px;
-    margin-top: 6px; width: fit-content; margin-left: auto; margin-right: auto; font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 6px;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.9rem;
   }
+
   @media (max-width: 768px) {
-    h1 { font-size: 1.5rem; margin-top: 80px; }
-    button { padding: 10px 20px; font-size: 0.9rem; }
-    .header .title { font-size: 1rem; }
-    .header .subtitle { font-size: 0.8rem; }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 80px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+
+    .header .title {
+      font-size: 1rem;
+    }
+
+    .header .subtitle {
+      font-size: 0.8rem;
+    }
   }
 </style>
 </head>
@@ -92,25 +154,26 @@
     <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
     Your browser does not support the video tag.
   </video>
-
+  
   <div class="header" id="header">
     <a href="/">
       <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" alt="Logo" class="logo">
     </a>
     <div class="title-container">
       <div class="title">the MASQuerades</div>
+<!--       <div class="subtitle">$MASQ</div> -->
     </div>
   </div>
 
   <main>
     <h1>Buy 5-Card Pack with $MASQ</h1>
-    <button id="loginBtn">Login</button>
-    <button id="connectWalletBtn" style="display: none;">Connect Phantom</button>
-    <button id="buyPackBtn" style="display: none;">Buy Pack (1M $MASQ)</button>
+    <button id="connectWalletBtn">Connect Phantom</button>
+    <button id="buyPackBtn">Buy Pack (1M $MASQ)</button>
+
     <p id="status"></p>
     <p id="balance"></p>
-    <p id="ownedSets"></p>
-    <div id="userInfo"></div>
+    <p id="ownedSets"></p> <!-- Sets owned info -->
+    <div id="userInfo"></div> <!-- Display username & linked wallet -->
   </main>
 
 </body>
