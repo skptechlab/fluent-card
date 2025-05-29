@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MASQ Roadmap</title>
+<!--   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Additional styles specific to the Roadmap page */
+    .roadmap-container {
+      max-width: 1000px;
+      margin: 100px auto;
+      padding: 20px;
+      background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.2));
+      border: 2px solid #FF0000;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+      color: #FFD700;
+      font-family: 'Roboto', sans-serif;
+      text-shadow: 0 0 5px #FF0000;
+      position: relative;
+      z-index: 1;
+    }
+
+    .roadmap-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
+      color: #FF0000;
+      text-shadow: 0 0 10px #FF0000, 0 0 20px #FF4500;
+      text-align: center;
+      margin-bottom: 40px;
+      animation: glow-animation 1.5s ease-in-out infinite alternate;
+    }
+
+    .roadmap-timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 50px;
+      padding-left: 60px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      width: 10px;
+      height: 100%;
+      background: linear-gradient(to bottom, #FF0000, #FFD700);
+      border-radius: 5px;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      background: #FFD700;
+      border: 2px solid #FF0000;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #FF0000;
+    }
+
+    .timeline-content {
+      background: rgba(43, 43, 43, 0.8);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #FF0000;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .timeline-content:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+    }
+
+    .timeline-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      color: #FF0000;
+      text-shadow: 0 0 5px #FF0000;
+      margin-bottom: 10px;
+    }
+
+    .timeline-description {
+      font-size: 16px;
+      color: #FFD700;
+      line-height: 1.5;
+    }
+
+    .timeline-date {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      color: #FFD700;
+      text-shadow: 0 0 5px #FF0000;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .roadmap-title {
+        font-size: 28px;
+      }
+      .timeline-title {
+        font-size: 20px;
+      }
+      .timeline-description {
+        font-size: 14px;
+      }
+      .timeline-item {
+        padding-left: 40px;
+      }
+      .timeline-item::before {
+        left: 10px;
+        width: 8px;
+      }
+      .timeline-item::after {
+        left: 5px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+    <video class="video-bg" autoplay loop muted>
+        <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="header" id="header">
+        <a href="/">
+            <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" alt="Logo" class="logo">
+        </a>
+        <div class="title-container">
+            <div class="title glow">the MASQuerades</div>
+<!--             <div class="subtitle">$MASQ</div> -->
+        </div>
+<!--         <button id="buyBtn" class="connect-btn"><span>BUY NOW</span></button> -->
+    </div>
+
+
+  <!-- Roadmap Content -->
+  <div class="roadmap-container">
+    <h1 class="roadmap-title">MASQ Roadmap</h1>
+    <div class="roadmap-timeline">
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q1 2025</div>
+          <h2 class="timeline-title">Solana Wallet Integration</h2>
+          <p class="timeline-description">
+            Implement seamless Solana wallet login for user authentication, enabling secure and decentralized access to the MASQ platform. Players can connect their Solana wallets to manage in-game assets and transactions.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q2 2025</div>
+          <h2 class="timeline-title">$MASQ Token Integration</h2>
+          <p class="timeline-description">
+            Enable players to purchase card packs and in-game items using $MASQ tokens. Integrate a marketplace for trading assets on the Solana blockchain, ensuring transparency and security.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q3 2025</div>
+          <h2 class="timeline-title">Enhanced Animations & Sounds</h2>
+          <p class="timeline-description">
+            Introduce dynamic card animations, immersive sound effects, and particle effects for in-game actions. Enhance the visual and auditory experience to create a more engaging gameplay environment.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q4 2025</div>
+          <h2 class="timeline-title">Mobile App Development</h2>
+          <p class="timeline-description">
+            Launch MASQ as a full-fledged mobile game on the iOS App Store and Google Play Store. Optimize the game for mobile devices, including touch controls, offline play, and cross-platform synchronization.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q1 2026</div>
+          <h2 class="timeline-title">Competitive Tournaments & Leaderboards</h2>
+          <p class="timeline-description">
+            Introduce global tournaments, ranked leaderboards, and seasonal events. Offer $MASQ rewards for top players, fostering a competitive community and increasing player engagement.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <div class="timeline-date">Q2 2026</div>
+          <h2 class="timeline-title">Expanded Game Modes & Story</h2>
+          <p class="timeline-description">
+            Add new game modes, including single-player campaigns and co-op challenges. Develop a rich lore and narrative to deepen the MASQ universe, with player-driven story events.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio for Interactions -->
+  <audio id="hover-sound" src="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/hover.mp3?v=1746977326714"></audio>
+  <audio id="click-sound" src="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/click.mp3?v=1746977326714"></audio>
+
+  <script>
+    // Scroll Animation for Timeline Items
+    document.addEventListener('DOMContentLoaded', () => {
+      const timelineItems = document.querySelectorAll('.timeline-item');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.2 });
+
+      timelineItems.forEach(item => observer.observe(item));
+
+      // Audio for hover and click
+      const hoverSound = document.getElementById('hover-sound');
+      const clickSound = document.getElementById('click-sound');
+
+      document.querySelectorAll('.nav-link, .connect-btn, .timeline-content').forEach(element => {
+        element.addEventListener('mouseenter', () => {
+          hoverSound.currentTime = 0;
+          hoverSound.play();
+        });
+        element.addEventListener('click', () => {
+          clickSound.currentTime = 0;
+          clickSound.play();
+        });
+      });
+    });
+  </script>
+</body>
+</html>

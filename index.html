@@ -1,0 +1,620 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<!-- <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="MASQuerades - A pioneering token and card game on Solana's $MASQ."/>
+    <title>MASQuerades</title>
+    <link rel="icon" type="image/png" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="styles.css"/>
+    <script src="https://public.bnbstatic.com/unpkg/growth-widget/cryptoCurrencyWidget@0.0.20.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+</head> -->
+  
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <!-- Primary Meta Tags -->
+    <title>MASQuerades – $MASQ Token & Card Game on Solana</title>
+    <meta name="title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
+    <meta name="description" content="Enter the MASQuerade. A legendary, aesthetic token & tactical card game built on Solana. Powered by $MASQ, forged by the masked anon vanguard." />
+
+    <!-- Favicon & App Icons -->
+    <link rel="icon" type="image/png" href="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/logomasq1-g11.gif" />
+    <link rel="apple-touch-icon" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+    <meta name="theme-color" content="#0B0B0B" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://masquerades.xyz/" />
+    <meta property="og:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
+    <meta property="og:description" content="Step into the masked realm. No presale. No deception. Just pure anon-powered gameplay and decentralized art." />
+    <meta property="og:image" content="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://masquerades.xyz/" />
+    <meta property="twitter:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
+    <meta property="twitter:description" content="Join the masked vanguard of Solana. Play. Collect. Conquer. One token. Infinite strategy." />
+    <meta property="twitter:image" content="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css"/>
+
+    <!-- External Scripts -->
+    <script src="https://public.bnbstatic.com/unpkg/growth-widget/cryptoCurrencyWidget@0.0.20.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+</head>
+<body>
+  
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen" style="display: none;">
+        <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/nullman1-red1.gif" alt="Loading GIF">
+        <div id="loadingText" class="loading-text">Initializing MASQ...</div>
+    </div>
+  
+  
+    <!-- Background Video -->
+    <video class="video-bg" autoplay loop muted>
+        <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Header -->
+    <div class="header" id="header">
+        <a href="/">
+            <img src="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/logomasq1-g11.gif" alt="Logo" class="logo">
+        </a>
+        <div class="title-container">
+            <div class="title glow">the MASQuerades</div>
+<!--             <div class="subtitle">$MASQ</div> -->
+        </div>
+    </div>
+  
+<!--     <div class="connect-container">
+      <button id="buyBtn" class="connect-btn"><span>BUY NOW</span></button>
+      <button id="holders" class="connect-btn" onclick="navigateTo('holders.html')"><span>Holders</span></button>
+    </div> -->
+
+
+    <!-- Audio for Typing Sound -->
+    <audio id="typingSound">
+        <source src="https://cdn.glitch.global/c3769579-3b02-4c12-972e-afe3dfff554a/typing-6458.mp3?v=1713139383668" type="audio/mpeg">
+    </audio>
+
+    <!-- Homepage -->
+    <div id="homepage" class="homepage">
+<!--         <div class="marquee">
+            <div>
+                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
+                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
+                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
+                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
+            </div>
+        </div> -->
+
+<!--         <div class="border-green"></div> -->
+
+        <div class="typewriter-container">
+            <div class="typewriter-text glow"><span id="line1"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow"><span id="line2"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow"><span id="line3"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow"><span id="line4"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow"><span id="line5"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow"><span id="line6"> . > </span><span class="cursor"></span></div>
+            <div class="typewriter-text glow clickable-word">
+<div id="masqNav" class="masq-navbar">
+    <span class="nav-link"  onclick="navigateTo('about.html')">About</span>
+    <span class="nav-link"  onclick="navigateTo('cards.html')">Cards</span>
+    <span class="nav-link" onclick="navigateTo('whitepaper.html')">Whitepaper</span>
+    <span class="nav-link"  onclick="openLink('https://github.com/')">Github</span>
+    <span class="nav-link"  onclick="navigateTo('roadmap.html')">Roadmap</span>
+<!--     <span class="nav-link"   onclick="openLink('')">Pumpfun</span> -->
+    <span class="nav-link" onclick="openLink('https://x.com/')">Twitter</span>
+<!--     <span class="nav-link tokenomics-link" onclick="toggleTokenomics()">Tokenomics
+        <div id="tokenomicsPopup" class="tokenomics-popup">
+            <div class="tokenomics-title">Tokenomics</div>
+            <div class="tokenomics-subtitle">Supply</div>
+            <div class="tokenomics-text">1,000,000,000 $MASQ (Fixed Supply, No Inflation)</div>
+            <div class="tokenomics-text">Distribution is veiled yet transparent to the anon collective.</div>
+            <div class="tokenomics-subtitle">Token Distribution</div>
+            <div class="tokenomics-text">95.8% Public Fair Launch – Forged for the MASQuerade community,</div>
+            <div class="tokenomics-text">with 4.2% reserved for the shadow architect, vested over 4.2 years</div>
+            <div class="tokenomics-text">No Presale, No Early Whispers</div>
+            <div class="tokenomics-text">No hidden elites – 100% anon-driven and equitable</div>
+            <div class="tokenomics-subtitle">Why $MASQ?</div>
+            <div class="tokenomics-text">No Deceptions, No Shadows – Pure transparency, Fair Genesis –</div>
+            <div class="tokenomics-text">Open to all beneath the MASQ,</div>
+            <div class="tokenomics-text">Aesthetic & Anon-Powered – Crafted by the silent vanguard</div>
+        </div>
+    </span> -->
+<!--   <span class="cursor"></span> -->
+</div>
+          
+            </div>
+        </div>
+
+      
+      
+<!-- <ul class="angled-btn-group">
+  <li>
+    <a href="#" onclick="showAuthPanel()">
+      <i class="fa fa-play" aria-hidden="true"></i>
+      <span>PLAY GAME</span>
+    </a>
+  </li>
+</ul> -->
+      
+      <ul class="angled-btn-group">
+        <li>
+          <a href="#" onclick="navigateTo('https://pump.fun/')">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+            <span>BUY $MASQ</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="showAuthPanel()">
+            <i class="fa fa-play" aria-hidden="true"></i>
+            <span>PLAY GAME</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" onclick="navigateTo('holders.html')">
+            <i class="fa fa-users" aria-hidden="true"></i>
+            <span>HOLDERS</span>
+          </a>
+        </li>
+      </ul>
+
+      
+        <!--     <div class="connect-container">
+      <button id="buyBtn" class="connect-btn"><span>BUY NOW</span></button>
+      <button id="holders" class="connect-btn" onclick="navigateTo('holders.html')"><span>Holders</span></button>
+    </div> -->
+
+        
+        
+        
+        
+<!--         <button id="playGameBtn" class="play-game-btn" onclick="showAuthPanel()">Play Game</button> -->
+        
+
+      
+<div id="card-container">
+  <div id="mana-label">MANA</div>
+  <div id="attack-label">ATTACK</div>
+  <div id="health-label">HEALTH</div>
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a57.png" class="card" />
+  <img src="https://cdn.glitch.global/3b75429b-022d-4967-8aa2-364098a53411/a45.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a65.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a66.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a59.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a63.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a64.png" class="card" />
+  <img src="https://cdn.glitch.global/788f42e8-9acb-41a1-a609-68bac1d03837/a10.png" class="card" />
+  <img src="https://cdn.glitch.global/3b75429b-022d-4967-8aa2-364098a53411/a47.png" class="card" />
+  <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a63.png" class="card" />
+</div>
+
+<!-- <div id="card-container-new">
+  <div id="pack-label" onclick="navigateTo('buy.html')">NEW PACK!! Buy with $MASQ!!</div>
+   <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+</div> -->
+      
+      <div id="notification-widget" onclick="window.location.href='buy.html'">
+        <div id="notification-title">New Golden Pack Launch!</div>
+        <div id="notification-message">Buy now with $MASQ</div>
+        <div id="notification-images">
+          <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g2.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g3.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g4.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g5.png" class="card" />
+          <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g2.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g3.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g4.png" class="card" />
+          <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g5.png" class="card" />
+        </div>
+      </div>
+<!--       https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png?v=1748296261157 -->
+      
+<!--         <div id="card-container">
+          
+            <div id="mana-label1">MANA</div>
+            <div id="attack-label1">ATTACK</div>
+            <div id="health-label1">HEALTH</div>
+            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
+        </div>
+       -->
+      
+
+<!--         <div class="controls-text" id="controlsText">
+            <div class="binance-widget-marquee" data-cmc-ids="1,1027,52,5426,3408,74,2010,5994,20947,24478,13502,35336" data-theme="dark" data-transparent="true" data-locale="en" data-fiat="USD" data-powered-by="Powered by" data-disclaimer="Disclaimer"></div>
+        </div> -->
+    </div>
+
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+
+    <!-- AUTH PANEL -->
+    <div class="auth-panel" id="authPanel" style="display: none;">
+        <h2>Signup / Login / Play as Guest</h2>
+        <input type="email" id="email" placeholder="Email"/>
+        <input type="password" id="password" placeholder="Password"/>
+        <div class="auth-buttons">
+            <button onclick="handleSignup()">Sign Up</button>
+            <button onclick="handleLogin()">Login</button>
+            <button onclick="handleGuestPlay()">Play as Guest</button>
+        </div>
+      <br>
+              <p style="font-size: 0.8rem; color: #aaa; margin-top: 0.5rem;">
+                  * Email confirmation not required. Treat like username in email format
+              </p>
+    </div>
+
+    <!-- POST LOGIN PANEL -->
+    <div id="postLogin" class="post-login" style="display: none;">
+        <h2 id="welcomeMessage" class="post-login-title">Welcome, Anon</h2>
+        <div class="player-stats" id="playerStats" style="display: none;">
+            <div class="stats-header">Your Legacy</div>
+            <div class="stats-item">
+                <span class="stats-label">Victories:</span>
+                <span class="stats-value" id="postLoginWins">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Defeats:</span>
+                <span class="stats-value" id="postLoginLosses">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Winning Streak:</span>
+                <span class="stats-value" id="postLoginStreak">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Packs Owned:</span>
+                <span class="stats-value" style="font-size: 10px;" id="packsOwned">0</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Wallet:</span>
+                <span class="stats-value" style="font-size: 8px;" id="walletConn">0</span>
+            </div>
+        </div>
+        <div class="post-login-buttons">
+            <button class="post-login-btn play-btn" onclick="startGame()">PLAY the Game</button>
+<!--             <button class="post-login-btn how-to-btn" onclick="showHowTo()">Unveil the Secrets</button> -->
+            <button class="post-login-btn buy-btn" onclick="navigateTo('buy.html')">Buy packs</button>
+        </div>
+    </div>
+
+    <!-- GAME UI -->
+    <div class="ui-overlay" id="gameUI" style="display: none;">
+        <div class="player-info">
+            <div>Health: <span id="playerHealth">30</span> / ∞</div>
+            <div class="health-bar"><div class="health-fill" id="playerHealthFill" style="width: 100%;"></div></div>
+            <div>Mana: <span id="playerMana">1</span>/<span id="playerMaxMana">1</span></div>
+            <div class="mana-bar"><div class="mana-fill" id="playerManaFill" style="width: 100%;"></div></div>
+            <div>Win Streak: <span id="winStreak">0</span></div>
+        </div>
+        <div class="opponent-info">
+            <div>Health: <span id="opponentHealth">30</span> / ∞</div>
+            <div class="health-bar"><div class="health-fill" id="opponentHealthFill" style="width: 100%;"></div></div>
+            <div>Mana: <span id="opponentMana">1</span>/<span id="opponentMaxMana">1</span></div>
+            <div class="mana-bar"><div class="mana-fill" id="opponentManaFill" style="width: 100%;"></div></div>
+        </div>
+        <button class="end-turn-btn" id="endTurnBtn">End Turn</button>
+        <button class="pause-btn" id="pauseBtn">Pause</button>
+        <div class="right-buttons">
+            <button class="how-to-play-btn" id="howToPlayBtn" onclick="showHowTo()">How to Play</button>
+            <button class="end-game-btn" id="endGame" onclick="endTheGame()">End Game</button>
+<!--             <button class="lore-btn" id="loreBtn">Lore</button> -->
+        </div>
+        <div class="game-log" id="gameLog"></div>
+        <div class="card-tooltip" id="cardTooltip"></div>
+        <div class="how-to-play-tooltip" id="howToPlayTooltip"></div>
+        <div class="lore-tooltip" id="loreTooltip"></div>
+        <div class="timer" id="turnTimer">20</div>
+        <div class="game-stats">
+            <div>Total Wins: <span id="totalWins">0</span></div>
+            <div>Total Losses: <span id="totalLosses">0</span></div>
+            <div>Win Streak: <span id="gameWinStreak">0</span></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { signUp, login, getUser, playAsGuest } from './auth.js';
+        import { initializeGame } from './game.js';
+        import { getUserStats, getUserOwnedSets, getUserWallet } from './auth.js';
+
+        function showLoadingScreen(text) {
+            const loadingScreen = document.getElementById("loadingScreen");
+            const loadingText = document.getElementById("loadingText");
+            if (loadingScreen && loadingText) {
+                loadingText.textContent = text;
+                loadingScreen.style.display = "flex";
+                loadingScreen.classList.remove('fade-out');
+            } else {
+                console.error("Loading screen elements not found:", { loadingScreen, loadingText });
+            }
+        }
+
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = "none";
+                }, 500);
+            } else {
+                console.error("Loading screen element not found");
+            }
+        }
+
+        window.handleSignup = async function() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            try {
+                const result = await signUp(email, password);
+                if (result?.error) {
+                    alert("Signup failed: " + result.error.message);
+                    return;
+                }
+            } catch (err) {
+                alert("Signup error: " + err.message);
+            }
+        };
+
+        window.handleLogin = async function() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            try {
+                showLoadingScreen("Loading User Stats...");
+                const result = await login(email, password);
+                if (result?.error || !result?.user) {
+                    hideLoadingScreen();
+                    alert("Login failed: " + (result?.error?.message || "Invalid credentials."));
+                    return;
+                }
+
+                const user = await getUser();
+                if (user) {
+                  console.log("statst:", user.id);
+                    const stats = await getUserStats(user.id);
+                    console.log("statst:", stats.total_wins);
+                    const packs = await getUserOwnedSets(user.id);
+                    const wallet = await getUserWallet(user.id);
+                    console.log("[Login] Wallet fetched:", wallet);
+                    document.getElementById("authPanel").style.display = "none";
+                    document.getElementById("postLogin").style.display = "flex";
+                    document.getElementById("welcomeMessage").textContent = `Welcome, ${result.username}`;
+                    document.getElementById("postLoginWins").textContent = stats.total_wins;
+                    document.getElementById("postLoginLosses").textContent = stats.total_losses;
+                    document.getElementById("postLoginStreak").textContent = stats.win_streak;
+                  
+                    // document.getElementById("packsOwned").textContent = packs.join(", ");
+                  
+                    const setNames = packs.map(setId => {
+                      if (setId === 1) return "Default Set";
+                      if (setId === 2) return "Golden Set";
+                      return `Set #${setId}`;
+                    });
+                    document.getElementById('packsOwned').textContent = `${setNames.join(', ') || 'None'}`;
+                  
+                    document.getElementById("walletConn").textContent = wallet;
+                    document.getElementById("playerStats").style.display = "block";
+                    hideLoadingScreen();
+                } else {
+                    hideLoadingScreen();
+                    alert("Login failed: User could not be loaded.");
+                }
+            } catch (err) {
+                hideLoadingScreen();
+                alert("Login error: " + err.message);
+            }
+        };
+
+        window.handleGuestPlay = async function() {
+            try {
+                showLoadingScreen("Entering as Guest...");
+                const result = await playAsGuest();
+                document.getElementById("authPanel").style.display = "none";
+                document.getElementById("postLogin").style.display = "flex";
+                document.getElementById("welcomeMessage").textContent = `Welcome, ${result.username}`;
+                document.getElementById("postLoginWins").textContent = "0";
+                document.getElementById("postLoginLosses").textContent = "0";
+                document.getElementById("postLoginStreak").textContent = "0";
+                document.getElementById("playerStats").style.display = "block";
+                hideLoadingScreen();
+            } catch (err) {
+                hideLoadingScreen();
+                alert("Guest mode error: " + err.message);
+            }
+        };
+
+        window.startGame = function() {
+            showLoadingScreen("Starting Game...");
+            document.getElementById("postLogin").style.display = "none";
+            document.getElementById("gameUI").style.display = "block";
+            document.getElementById("gameCanvas").style.display = "block";
+            document.getElementById("header").style.display = "none";
+            initializeGame();
+        };
+
+        window.showHowTo = function() {
+            const tooltip = document.getElementById("howToPlayTooltip");
+            tooltip.innerHTML = `
+                <strong>Unveiling the MASQuerade:</strong><br><br>
+                1. <em>Cards in Hand:</em> Behold your arsenal, a collection of veiled powers.<br>
+                2. <em>Drag & Drop:</em> Summon your cards to the battlefield with a graceful sweep.<br>
+                3. <em>Mana Mastery:</em> Each move demands essence—spend wisely, for mana grows with each turn.<br>
+                4. <em>End Turn:</em> Conclude your strategy to unleash queued chaos upon your foe.<br>
+                5. <em>Victory:</em> Reduce your opponent’s vitality to naught and claim your dominion.<br><br>
+                Embrace the shadows, outwit your rival, and ascend as a legend beneath the MASQ!
+            `;
+            tooltip.style.display = "block";
+        };
+
+//         window.endTheGame = async function() {
+//           console.log("Game ended. Counting as player loss.");
+
+//           // Clear the scene and stop animations/timers
+//           if (window.cancelAnimationFrame) window.cancelAnimationFrame(window.animationFrameId);
+//           if (gameState.turnTimer) clearInterval(gameState.turnTimer);
+//           if (gameState.opponentQueueTimer) clearTimeout(gameState.opponentQueueTimer);
+
+//           // Update the player's loss stats in Supabase
+//           try {
+//             const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
+//             const supabase = createClient(
+//               "https://pklmlttcycefshwxqcwu.supabase.co",
+//               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
+//             );
+
+//             const { data: user, error: userError } = await supabase.auth.getUser();
+//             if (userError || !user?.user) {
+//               console.warn("No user session found. Stats not updated.");
+//             } else {
+//               const userId = user.user.id;
+//               await supabase.rpc('increment_loss', { user_id_input: userId });
+//               console.log("Loss counted in database.");
+//             }
+//           } catch (error) {
+//             console.error("Failed to update loss in database:", error);
+//           }
+
+//           // Redirect to player screen and refresh stats
+//           window.location.href = "/player.html";
+//         };
+      
+        window.showAuthPanel = function() {
+            document.getElementById("homepage").style.display = "none";
+            document.getElementById("authPanel").style.display = "block";
+            const typingSound = document.getElementById('typingSound');
+            typingSound.muted = true;
+            clearInterval(window.typeWriterInterval);
+        };
+
+        window.toggleTokenomics = function() {
+            const popup = document.getElementById("tokenomicsPopup");
+            popup.style.display = popup.style.display === "block" ? "none" : "block";
+        };
+
+        window.openLink = function(url) {
+            window.open(url, '_blank');
+        };
+
+        window.navigateTo = function(page) {
+            window.location.href = page;
+        };
+
+        // document.getElementById('buyBtn').addEventListener('click', function() {
+        //     window.open('', '_blank');
+        // });
+
+        window.addEventListener('load', function () {
+            const loadingScreen = document.getElementById('loadingScreen');
+            showLoadingScreen("Initializing MASQ...");
+            setTimeout(() => {
+                hideLoadingScreen();
+                document.getElementById("homepage").style.display = "block";
+                document.getElementById("header").style.display = "flex";
+            }, 1000);
+
+            // const marqueeContent = document.querySelector('.marquee div');
+            // marqueeContent.innerHTML += marqueeContent.innerHTML;
+
+            const lines = [
+                "Greetings, voyager of the boundless digital void",
+                "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
+                "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
+                "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
+                "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
+                "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
+            ];
+            let currentLine = 0;
+            let currentChar = 0;
+            const typingSound = document.getElementById('typingSound');
+
+            function typeWriter() {
+                if (currentChar < lines[currentLine].length) {
+                    const currentLineElement = document.getElementById(`line${currentLine + 1}`);
+                    const currentCharElement = document.createElement('span');
+                    const currentCharValue = lines[currentLine].charAt(currentChar);
+
+                    if (currentCharValue === '<' && lines[currentLine].charAt(currentChar + 1) === 's') {
+                        const closingTagIndex = lines[currentLine].indexOf('>', currentChar);
+                        currentChar = closingTagIndex + 1;
+                    } else {
+                        currentCharElement.textContent = currentCharValue;
+                        currentLineElement.appendChild(currentCharElement);
+                        currentChar++;
+                        if (!typingSound.muted) typingSound.play();
+                    }
+                } else {
+                    currentLine++;
+                    currentChar = 0;
+                    if (currentLine >= lines.length) {
+                        clearInterval(window.typeWriterInterval);
+                        if (!typingSound.muted) typingSound.pause();
+                    }
+                }
+            }
+
+            window.typeWriterInterval = setInterval(typeWriter, 100);
+        });
+
+        const cards = document.querySelectorAll('.card');
+
+        function shuffleCards() {
+            cards.forEach((card, i) => {
+                card.style.transform = 'rotateY(90deg)';
+                card.style.opacity = 0;
+
+                setTimeout(() => {
+                    const offsetX = Math.random() * 100 - 50;
+                    const offsetY = Math.random() * 80 - 40;
+                    const rotate = Math.random() * 20 - 10;
+
+                    card.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg) rotateY(0deg)`;
+                    card.style.opacity = 1;
+                    card.style.zIndex = i;
+                }, 300 + i * 100);
+            });
+
+            setTimeout(() => {
+                cards.forEach((card, i) => {
+                    card.style.transform = `translate(0px, 0px) rotate(0deg) rotateY(0deg)`;
+                    card.style.zIndex = cards.length - i;
+                });
+            }, 2000);
+        }
+
+        shuffleCards();
+        setInterval(shuffleCards, 2000);
+      
+      function toggleTokenomics() {
+    const popup = document.getElementById('tokenomicsPopup');
+    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+}
+      
+      
+      
+    </script>
+</body>
+</html>
