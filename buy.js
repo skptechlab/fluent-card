@@ -214,7 +214,6 @@ async function getHeliusUrl() {
     if (!response.ok) throw new Error('Failed to fetch Helius key.');
     const { heliusKey } = await response.json();
     heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
-    console.log("Helius URL initialized:", heliusUrl);
   } catch (err) {
     console.error("Error fetching Helius key:", err);
     alert("Could not initialize wallet connection. Please try again later.");
