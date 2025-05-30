@@ -971,7 +971,7 @@ button,
 
  #notification-widget {
     position: fixed;
-    top: 100px;
+    bottom: 100px;
     right: 40px;
     width: 150px;
     background: rgba(0, 0, 0, 0.85);
