@@ -583,10 +583,12 @@
               // Show loading screen immediately
               const loadingScreen = document.getElementById('loadingScreen');
               loadingScreen.style.display = 'flex';
-                setTimeout(() => {
+               startTypewriter();
                 loadingScreen.style.display = "none";
-                startTypewriter();
-              }, 500);
+              //   setTimeout(() => {
+              //   loadingScreen.style.display = "none";
+              //   startTypewriter();
+              // }, 500);
             });
             
             window.addEventListener('load', () => {
