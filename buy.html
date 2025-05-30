@@ -138,17 +138,48 @@
     color: #FFD700;
   }
 
-  /* Info blocks */
-  #status, #balance, #ownedSets, #userInfo {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 8px 12px;
-    border-radius: 4px;
-    margin-top: 6px;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 0.9rem;
-  }
+ /* General layout and alignment for user info containers */
+#userInfo, #ownedSets, #balance {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #FF0000;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), inset 0 0 5px rgba(255, 215, 0, 0.3);
+  color: #FFD700;
+  text-shadow: 0 0 3px #FF0000;
+  padding: 10px 15px;
+  margin: 10px auto;
+  width: fit-content;
+  max-width: 90%;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+
+#userInfo p, #ownedSets, #balance {
+  margin: 4px 0;
+}
+
+#userInfo strong {
+  color: #FF0000;
+  text-shadow: 0 0 2px #FFD700;
+}
+
+#userInfo:hover, #ownedSets:hover, #balance:hover {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), inset 0 0 10px rgba(255, 0, 0, 0.6);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Center alignment for parent container if needed */
+#userInfoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 </style>
 </head>
 
@@ -172,10 +203,17 @@
   <button id="connectWalletBtn" style="display: none;">Connect Phantom</button>
   <button id="buyPackBtn" style="display: none;">Buy Pack (1M $MASQ)</button>
 
-  <p id="status"></p>
-  <p id="balance"></p>
+  
+<!--   <p id="balance"></p>
   <p id="ownedSets"></p>
-  <div id="userInfo"></div>
+  <div id="userInfo"></div> -->
+  
+  <div id="userInfoContainer">
+    <p id="status"></p>
+    <div id="userInfo"></div>  
+    <p id="balance"></p>
+    <p id="ownedSets"></p>
+  </div>
 </main>
 
 <!-- Auth Panel Popup -->
