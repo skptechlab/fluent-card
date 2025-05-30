@@ -56,7 +56,7 @@
 <body>
   
     <!-- Loading Screen -->
-    <div id="loadingScreen" class="loading-screen" style="display: none;">
+    <div id="loadingScreen" class="loading-screen">
         <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/nullman1-red1.gif" alt="Loading GIF">
         <div id="loadingText" class="loading-text">Initializing MASQ...</div>
     </div>
@@ -583,6 +583,10 @@
               // Show loading screen immediately
               const loadingScreen = document.getElementById('loadingScreen');
               loadingScreen.style.display = 'flex';
+                setTimeout(() => {
+                loadingScreen.style.display = "none";
+                startTypewriter();
+              }, 500);
             });
             
             window.addEventListener('load', () => {
@@ -598,70 +602,70 @@
             
               // Hide the loading screen with fade-out
               loadingScreen.classList.add('fade-out');
-              setTimeout(() => {
-                loadingScreen.style.display = "none";
-                showAllLines();
-              }, 500);
+              // setTimeout(() => {
+              //   loadingScreen.style.display = "none";
+              //   showAllLines();
+              // }, 500);
             });
 
-              function showAllLines() {
-  const lines = [
-    "Greetings, voyager of the boundless digital void",
-    "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
-    "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
-    "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
-    "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
-    "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
-  ];
+//               function showAllLines() {
+//   const lines = [
+//     "Greetings, voyager of the boundless digital void",
+//     "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
+//     "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
+//     "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
+//     "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
+//     "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
+//   ];
 
-  lines.forEach((line, index) => {
-    const lineElement = document.getElementById(`line${index + 1}`);
-    if (lineElement) {
-      lineElement.textContent = `. > ${line}`;
-    }
-  });
-}
+//   lines.forEach((line, index) => {
+//     const lineElement = document.getElementById(`line${index + 1}`);
+//     if (lineElement) {
+//       lineElement.textContent = `. > ${line}`;
+//     }
+//   });
+// }
             
-            // function startTypewriter() {
-            //   const lines = [
-            //     "Greetings, voyager of the boundless digital void",
-            //     "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
-            //     "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
-            //     "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
-            //     "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
-            //     "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
-            //   ];
-            //   let currentLine = 0;
-            //   let currentChar = 0;
-            //   const typingSound = document.getElementById('typingSound');
+            function startTypewriter() {
+              const lines = [
+                "Greetings, voyager of the boundless digital void",
+                "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
+                "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
+                "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
+                "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
+                "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
+              ];
+              let currentLine = 0;
+              let currentChar = 0;
+              const typingSound = document.getElementById('typingSound');
             
-            //   function typeWriter() {
-            //     if (currentChar < lines[currentLine].length) {
-            //       const currentLineElement = document.getElementById(`line${currentLine + 1}`);
-            //       const currentCharElement = document.createElement('span');
-            //       const currentCharValue = lines[currentLine].charAt(currentChar);
+              function typeWriter() {
+                if (currentChar < lines[currentLine].length) {
+                  const currentLineElement = document.getElementById(`line${currentLine + 1}`);
+                  const currentCharElement = document.createElement('span');
+                  const currentCharValue = lines[currentLine].charAt(currentChar);
             
-            //       if (currentCharValue === '<' && lines[currentLine].charAt(currentChar + 10) === 's') {
-            //         const closingTagIndex = lines[currentLine].indexOf('>', currentChar);
-            //         currentChar = closingTagIndex + 1;
-            //       } else {
-            //         currentCharElement.textContent = currentCharValue;
-            //         currentLineElement.appendChild(currentCharElement);
-            //         currentChar++;
-            //         if (!typingSound.muted) typingSound.play();
-            //       }
-            //     } else {
-            //       currentLine++;
-            //       currentChar = 0;
-            //       if (currentLine >= lines.length) {
-            //         clearInterval(window.typeWriterInterval);
-            //         if (!typingSound.muted) typingSound.pause();
-            //       }
-            //     }
-            //   }
+                  if (currentCharValue === '<' && lines[currentLine].charAt(currentChar + 10) === 's') {
+                    const closingTagIndex = lines[currentLine].indexOf('>', currentChar);
+                    currentChar = closingTagIndex + 1;
+                  } else {
+                    currentCharElement.textContent = currentCharValue;
+                    currentLineElement.appendChild(currentCharElement);
+                    currentChar++;
+                    if (!typingSound.muted) typingSound.play();
+                  }
+                } else {
+                  currentLine++;
+                  currentChar = 0;
+                  if (currentLine >= lines.length) {
+                    clearInterval(window.typeWriterInterval);
+                    if (!typingSound.muted) typingSound.pause();
+                  }
+                }
+              }
             
-            //   window.typeWriterInterval = setInterval(typeWriter, 100);
-            // }
+              window.typeWriterInterval = setInterval(typeWriter, 100);
+            }
 
         const cards = document.querySelectorAll('.card');
 
