@@ -174,6 +174,29 @@
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
 }
 
+#loadingSpinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  display: none;
+  z-index: 9999;
+}
+
+#loadingSpinner .spinner-circle {
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(255, 215, 0, 0.3);
+  border-top: 4px solid #FFD700;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 </style>
 </head>
 
@@ -182,6 +205,11 @@
 <video class="video-bg" autoplay loop muted>
   <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
 </video>
+
+<div id="loadingSpinner">
+  <div class="spinner-circle"></div>
+</div>
+
 
 <div class="header" id="header">
   <a href="/">
@@ -229,6 +257,11 @@
 
 <script type="module">
 import { signUp, login, getUser, playAsGuest } from './auth.js';
+
+function showLoadingSpinner(show = true) {
+  const spinner = document.getElementById('loadingSpinner');
+  spinner.style.display = show ? 'block' : 'none';
+}
 
 async function handleSignup() {
   const email = document.getElementById("email").value;
