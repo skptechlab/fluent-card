@@ -998,11 +998,13 @@ button,
     font-weight: bold;
     margin-bottom: 5px;
     text-shadow: 0 0 6px gold;
+    animation: pulse 1s infinite alternate;
   }
 
   #notification-message {
     font-size: 0.4rem;
     color: #FFD700;
+    animation: pulse 1s infinite alternate;
   }
 
   #notification-images {
