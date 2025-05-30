@@ -10,7 +10,7 @@
 <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
 <script type="module" src="buy.js"></script>
 <style>
-  body {
+/*   body {
     margin: 0;
     background: #000;
     color: #FFD700;
@@ -18,8 +18,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+  } */
   
+
   button {
     font-family: 'Orbitron', sans-serif;
     margin: 10px;
@@ -100,7 +101,21 @@
     z-index: -1;
     opacity: 0.8;
   }
-    
+
+/*   .header {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .header img {
+    width: 50px;
+    margin-right: 10px;
+  } */
+
  /* General layout and alignment for user info containers */
 #status, #userInfo, #ownedSets, #balance {
   background: rgba(0, 0, 0, 0.6);
@@ -173,7 +188,7 @@
   border-radius: 8px;
   box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
 }
-
+  
 #loadingSpinner {
   position: fixed;
   top: 50%;
@@ -206,11 +221,11 @@
   <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
 </video>
 
-<div id="loadingSpinner">
+  <div id="loadingSpinner">
   <div class="spinner-circle"></div>
 </div>
 
-
+  
 <div class="header" id="header">
   <a href="/">
     <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" alt="Logo" class="logo">
@@ -257,13 +272,14 @@
 
 <script type="module">
 import { signUp, login, getUser, playAsGuest } from './auth.js';
-
+  
 function showLoadingSpinner(show = true) {
   const spinner = document.getElementById('loadingSpinner');
   spinner.style.display = show ? 'block' : 'none';
 }
 
 async function handleSignup() {
+  showLoadingSpinner(true);
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   try {
@@ -273,12 +289,14 @@ async function handleSignup() {
       return;
     }
     alert("Signup successful. Please login now.");
+    showLoadingSpinner(false);
   } catch (err) {
     alert("Signup error: " + err.message);
   }
 }
 
 async function handleLogin() {
+  showLoadingSpinner(true);
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   try {
@@ -289,6 +307,7 @@ async function handleLogin() {
     }
     document.getElementById("authPanel").style.display = "none";
     document.getElementById("connectWalletBtn").style.display = "inline-block";
+    showLoadingSpinner(false);
     alert("Login successful! Connect your Phantom wallet next.");
   } catch (err) {
     alert("Login error: " + err.message);
