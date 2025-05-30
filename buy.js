@@ -13,12 +13,19 @@ let provider = null;
 let userPublicKey = null;
 let heliusUrl = "";
 
+function showLoadingSpinner(show = true) {
+  const spinner = document.getElementById('loadingSpinner');
+  spinner.style.display = show ? 'block' : 'none';
+}
+
 async function getHeliusUrl() {
   try {
+    showLoadingSpinner(true);
     const response = await fetch('/api/helius-key');
     if (!response.ok) throw new Error('Failed to fetch Helius key.');
     const { heliusKey } = await response.json();
     heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
+    showLoadingSpinner(false);
   } catch (err) {
     console.error("Error fetching Helius key:", err);
     alert("Could not initialize wallet connection. Please try again later.");
@@ -29,6 +36,7 @@ async function getHeliusUrl() {
 await getHeliusUrl();
 
 document.getElementById('connectWalletBtn').onclick = async () => {
+  showLoadingSpinner(true);
   console.log("Connecting to Phantom...");
   if ('solana' in window) {
     provider = window.solana;
@@ -86,6 +94,7 @@ document.getElementById('connectWalletBtn').onclick = async () => {
         <p><strong>Username:</strong> ${username}</p>
         <p><strong>Linked Wallet:</strong> ${linkedWallet}</p>
       `;
+      showLoadingSpinner(false);
     } catch (err) {
       console.error("Error connecting to wallet:", err);
       alert('Failed to connect wallet.');
@@ -96,6 +105,7 @@ document.getElementById('connectWalletBtn').onclick = async () => {
 };
 
 document.getElementById('buyPackBtn').onclick = async () => {
+  showLoadingSpinner(true);
   if (!provider || !userPublicKey) {
     alert('Please connect your wallet first!');
     return;
@@ -135,6 +145,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
       document.getElementById('ownedSets').textContent = `Sets owned: ${[...ownedSets, 2].join(', ')}`;
     } else {
       alert("Wallet not linked. Purchase cancelled.");
+      showLoadingSpinner(false);
       return;
     }
   }
@@ -192,6 +203,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
     const signedTx = await provider.signTransaction(transaction);
     const signature = await connection.sendRawTransaction(signedTx.serialize());
     await connection.confirmTransaction(signature, 'confirmed');
+    showLoadingSpinner(false);
     alert(`Pack purchased successfully! Tx: ${signature}`);
   } catch (err) {
     console.error("Transaction error:", err);
