@@ -1001,6 +1001,14 @@ button,
     animation: pulse 1s infinite alternate;
   }
 
+  #notification-countdown {
+    font-size: 0.45rem;
+    margin-bottom: 6px;
+    color: #FFD700;
+    text-shadow: 0 0 4px gold;
+    animation: pulse 1s infinite alternate;
+  }
+
   #notification-message {
     font-size: 0.4rem;
     color: #FFD700;
