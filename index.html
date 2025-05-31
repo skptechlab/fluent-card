@@ -86,8 +86,8 @@
 
 
     <!-- Audio for Typing Sound -->
-    <audio id="typingSound">
-        <source src="https://cdn.glitch.global/c3769579-3b02-4c12-972e-afe3dfff554a/typing-6458.mp3?v=1713139383668" type="audio/mpeg">
+    <audio id="bg-audio" autoplay mute>
+        <source src="https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/bg_score.mp3" type="audio/mpeg">
     </audio>
 
     <!-- Homepage -->
@@ -356,12 +356,17 @@
         }
 
         const loadingScreen = document.getElementById('loadingScreen');
-      showLoadingScreen("Initializing MASQ...");
-      setTimeout(() => {
-          hideLoadingScreen();
-          document.getElementById("homepage").style.display = "block";
-          document.getElementById("header").style.display = "flex";
-      }, 100);
+        const audio = document.getElementById('typingSound');
+        audio.play().catch(err => {
+          console.log("Autoplay blocked:", err);
+        });
+        
+          showLoadingScreen("Initializing MASQ...");
+          setTimeout(() => {
+              hideLoadingScreen();
+              document.getElementById("homepage").style.display = "block";
+              document.getElementById("header").style.display = "flex";
+          }, 100);
 
       // const marqueeContent = document.querySelector('.marquee div');
       // marqueeContent.innerHTML += marqueeContent.innerHTML;
@@ -376,7 +381,6 @@
       ];
       let currentLine = 0;
       let currentChar = 0;
-      const typingSound = document.getElementById('typingSound');
 
       function typeWriter() {
           if (currentChar < lines[currentLine].length) {
@@ -391,14 +395,14 @@
                   currentCharElement.textContent = currentCharValue;
                   currentLineElement.appendChild(currentCharElement);
                   currentChar++;
-                  if (!typingSound.muted) typingSound.play();
+                  
               }
           } else {
               currentLine++;
               currentChar = 0;
               if (currentLine >= lines.length) {
                   clearInterval(window.typeWriterInterval);
-                  if (!typingSound.muted) typingSound.pause();
+                  
               }
           }
       }
@@ -597,8 +601,6 @@
         window.showAuthPanel = function() {
             document.getElementById("homepage").style.display = "none";
             document.getElementById("authPanel").style.display = "block";
-            const typingSound = document.getElementById('typingSound');
-            typingSound.muted = true;
             clearInterval(window.typeWriterInterval);
         };
 
@@ -682,6 +684,20 @@ function updateCountdown() {
 updateCountdown();
 // Repeat every second
 setInterval(updateCountdown, 1000);
+
+  const muteToggle = document.getElementById('muteToggle');
+
+  // Start as muted
+  audio.muted = true;
+
+  muteToggle.addEventListener('click', () => {
+    audio.muted = !audio.muted;
+    muteToggle.textContent = audio.muted ? '🔇' : '🔊';
+    // Play audio if unmuted
+    if (!audio.muted && audio.paused) {
+      audio.play().catch(err => console.log("Autoplay blocked:", err));
+    }
+  });
       
     </script>
 </body>
