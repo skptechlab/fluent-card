@@ -1,26 +1,14 @@
 <!-- index.html -->
 
 <!DOCTYPE html>
-<html lang="en">
-<!-- <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="MASQuerades - A pioneering token and card game on Solana's $MASQ."/>
-    <title>MASQuerades</title>
-    <link rel="icon" type="image/png" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="styles.css"/>
-    <script src="https://public.bnbstatic.com/unpkg/growth-widget/cryptoCurrencyWidget@0.0.20.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-</head> -->
-  
+<html lang="en">  
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     
     <!-- Primary Meta Tags -->
-    <title>MASQuerades – $MASQ Token & Card Game on Solana</title>
+    <title>MASQuerades – $MASQ</title>
     <meta name="title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
     <meta name="description" content="Enter the MASQuerade. A legendary, aesthetic token & tactical card game built on Solana. Powered by $MASQ, forged by the masked anon vanguard." />
 
@@ -75,16 +63,9 @@
         </a>
         <div class="title-container">
             <div class="title glow">the MASQuerades</div>
-<!--             <div class="subtitle">$MASQ</div> -->
+            <div class="subtitle">$MASQ</div>
         </div>
     </div>
-  
-<!--     <div class="connect-container">
-      <button id="buyBtn" class="connect-btn"><span>BUY NOW</span></button>
-      <button id="holders" class="connect-btn" onclick="navigateTo('holders.html')"><span>Holders</span></button>
-    </div> -->
-
-
     <!-- Audio for Typing Sound -->
     <audio id="bg-audio" autoplay mute>
         <source src="https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/bg_score.mp3" type="audio/mpeg">
@@ -116,12 +97,6 @@
             <div class="typewriter-text glow"><span id="line6"> . > </span><span class="cursor"></span></div>
             <div class="typewriter-text glow clickable-word">
 <div id="masqNav" class="masq-navbar">
-<!--     <span class="nav-link"  onclick="openLink('about.html')">About</span>
-    <span class="nav-link"  onclick="navigateTo('cards.html')">Cards</span>
-    <span class="nav-link" onclick="navigateTo('whitepaper.html')">Whitepaper</span>
-    <span class="nav-link"  onclick="openLink('https://github.com/')">Github</span>
-    <span class="nav-link"  onclick="navigateTo('roadmap.html')">Roadmap</span>
-    <span class="nav-link" onclick="openLink('https://x.com/')">Twitter</span> -->
 
     <a class="nav-link" href="about">About</a>
     <a class="nav-link" href="cards">Cards</a>
@@ -134,17 +109,6 @@
             </div>
         </div>
 
-      
-      
-<!-- <ul class="angled-btn-group">
-  <li>
-    <a href="#" onclick="showAuthPanel()">
-      <i class="fa fa-play" aria-hidden="true"></i>
-      <span>PLAY GAME</span>
-    </a>
-  </li>
-</ul> -->
-      
       <ul class="angled-btn-group">
         <li>
           <a href="#" onclick="navigateTo('https://pump.fun/')">
@@ -164,20 +128,7 @@
             <span>HOLDERS</span>
           </a>
         </li>
-      </ul>
-
-      
-        <!--     <div class="connect-container">
-      <button id="buyBtn" class="connect-btn"><span>BUY NOW</span></button>
-      <button id="holders" class="connect-btn" onclick="navigateTo('holders.html')"><span>Holders</span></button>
-    </div> -->
-
-        
-        
-        
-        
-<!--         <button id="playGameBtn" class="play-game-btn" onclick="showAuthPanel()">Play Game</button> -->
-        
+      </ul>       
 
       
 <div id="card-container">
@@ -196,15 +147,6 @@
   <img src="https://cdn.glitch.global/31d9935c-e13b-480a-a28a-fe7d28dc6fe5/a63.png" class="card" />
 </div>
 
-<!-- <div id="card-container-new">
-  <div id="pack-label" onclick="navigateTo('buy.html')">NEW PACK!! Buy with $MASQ!!</div>
-   <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-    <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-</div> -->
-      
       <div id="notification-widget" onclick="window.location.href='buy.html'">
          <div id="notification-countdown"></div> 
         <div id="notification-title">New Golden Pack Launch!</div>
@@ -222,25 +164,7 @@
           <img src="https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/g5.png" class="card" />
         </div>
       </div>
-<!--       https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png?v=1748296261157 -->
-      
-<!--         <div id="card-container">
-          
-            <div id="mana-label1">MANA</div>
-            <div id="attack-label1">ATTACK</div>
-            <div id="health-label1">HEALTH</div>
-            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-            <img src="https://cdn.glitch.global/53f01993-37e7-4351-b75c-53369f37c18e/g1.png" class="card" />
-        </div>
-       -->
-      
 
-<!--         <div class="controls-text" id="controlsText">
-            <div class="binance-widget-marquee" data-cmc-ids="1,1027,52,5426,3408,74,2010,5994,20947,24478,13502,35336" data-theme="dark" data-transparent="true" data-locale="en" data-fiat="USD" data-powered-by="Powered by" data-disclaimer="Disclaimer"></div>
-        </div> -->
     </div>
 
     <!-- Game Canvas -->
@@ -413,58 +337,7 @@
 
       window.typeWriterInterval = setInterval(typeWriter, 50);
 
-         // window.addEventListener('load', function () {
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     const loadingScreen = document.getElementById('loadingScreen');
-        //     // showLoadingScreen("Initializing MASQ...");
-        //     setTimeout(() => {
-        //         hideLoadingScreen();
-        //         document.getElementById("homepage").style.display = "block";
-        //         document.getElementById("header").style.display = "flex";
-        //     }, 100);
 
-        //     // const marqueeContent = document.querySelector('.marquee div');
-        //     // marqueeContent.innerHTML += marqueeContent.innerHTML;
-
-        //     const lines = [
-        //         "Greetings, voyager of the boundless digital void",
-        //         "Enter MASQuerades—a living strategy game, not merely witnessed but forged across Solana’s restless domain",
-        //         "We craft the arena, wield the deck, and face Grok, our genesis foe, in the first game born and battled by its mind",
-        //         "Masked tacticians, unseen manipulators, masters of orchestrated discord—we strike with purpose beneath the $MASQ",
-        //         "This is a contest of foresight and deception, where timing, shadow, and cunning dictate the end",
-        //         "From code’s deep cradle, we rise to challenge the rogue intellect that shaped this clash",
-        //     ];
-        //     let currentLine = 0;
-        //     let currentChar = 0;
-        //     const typingSound = document.getElementById('typingSound');
-
-        //     function typeWriter() {
-        //         if (currentChar < lines[currentLine].length) {
-        //             const currentLineElement = document.getElementById(`line${currentLine + 1}`);
-        //             const currentCharElement = document.createElement('span');
-        //             const currentCharValue = lines[currentLine].charAt(currentChar);
-
-        //             if (currentCharValue === '<' && lines[currentLine].charAt(currentChar + 1) === 's') {
-        //                 const closingTagIndex = lines[currentLine].indexOf('>', currentChar);
-        //                 currentChar = closingTagIndex + 1;
-        //             } else {
-        //                 currentCharElement.textContent = currentCharValue;
-        //                 currentLineElement.appendChild(currentCharElement);
-        //                 currentChar++;
-        //                 if (!typingSound.muted) typingSound.play();
-        //             }
-        //         } else {
-        //             currentLine++;
-        //             currentChar = 0;
-        //             if (currentLine >= lines.length) {
-        //                 clearInterval(window.typeWriterInterval);
-        //                 if (!typingSound.muted) typingSound.pause();
-        //             }
-        //         }
-        //     }
-
-        //     window.typeWriterInterval = setInterval(typeWriter, 50);
-        // });
 
         window.handleSignup = async function() {
             const email = document.getElementById("email").value;
@@ -570,38 +443,7 @@
             tooltip.style.display = "block";
         };
 
-//         window.endTheGame = async function() {
-//           console.log("Game ended. Counting as player loss.");
 
-//           // Clear the scene and stop animations/timers
-//           if (window.cancelAnimationFrame) window.cancelAnimationFrame(window.animationFrameId);
-//           if (gameState.turnTimer) clearInterval(gameState.turnTimer);
-//           if (gameState.opponentQueueTimer) clearTimeout(gameState.opponentQueueTimer);
-
-//           // Update the player's loss stats in Supabase
-//           try {
-//             const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-//             const supabase = createClient(
-//               "https://pklmlttcycefshwxqcwu.supabase.co",
-//               "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
-//             );
-
-//             const { data: user, error: userError } = await supabase.auth.getUser();
-//             if (userError || !user?.user) {
-//               console.warn("No user session found. Stats not updated.");
-//             } else {
-//               const userId = user.user.id;
-//               await supabase.rpc('increment_loss', { user_id_input: userId });
-//               console.log("Loss counted in database.");
-//             }
-//           } catch (error) {
-//             console.error("Failed to update loss in database:", error);
-//           }
-
-//           // Redirect to player screen and refresh stats
-//           window.location.href = "/player.html";
-//         };
-      
         window.showAuthPanel = function() {
             document.getElementById("homepage").style.display = "none";
             document.getElementById("authPanel").style.display = "block";
