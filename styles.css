@@ -1351,8 +1351,7 @@ p {
     width: 100%;
     background: rgba(0,0,0,0.9);
     color: white;
-    font-size: 1.2rem;
-    padding: 1rem;
+    font-size: 1rem;
     text-align: center;
     z-index: 9999;
   }
