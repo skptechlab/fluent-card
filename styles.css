@@ -1406,6 +1406,7 @@ p {
   color: white;
   letter-spacing: 4px;
   transition: 0.5s;
+  text-shadow: 2px 2px red;
 }
 
 .angled-btn-group li a:hover {
