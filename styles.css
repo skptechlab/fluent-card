@@ -468,23 +468,6 @@ body {
   pointer-events: auto;
 }
 
-/* Responsive adjustments for auth-panel */
-@media (max-width: 480px) {
-  .auth-panel {
-    padding: 24px;
-    min-width: 260px;
-    max-width: 340px;
-  }
-}
-
-@media (min-width: 768px) {
-  .auth-panel {
-    padding: 40px;
-    min-width: 320px;
-    max-width: 450px;
-  }
-}
-
 .auth-panel input {
   width: 100%;
   padding: 10px;
@@ -1053,22 +1036,6 @@ button,
   box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
 }
 
-@media (max-width: 768px) {
-  #card-container,
-  #card-container-new {
-    top: 70%;
-    width: 120px;
-    height: 180px;
-  }
-
-  #pack-label {
-    font-size: 1.1rem;
-  }
-
-  #pack-label::after {
-    font-size: 1rem;
-  }
-}
 
 #mana-label {
   position: absolute;
@@ -1249,160 +1216,6 @@ p {
     text-shadow: 0 0 6px red;
 }
 
-/* Responsive adjustments */
-@media (max-width: 820px) {
-  .logo {
-    width: 50px;
-  }
-  .loading-text {
-    font-size: 12px;
-  }
-  .title {
-    font-size: 25px;
-  }
-  .connect-btn {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
-  .typewriter-text {
-    font-size: 10px;
-  }
-  .controls-text {
-    font-size: 8px;
-  }
-  .clickable-word {
-    font-size: 12px;
-  }
-  .tokenomics-popup {
-    width: 200px;
-  }
-  .tokenomics-title {
-    font-size: 16px;
-  }
-  .tokenomics-subtitle {
-    font-size: 12px;
-  }
-  .tokenomics-text {
-    font-size: 10px;
-  }
-  .top-right-gif {
-    width: 250px;
-  }
-  .subtitle {
-    font-size: 8px;
-  }
-  .marquee {
-    font-size: 16px;
-  }
-  .play-game-btn {
-    padding: 15px 30px;
-    font-size: 18px;
-    top: 70%; /* Adjusted for smaller screens */
-  }
-  .post-login {
-    padding: 30px;
-    width: 300px;
-  }
-  .post-login-title {
-    font-size: 22px;
-  }
-  .stats-header {
-    font-size: 18px;
-  }
-  .stats-label {
-    font-size: 14px;
-  }
-  .stats-value {
-    font-size: 16px;
-  }
-  .post-login-btn {
-    padding: 12px 20px;
-    font-size: 16px;
-  }
-  #card-container {
-    width: 120px; /* Smaller card for tablets */
-    height: 180px;
-  }
-}
-
-@media (max-width: 480px) {
-  .auth-panel {
-    padding: 24px;
-    min-width: 260px;
-    max-width: 340px;
-  }
-  .play-game-btn {
-    padding: 12px 24px;
-    font-size: 16px;
-    top: 65%; /* Adjusted for mobile */
-  }
-  .post-login {
-    padding: 20px;
-    width: 260px;
-  }
-  .post-login-title {
-    font-size: 18px;
-  }
-  .stats-header {
-    font-size: 16px;
-  }
-  .stats-label {
-    font-size: 12px;
-  }
-  .stats-value {
-    font-size: 14px;
-  }
-  .post-login-btn {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-  #card-container {
-    width: 90px; /* Even smaller for mobile */
-    height: 135px;
-  }
-  .card {
-    border-radius: 12px; /* Slightly smaller radius */
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5); /* Reduced shadow */
-  }
-}
-
-@media (min-width: 1200px) {
-  .play-game-btn {
-    padding: 25px 50px;
-    font-size: 28px;
-  }
-  .post-login {
-    padding: 50px;
-    width: 450px;
-  }
-  .post-login-title {
-    font-size: 32px;
-  }
-  .stats-header {
-    font-size: 22px;
-  }
-  .stats-label {
-    font-size: 18px;
-  }
-  .stats-value {
-    font-size: 20px;
-  }
-  .post-login-btn {
-    padding: 18px 35px;
-    font-size: 20px;
-  }
-  #card-container {
-    width: 180px; /* Larger card for bigger screens */
-    height: 270px;
-  }
-  .card {
-    border-radius: 20px; /* Larger radius */
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* Enhanced shadow */
-  }
-}
-
-
-
 .angled-btn-group {
   position: absolute;
   top: 80%;
@@ -1523,4 +1336,27 @@ p {
   cursor: pointer;
   z-index: 1000;
 }
+
+
+#mobileMessage {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #mobileMessage {
+    display: block;
+    position: fixed;
+    bottom: 50%;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    font-size: 1.2rem;
+    padding: 1rem;
+    text-align: center;
+    z-index: 9999;
+  }
+
+
+
 
