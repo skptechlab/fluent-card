@@ -145,6 +145,8 @@ async function fetchGrokResponse(prompt) {
 
 export async function initializeGame() {
   const loadingScreen = document.getElementById("loadingScreen");
+  const muteToggle = document.getElementById("muteToggle");
+  muteToggle.style.display = "none";
   loadingScreen.style.display = "flex";
 
   clearSceneAndState();
