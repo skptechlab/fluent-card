@@ -341,6 +341,7 @@ document.getElementById('connectWalletBtn').onclick = async () => {
 
 document.getElementById('buyPackBtn').onclick = async () => {
   showLoadingSpinner(true);
+
   if (!provider || !userPublicKey) {
     alert('Please connect your wallet first!');
     showLoadingSpinner(false);
@@ -371,10 +372,8 @@ document.getElementById('buyPackBtn').onclick = async () => {
     const confirmLink = confirm("Link this wallet to your account? This cannot be changed later!");
     if (confirmLink) {
       await supabase.from('users').update({
-        owned_sets: ownedSets.includes(2) ? ownedSets : [...ownedSets, 2],
         wallet: connectedWallet
       }).eq('id', userId);
-      document.getElementById('ownedSets').textContent = `Sets owned: ${[...ownedSets, 2].join(', ')}`;
     } else {
       alert("Wallet not linked. Purchase cancelled.");
       showLoadingSpinner(false);
@@ -400,7 +399,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
     );
   }
 
-  const amountToTransfer = 100000000_000;
+  const amountToTransfer = 100000000_000; // 1000 $MASQ tokens
   const transferIx = createTransferInstruction(userTokenAccount, treasuryTokenAccount, userPublicKey, amountToTransfer, [], TOKEN_PROGRAM_ID);
   instructions.push(transferIx);
 
@@ -410,45 +409,42 @@ document.getElementById('buyPackBtn').onclick = async () => {
   transaction.recentBlockhash = blockhash;
 
   try {
-  const signedTx = await provider.signTransaction(transaction);
-  const signature = await connection.sendRawTransaction(signedTx.serialize());
-  await connection.confirmTransaction(signature, 'confirmed');
-  alert(`Pack purchased successfully! Tx: ${signature}`);
+    const signedTx = await provider.signTransaction(transaction);
+    const signature = await connection.sendRawTransaction(signedTx.serialize());
+    await connection.confirmTransaction(signature, 'confirmed');
+    alert(`Pack purchased successfully! Tx: ${signature}`);
 
-  // 🟩 After transaction, double-check & update owned_sets to include 2
-  const { data: updatedProfile, error: fetchError } = await supabase
-    .from('users')
-    .select('owned_sets')
-    .eq('id', userId)
-    .single();
+    // 🟩 FORCE update owned_sets to include 2 after transaction
+    const { data: latestProfile, error: profileError } = await supabase
+      .from('users')
+      .select('owned_sets')
+      .eq('id', userId)
+      .single();
 
-  if (fetchError) {
-    console.error("Error fetching profile after tx:", fetchError);
-  } else {
-    const ownedSetsAfter = updatedProfile.owned_sets || [];
-    if (!ownedSetsAfter.includes(2)) {
-      const updatedSets = [...ownedSetsAfter, 2];
+    if (profileError) {
+      console.error("Failed to fetch owned_sets after tx:", profileError);
+    } else {
+      const ownedSetsAfter = latestProfile?.owned_sets || [];
+      const updatedSets = ownedSetsAfter.includes(2) ? ownedSetsAfter : [...ownedSetsAfter, 2];
       const { error: updateError } = await supabase
         .from('users')
         .update({ owned_sets: updatedSets })
         .eq('id', userId);
 
       if (updateError) {
-        console.error("Error updating owned_sets:", updateError);
+        console.error("Failed to update owned_sets after tx:", updateError);
       } else {
+        console.log("Owned_sets updated to:", updatedSets);
         document.getElementById('ownedSets').textContent = `Sets owned: ${updatedSets.join(', ')}`;
-        console.log("owned_sets updated to include 2 after purchase.");
       }
-    } else {
-      console.log("User already has 2 in owned_sets, no update needed.");
     }
+
+  } catch (err) {
+    console.error("Transaction error:", err);
+    alert('Transaction failed. Check console for logs.');
+  } finally {
+    showLoadingSpinner(false);
   }
-} catch (err) {
-  console.error("Transaction error:", err);
-  alert('Transaction failed. Check console for logs.');
-} finally {
-  showLoadingSpinner(false);
-}
 };
 
 </script>
