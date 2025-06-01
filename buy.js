@@ -76,11 +76,6 @@ document.getElementById('connectWalletBtn').onclick = async () => {
 
       const connection = new solanaWeb3.Connection(heliusUrl);
       const masqMint = new solanaWeb3.PublicKey(masqMintAddress);
-
-      document.getElementById('status').style.display = 'block';
-      document.getElementById('userInfo').style.display = 'block';
-      document.getElementById('balance').style.display = 'block';
-      document.getElementById('ownedSets').style.display = 'block';
       
       const tokenAccounts = await connection.getTokenAccountsByOwner(userPublicKey, { mint: masqMint });
       let balance = 0;
@@ -89,6 +84,11 @@ document.getElementById('connectWalletBtn').onclick = async () => {
         const tokenAccountInfo = await connection.getParsedAccountInfo(tokenAccountPubkey);
         balance = tokenAccountInfo.value.data.parsed.info.tokenAmount.uiAmount;
       }
+
+      document.getElementById('status').style.display = 'block';
+      document.getElementById('userInfo').style.display = 'block';
+      document.getElementById('balance').style.display = 'block';
+      document.getElementById('ownedSets').style.display = 'block';
       
       document.getElementById('balance').textContent = `$MASQ Balance: ${balance}`;
       if (balance >= 1_000) {
