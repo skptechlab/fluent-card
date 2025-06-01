@@ -451,41 +451,37 @@ document.getElementById('buyPackBtn').onclick = async () => {
   transaction.recentBlockhash = blockhash;
 
   try {
-  // 🟢 Fetch the current owned_sets again
   const { data: profileData, error: profileFetchError } = await supabase
-    .from('users')
-    .select('owned_sets')
-    .eq('id', userId)
-    .single();
+  .from('users')
+  .select('owned_sets')
+  .eq('id', userId)
+  .single();
 
-  if (profileFetchError) {
-    console.error('Failed to fetch profile data after transaction:', profileFetchError);
-    alert('Transaction succeeded, but failed to update owned sets. Contact support.');
-    return;
-  }
+if (profileFetchError) {
+  console.error('Failed to fetch profile data:', profileFetchError);
+  alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+  return;
+}
 
-  let currentSets = profileData.owned_sets || [];
+let currentSets = profileData.owned_sets || [];
+if (!currentSets.includes(2)) {
+  currentSets.push(2);
+}
 
-  // 🟢 Add 2 if not present
-  if (!currentSets.includes(2)) {
-    currentSets.push(2);
-  }
+const { error: updateError } = await supabase
+  .from('users')
+  .update({ owned_sets: currentSets })
+  .eq('id', userId);
 
-  // 🟢 Update the owned_sets array
-  const { error: updateError } = await supabase
-    .from('users')
-    .update({ owned_sets: currentSets })
-    .eq('id', userId);
-
-  if (updateError) {
-    console.error('Failed to update owned_sets:', updateError);
-    alert('Transaction succeeded, but failed to update owned sets. Contact support.');
-  } else {
-    alert(`Pack purchased successfully! Tx: ${signature}`);
-    document.getElementById('ownedSets').textContent = `Sets owned: ${
-      currentSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
-    }`;
-  }
+if (updateError) {
+  console.error('Failed to update owned_sets:', updateError);
+  alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+} else {
+  alert('Pack purchased and owned sets updated!');
+  document.getElementById('ownedSets').textContent = `Sets owned: ${
+    currentSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
+  }`;
+}
 } catch (err) {
   console.error('Unexpected error while updating owned sets:', err);
   alert('Transaction succeeded, but failed to update owned sets. Contact support.');
