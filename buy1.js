@@ -469,9 +469,14 @@ document.getElementById('buyPackBtn').onclick = async () => {
 
     // Update owned_sets in Supabase using array_append
     const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
-    const { error: updateError } = await supabase
+    const { error } = await supabase
       .from('users')
-      .update({ owned_sets: updatedSets })
+      .update({
+        owned_sets: supabase.rpc('array_append', {
+          array: 'owned_sets',
+          value: 2
+        })
+      })
       .eq('id', userId);
 
     if (updateError) {
