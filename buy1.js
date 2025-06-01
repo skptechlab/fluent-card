@@ -17,23 +17,19 @@ let supabase = null;
 
 async function initSupabase() {
   if (!supabase) {
-    console.log('Fetching Supabase keys...');
     const response = await fetch('/api/supabaseKeys');
     const { SUPABASE_URL, SUPABASE_ANON_KEY } = await response.json();
     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log("Supabase initialized!", supabase);
   }
 }
 
 async function getHeliusUrl() {
   showLoadingSpinner(true);
   try {
-    console.log('Fetching Helius key...');
     const response = await fetch('/api/helius-key');
     const { heliusKey } = await response.json();
     heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
-    console.log('Helius URL set:', heliusUrl);
   } catch (err) {
     console.error("Error fetching Helius key:", err);
     alert("Could not initialize wallet connection. Please try again later.");
@@ -105,7 +101,6 @@ document.getElementById('connectWalletBtn').onclick = async () => {
 
 document.getElementById('buyPackBtn').onclick = async () => {
   showLoadingSpinner(true);
-  console.log('Buy Pack button clicked!');
 
   if (!provider || !userPublicKey) {
     alert('Please connect your wallet first!');
@@ -115,8 +110,6 @@ document.getElementById('buyPackBtn').onclick = async () => {
 
   const connection = new solanaWeb3.Connection(heliusUrl);
   const masqMint = new solanaWeb3.PublicKey(masqMintAddress);
-
-  console.log('Checking user authentication...');
   const { data: user, error: userError } = await supabase.auth.getUser();
   if (userError || !user?.user) {
     console.warn('User not authenticated:', userError);
@@ -126,15 +119,11 @@ document.getElementById('buyPackBtn').onclick = async () => {
   }
 
   const userId = user.user.id;
-  console.log('User ID:', userId);
-
-  console.log('Fetching user profile...');
   const { data: profile, error: profileError } = await supabase
     .from('users')
     .select('owned_sets, wallet')
     .eq('id', userId)
     .single();
-  console.log('Profile data:', profile, 'Error:', profileError);
 
   if (profileError) {
     console.error('Failed to fetch user profile:', profileError);
@@ -144,10 +133,8 @@ document.getElementById('buyPackBtn').onclick = async () => {
   }
 
   const ownedSets = Array.isArray(profile?.owned_sets) ? profile.owned_sets : [];
-  console.log('Current owned_sets:', ownedSets);
   const walletInDB = profile?.wallet;
   const connectedWallet = userPublicKey.toBase58();
-  console.log('Wallet in DB:', walletInDB, 'Connected wallet:', connectedWallet);
 
   if (walletInDB && walletInDB !== connectedWallet) {
     alert('This wallet does not match your linked wallet. Contact support.');
@@ -162,7 +149,6 @@ document.getElementById('buyPackBtn').onclick = async () => {
   const instructions = [];
   const userATAInfo = await connection.getAccountInfo(userTokenAccount);
   if (!userATAInfo) {
-    console.log('Creating user ATA...');
     instructions.push(
       createAssociatedTokenAccountInstruction(
         userPublicKey, userTokenAccount, userPublicKey, masqMint,
@@ -172,7 +158,6 @@ document.getElementById('buyPackBtn').onclick = async () => {
   }
   const treasuryATAInfo = await connection.getAccountInfo(treasuryTokenAccount);
   if (!treasuryATAInfo) {
-    console.log('Creating treasury ATA...');
     instructions.push(
       createAssociatedTokenAccountInstruction(
         userPublicKey, treasuryTokenAccount, treasuryPublicKey, masqMint,
@@ -200,8 +185,6 @@ document.getElementById('buyPackBtn').onclick = async () => {
     const signedTx = await provider.signTransaction(transaction);
     console.log('Sending transaction...');
     const signature = await connection.sendRawTransaction(signedTx.serialize());
-    console.log('Transaction sent! Signature:', signature);
-
     console.log('Confirming transaction...');
     const confirmation = await connection.confirmTransaction(signature, 'confirmed');
     console.log('Transaction confirmation:', confirmation);
@@ -225,12 +208,10 @@ document.getElementById('buyPackBtn').onclick = async () => {
     }
 
     let newOwnedSets = updatedProfile.owned_sets || [];
-    console.log('Owned sets after transaction (before append):', newOwnedSets);
 
     if (!newOwnedSets.includes(2)) {
       newOwnedSets.push(2);
     }
-    console.log('Owned sets to update in DB:', newOwnedSets);
 
     const { error: updateError } = await supabase
       .from('users')
