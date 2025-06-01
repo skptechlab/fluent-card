@@ -460,41 +460,21 @@ document.getElementById('buyPackBtn').onclick = async () => {
       throw new Error('Transaction failed to confirm');
     }
 
-    // // Update owned_sets in Supabase using array_append
-    // const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
-    // const { error } = await supabase
-    //   .from('users')
-    //   .update({
-    //     owned_sets: supabase.rpc('array_append', {
-    //       array: 'owned_sets',
-    //       value: 2
-    //     })
-    //   })
-    //   .eq('id', userId);
-
-    const { data: userData, error: fetchError } = await supabase
+    await initSupabase();
+    
+    // Update owned_sets in Supabase using array_append
+    const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
+    const { error } = await supabase
       .from('users')
-      .select('owned_sets')
-      .eq('id', userId)
-      .single();
-    
-    if (fetchError) {
-      console.error('Error fetching user data:', fetchError);
-      return;
-    }
-    
-    const currentOwnedSets = userData.owned_sets || [];
-    
-    // Append new value if it doesn't exist
-    if (!currentOwnedSets.includes(2)) {
-      const updatedOwnedSets = [...currentOwnedSets, 2];
-    
-      // Update the database
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ owned_sets: updatedOwnedSets })
-        .eq('id', userId);
+      .update({
+        owned_sets: supabase.rpc('array_append', {
+          array: 'owned_sets',
+          value: 2
+        })
+      })
+      .eq('id', userId);
 
+   
     if (updateError) {
       console.error('Failed to update owned_sets:', updateError);
       alert('Transaction succeeded, but failed to update owned sets. Contact support.');
