@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store</title>
+<link rel="icon" type="image/png" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
+<script type="module" src="buy.js"></script>
+<style>
+  button {
+    font-family: 'Orbitron', sans-serif;
+    margin: 10px;
+    padding: 12px 30px;
+    background: rgba(255, 215, 0, 0.9);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px #FF0000, 0 0 5px #FF0000 inset;
+    transition: transform 0.2s ease, box-shadow 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  button:hover {
+    background: #FF0000;
+    color: #FFD700;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 20px #FFD700, 0 0 10px #FF0000 inset;
+  }
+
+  /* Auth Panel Styles */
+  .auth-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid #FFD700;
+    border-radius: 12px;
+    padding: 30px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 20px #FF0000;
+  }
+
+  .auth-panel h2 {
+    font-family: 'Cinzel', serif;
+    color: #FFD700;
+    margin-bottom: 15px;
+    text-shadow: 0 0 5px #FF0000;
+  }
+
+  .auth-panel input {
+    width: 220px;
+    margin: 8px 0;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9rem;
+  }
+
+  .auth-panel .auth-buttons button {
+    margin: 5px;
+    width: 120px;
+    background: rgba(255, 215, 0, 0.9);
+    color: #000;
+    box-shadow: 0 0 10px #FF0000;
+  }
+
+  .auth-panel .auth-buttons button:hover {
+    background: #FF0000;
+    color: #FFD700;
+  }
+
+  /* Video background */
+  video.video-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.8;
+  }
+
+/*   .header {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+  }
+
+  .header img {
+    width: 50px;
+    margin-right: 10px;
+  } */
+
+ /* General layout and alignment for user info containers */
+#status, #userInfo, #ownedSets, #balance {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #FF0000;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), inset 0 0 5px rgba(255, 215, 0, 0.3);
+  color: #FFD700;
+  text-shadow: 0 0 3px #FF0000;
+  padding: 10px 15px;
+  margin: 10px auto;
+  width: fit-content;
+  max-width: 90%;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+
+#userInfo p, #ownedSets, #balance {
+  margin: 4px 0;
+}
+
+#userInfo strong {
+  color: #FF0000;
+  text-shadow: 0 0 2px #FFD700;
+}
+
+#userInfo:hover, #ownedSets:hover, #balance:hover {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), inset 0 0 10px rgba(255, 0, 0, 0.6);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Center alignment for parent container if needed */
+#userInfoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+#buy-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid gold;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+  padding: 20px;
+  margin-bottom: 20px;
+  color: gold;
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  max-width: 300px;
+  margin: 0 auto 20px auto;
+  animation: pulse 1s infinite alternate;
+}
+
+#buy-widget h1 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  text-shadow: 0 0 6px gold;
+}
+
+#buy-widget-image {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.3);
+}
+  
+#loadingSpinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  display: none;
+  z-index: 9999;
+}
+
+#loadingSpinner .spinner-circle {
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(255, 215, 0, 0.3);
+  border-top: 4px solid #FFD700;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+</style>
+</head>
+
+<body>
+
+<video class="video-bg" autoplay loop muted>
+  <source src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/MASQ1.mp4?v=1739835894289" type="video/mp4">
+</video>
+
+  <div id="loadingSpinner">
+  <div class="spinner-circle"></div>
+</div>
+
+  
+<div class="header" id="header">
+  <a href="/">
+    <img src="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" alt="Logo" class="logo">
+  </a>
+  <div class="title-container">
+    <div class="title">the MASQuerades</div>
+    <div class="subtitle">$MASQ</div>
+  </div>
+</div>
+
+<main>
+  <div id="buy-widget">
+    <h1>Golden Pack <br> [Set of 5 unique cards]</h1>
+    <img src="https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/golden-icon.gif" alt="Card Pack" id="buy-widget-image" />
+  </div>
+  
+  <button id="connectWalletBtn" style="display: none;">Connect Phantom</button>
+  <button id="buyPackBtn" style="display: none;">Buy Pack (1M $MASQ)</button>
+
+  
+<!--   <p id="balance"></p>
+  <p id="ownedSets"></p>
+  <div id="userInfo"></div> -->
+  
+  <div id="userInfoContainer">
+    <p id="status"></p>
+    <div id="userInfo"></div>  
+    <p id="balance"></p>
+    <p id="ownedSets"></p>
+  </div>
+</main>
+
+<!-- Auth Panel Popup -->
+<div class="auth-panel" id="authPanel">
+  <h2>Login / Signup to Continue</h2>
+  <input type="email" id="email" placeholder="Email"/>
+  <input type="password" id="password" placeholder="Password"/>
+  <div class="auth-buttons">
+    <button onclick="handleSignup()">Sign Up</button>
+    <button onclick="handleLogin()">Login</button>
+    <button onclick="handleGuestPlay()">Guest</button>
+  </div>
+  <p style="font-size: 0.8rem; color: #aaa; margin-top: 0.5rem;">* Email confirmation not required. Use as username</p>
+</div>
+
+<script type="module">
+import { signUp, login, getUser, playAsGuest } from './auth.js';
+  
+function showLoadingSpinner(show = true) {
+  const spinner = document.getElementById('loadingSpinner');
+  spinner.style.display = show ? 'block' : 'none';
+}
+
+async function handleSignup() {
+  showLoadingSpinner(true);
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  try {
+    const result = await signUp(email, password);
+    if (result?.error) {
+      alert("Signup failed: " + result.error.message);
+      return;
+    }
+    alert("Signup successful. Please login now.");
+    showLoadingSpinner(false);
+  } catch (err) {
+    alert("Signup error: " + err.message);
+  }
+}
+
+async function handleLogin() {
+  showLoadingSpinner(true);
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  try {
+    const result = await login(email, password);
+    if (result?.error || !result?.user) {
+      alert("Login failed: " + (result?.error?.message || "Invalid credentials."));
+      return;
+    }
+    document.getElementById("authPanel").style.display = "none";
+    document.getElementById("connectWalletBtn").style.display = "inline-block";
+    showLoadingSpinner(false);
+    alert("Login successful! Connect your Phantom wallet next.");
+  } catch (err) {
+    alert("Login error: " + err.message);
+  }
+}
+
+async function handleGuestPlay() {
+  try {
+    const result = await playAsGuest();
+    document.getElementById("authPanel").style.display = "none";
+    document.getElementById("connectWalletBtn").style.display = "inline-block";
+    alert("Guest mode activated! Connect your Phantom wallet next.");
+  } catch (err) {
+    alert("Guest mode error: " + err.message);
+  }
+}
+
+window.handleSignup = handleSignup;
+window.handleLogin = handleLogin;
+window.handleGuestPlay = handleGuestPlay;
+</script>
+
+</body>
+</html>
