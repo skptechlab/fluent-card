@@ -44,6 +44,15 @@ function showLoadingSpinner(show = true) {
 await getHeliusUrl();
 await initSupabase();
 
+// document.getElementById('connectWalletBtn').onclick = async () => {
+//   showLoadingSpinner(true);
+//   if ('solana' in window) {
+//     provider = window.solana;
+//     try {
+//       const resp = await provider.connect();
+//       userPublicKey = resp.publicKey;
+//       document.getElementById('status').textContent = `Connected Wallet: ${userPublicKey.toBase58()}`;
+
 document.getElementById('connectWalletBtn').onclick = async () => {
   showLoadingSpinner(true);
   if ('solana' in window) {
@@ -52,6 +61,18 @@ document.getElementById('connectWalletBtn').onclick = async () => {
       const resp = await provider.connect();
       userPublicKey = resp.publicKey;
       document.getElementById('status').textContent = `Connected Wallet: ${userPublicKey.toBase58()}`;
+
+      // Change button label to "Refresh Stats"
+      const connectBtn = document.getElementById('connectWalletBtn');
+      connectBtn.textContent = 'Refresh Stats';
+
+      // Change the button's onclick behavior to refreshStats
+      connectBtn.onclick = async () => {
+        await refreshStats();
+      };
+
+      // Immediately call refreshStats after wallet connect
+      await refreshStats();
 
       const connection = new solanaWeb3.Connection(heliusUrl);
       const masqMint = new solanaWeb3.PublicKey(masqMintAddress);
