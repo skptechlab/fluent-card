@@ -451,43 +451,45 @@ document.getElementById('buyPackBtn').onclick = async () => {
   transaction.recentBlockhash = blockhash;
 
   try {
-    // Sign and send transaction
-    const signedTx = await provider.signTransaction(transaction);
-    const signature = await connection.sendRawTransaction(signedTx.serialize());
-    const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+  // 🟢 Fetch the current owned_sets again
+  const { data: profileData, error: profileFetchError } = await supabase
+    .from('users')
+    .select('owned_sets')
+    .eq('id', userId)
+    .single();
 
-    if (confirmation.value.err) {
-      throw new Error('Transaction failed to confirm');
-    }
+  if (profileFetchError) {
+    console.error('Failed to fetch profile data after transaction:', profileFetchError);
+    alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+    return;
+  }
 
-    await initSupabase();
-    
-    // Update owned_sets in Supabase using array_append
-    const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
-    const { error } = await supabase
-      .from('users')
-      .update({
-        owned_sets: supabase.rpc('array_append', {
-          array: 'owned_sets',
-          value: 2
-        })
-      })
-      .eq('id', userId);
+  let currentSets = profileData.owned_sets || [];
 
-   
-    if (updateError) {
-      console.error('Failed to update owned_sets:', updateError);
-      alert('Transaction succeeded, but failed to update owned sets. Contact support.');
-    } else {
-      alert(`Pack purchased successfully! Tx: ${signature}`);
-      document.getElementById('ownedSets').textContent = `Sets owned: ${
-        updatedSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
-      }`;
-    }
-  } catch (err) {
-    console.error('Transaction error:', err);
-    alert(`Transaction failed: ${err.message || 'Check console for logs.'}`);
-  } finally {
+  // 🟢 Add 2 if not present
+  if (!currentSets.includes(2)) {
+    currentSets.push(2);
+  }
+
+  // 🟢 Update the owned_sets array
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ owned_sets: currentSets })
+    .eq('id', userId);
+
+  if (updateError) {
+    console.error('Failed to update owned_sets:', updateError);
+    alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+  } else {
+    alert(`Pack purchased successfully! Tx: ${signature}`);
+    document.getElementById('ownedSets').textContent = `Sets owned: ${
+      currentSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
+    }`;
+  }
+} catch (err) {
+  console.error('Unexpected error while updating owned sets:', err);
+  alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+} finally {
     showLoadingSpinner(false);
   }
 };
