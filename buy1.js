@@ -200,7 +200,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
     showLoadingSpinner(false);
   }
 };
-</script>
+// </script>
 
 
 
