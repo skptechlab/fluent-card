@@ -24,6 +24,7 @@
     transition: transform 0.2s ease, box-shadow 0.3s;
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-top: 30px;
   }
 
   button:hover {
@@ -105,25 +106,22 @@
     margin-right: 10px;
   } */
 
- /* General layout and alignment for user info containers */
 #status, #userInfo, #ownedSets, #balance {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #FF0000;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6), inset 0 0 5px rgba(255, 215, 0, 0.3);
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2), inset 0 0 5px rgba(255, 215, 0, 0.1);
   color: #FFD700;
-  text-shadow: 0 0 3px #FF0000;
-  padding: 10px 15px;
-  margin: 10px auto;
+  text-shadow: 0 0 2px #FF0000;
+  padding: 15px 25px;
   width: fit-content;
   max-width: 90%;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: box-shadow 0.3s, transform 0.2s;
-  display: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  display: none; 
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  backdrop-filter: blur(6px);
+  text-align: center;
 }
 
 #userInfo p, #ownedSets, #balance {
@@ -132,10 +130,10 @@
 
 #userInfo strong {
   color: #FF0000;
-  text-shadow: 0 0 2px #FFD700;
+  font-weight: 600;
 }
 
-#userInfo:hover, #ownedSets:hover, #balance:hover {
+#status:hover, #userInfo:hover, #ownedSets:hover, #balance:hover {
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.7), inset 0 0 10px rgba(255, 0, 0, 0.6);
   transform: translateY(-2px) scale(1.02);
 }
@@ -146,6 +144,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: 30px;
 }
 
 #buy-widget {
