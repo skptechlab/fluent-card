@@ -351,37 +351,58 @@ document.getElementById('buyPackBtn').onclick = async () => {
   const connection = new solanaWeb3.Connection(heliusUrl);
   const masqMint = new solanaWeb3.PublicKey(masqMintAddress);
 
-  const { data: user } = await supabase.auth.getUser();
-  if (!user?.user) {
+  // Check user authentication
+  const { data: user, error: userError } = await supabase.auth.getUser();
+  if (userError || !user?.user) {
     alert('User not authenticated.');
     showLoadingSpinner(false);
     return;
   }
 
   const userId = user.user.id;
-  const { data: profile } = await supabase.from('users').select('owned_sets, wallet').eq('id', userId).single();
-  const ownedSets = profile?.owned_sets || [];
+  const { data: profile, error: profileError } = await supabase
+    .from('users')
+    .select('owned_sets, wallet')
+    .eq('id', userId)
+    .single();
+
+  if (profileError) {
+    console.error('Failed to fetch user profile:', profileError);
+    alert('Failed to fetch user data.');
+    showLoadingSpinner(false);
+    return;
+  }
+
+  const ownedSets = Array.isArray(profile?.owned_sets) ? profile.owned_sets : [];
   const walletInDB = profile?.wallet;
   const connectedWallet = userPublicKey.toBase58();
 
+  // Wallet linking logic
   if (walletInDB && walletInDB !== connectedWallet) {
-    alert("This wallet does not match your linked wallet. Contact support to update it.");
+    alert('This wallet does not match your linked wallet. Contact support to update it.');
     showLoadingSpinner(false);
     return;
   } else if (!walletInDB) {
-    const confirmLink = confirm("Link this wallet to your account? This cannot be changed later!");
+    const confirmLink = confirm('Link this wallet to your account? This cannot be changed later!');
     if (confirmLink) {
-      await supabase.from('users').update({
-        wallet: connectedWallet
-      }).eq('id', userId);
+      const { error: updateWalletError } = await supabase
+        .from('users')
+        .update({ wallet: connectedWallet })
+        .eq('id', userId);
+      if (updateWalletError) {
+        console.error('Failed to link wallet:', updateWalletError);
+        alert('Failed to link wallet. Purchase cancelled.');
+        showLoadingSpinner(false);
+        return;
+      }
     } else {
-      alert("Wallet not linked. Purchase cancelled.");
+      alert('Wallet not linked. Purchase cancelled.');
       showLoadingSpinner(false);
       return;
     }
   }
 
-  // Transaction
+  // Transaction setup
   const userTokenAccount = await getAssociatedTokenAddress(masqMint, userPublicKey, false);
   const treasuryTokenAccount = await getAssociatedTokenAddress(masqMint, treasuryPublicKey, true);
 
@@ -389,18 +410,39 @@ document.getElementById('buyPackBtn').onclick = async () => {
   const userATAInfo = await connection.getAccountInfo(userTokenAccount);
   if (!userATAInfo) {
     instructions.push(
-      createAssociatedTokenAccountInstruction(userPublicKey, userTokenAccount, userPublicKey, masqMint, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID)
+      createAssociatedTokenAccountInstruction(
+        userPublicKey,
+        userTokenAccount,
+        userPublicKey,
+        masqMint,
+        TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
     );
   }
   const treasuryATAInfo = await connection.getAccountInfo(treasuryTokenAccount);
   if (!treasuryATAInfo) {
     instructions.push(
-      createAssociatedTokenAccountInstruction(userPublicKey, treasuryTokenAccount, treasuryPublicKey, masqMint, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID)
+      createAssociatedTokenAccountInstruction(
+        userPublicKey,
+        treasuryTokenAccount,
+        treasuryPublicKey,
+        masqMint,
+        TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
     );
   }
 
   const amountToTransfer = 100000000_000; // 1000 $MASQ tokens
-  const transferIx = createTransferInstruction(userTokenAccount, treasuryTokenAccount, userPublicKey, amountToTransfer, [], TOKEN_PROGRAM_ID);
+  const transferIx = createTransferInstruction(
+    userTokenAccount,
+    treasuryTokenAccount,
+    userPublicKey,
+    amountToTransfer,
+    [],
+    TOKEN_PROGRAM_ID
+  );
   instructions.push(transferIx);
 
   const transaction = new solanaWeb3.Transaction().add(...instructions);
@@ -409,39 +451,41 @@ document.getElementById('buyPackBtn').onclick = async () => {
   transaction.recentBlockhash = blockhash;
 
   try {
+    // Sign and send transaction
     const signedTx = await provider.signTransaction(transaction);
     const signature = await connection.sendRawTransaction(signedTx.serialize());
-    await connection.confirmTransaction(signature, 'confirmed');
-    alert(`Pack purchased successfully! Tx: ${signature}`);
+    const confirmation = await connection.confirmTransaction(signature, 'confirmed');
 
-    // 🟩 FORCE update owned_sets to include 2 after transaction
-    const { data: latestProfile, error: profileError } = await supabase
-      .from('users')
-      .select('owned_sets')
-      .eq('id', userId)
-      .single();
-
-    if (profileError) {
-      console.error("Failed to fetch owned_sets after tx:", profileError);
-    } else {
-      const ownedSetsAfter = latestProfile?.owned_sets || [];
-      const updatedSets = ownedSetsAfter.includes(2) ? ownedSetsAfter : [...ownedSetsAfter, 2];
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ owned_sets: updatedSets })
-        .eq('id', userId);
-
-      if (updateError) {
-        console.error("Failed to update owned_sets after tx:", updateError);
-      } else {
-        console.log("Owned_sets updated to:", updatedSets);
-        document.getElementById('ownedSets').textContent = `Sets owned: ${updatedSets.join(', ')}`;
-      }
+    if (confirmation.value.err) {
+      throw new Error('Transaction failed to confirm');
     }
 
+    // Verify token balance change (optional but recommended)
+    const tokenAccountInfo = await connection.getParsedAccountInfo(userTokenAccount);
+    const newBalance = tokenAccountInfo.value?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
+    if (newBalance >= 1000) {
+      throw new Error('Token balance not updated as expected');
+    }
+
+    // Update owned_sets in Supabase using array_append
+    const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({ owned_sets: updatedSets })
+      .eq('id', userId);
+
+    if (updateError) {
+      console.error('Failed to update owned_sets:', updateError);
+      alert('Transaction succeeded, but failed to update owned sets. Contact support.');
+    } else {
+      alert(`Pack purchased successfully! Tx: ${signature}`);
+      document.getElementById('ownedSets').textContent = `Sets owned: ${
+        updatedSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
+      }`;
+    }
   } catch (err) {
-    console.error("Transaction error:", err);
-    alert('Transaction failed. Check console for logs.');
+    console.error('Transaction error:', err);
+    alert(`Transaction failed: ${err.message || 'Check console for logs.'}`);
   } finally {
     showLoadingSpinner(false);
   }
