@@ -410,26 +410,45 @@ document.getElementById('buyPackBtn').onclick = async () => {
   transaction.recentBlockhash = blockhash;
 
   try {
-    const signedTx = await provider.signTransaction(transaction);
-    const signature = await connection.sendRawTransaction(signedTx.serialize());
-    await connection.confirmTransaction(signature, 'confirmed');
-    alert(`Pack purchased successfully! Tx: ${signature}`);
+  const signedTx = await provider.signTransaction(transaction);
+  const signature = await connection.sendRawTransaction(signedTx.serialize());
+  await connection.confirmTransaction(signature, 'confirmed');
+  alert(`Pack purchased successfully! Tx: ${signature}`);
 
-    // 🟩 After successful transaction, update owned_sets to include "2"
-    if (!ownedSets.includes(2)) {
-      const updatedSets = [...ownedSets, 2];
-      await supabase.from('users').update({
-        owned_sets: updatedSets
-      }).eq('id', userId);
-      document.getElementById('ownedSets').textContent = `Sets owned: ${updatedSets.join(', ')}`;
-      console.log("User owned_sets updated to include 2 after purchase.");
+  // 🟩 After transaction, double-check & update owned_sets to include 2
+  const { data: updatedProfile, error: fetchError } = await supabase
+    .from('users')
+    .select('owned_sets')
+    .eq('id', userId)
+    .single();
+
+  if (fetchError) {
+    console.error("Error fetching profile after tx:", fetchError);
+  } else {
+    const ownedSetsAfter = updatedProfile.owned_sets || [];
+    if (!ownedSetsAfter.includes(2)) {
+      const updatedSets = [...ownedSetsAfter, 2];
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ owned_sets: updatedSets })
+        .eq('id', userId);
+
+      if (updateError) {
+        console.error("Error updating owned_sets:", updateError);
+      } else {
+        document.getElementById('ownedSets').textContent = `Sets owned: ${updatedSets.join(', ')}`;
+        console.log("owned_sets updated to include 2 after purchase.");
+      }
+    } else {
+      console.log("User already has 2 in owned_sets, no update needed.");
     }
-  } catch (err) {
-    console.error("Transaction error:", err);
-    alert('Transaction failed. Check console for logs.');
-  } finally {
-    showLoadingSpinner(false);
   }
+} catch (err) {
+  console.error("Transaction error:", err);
+  alert('Transaction failed. Check console for logs.');
+} finally {
+  showLoadingSpinner(false);
+}
 };
 
 </script>
