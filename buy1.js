@@ -1,4 +1,3 @@
-// <script type="module">
 import {
   getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
@@ -235,7 +234,6 @@ document.getElementById('buyPackBtn').onclick = async () => {
     showLoadingSpinner(false);
   }
 };
-// </script>
 
 
 
