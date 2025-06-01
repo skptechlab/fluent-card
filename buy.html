@@ -232,7 +232,7 @@
   <div class="auth-buttons">
     <button onclick="handleSignup()">Sign Up</button>
     <button onclick="handleLogin()">Login</button>
-    <button onclick="handleGuestPlay()">Guest</button>
+<!--     <button onclick="handleGuestPlay()">Guest</button> -->
   </div>
   <p style="font-size: 0.8rem; color: #aaa; margin-top: 0.5rem;">* Email confirmation not required. Use as username</p>
 </div>
@@ -281,20 +281,9 @@ async function handleLogin() {
   }
 }
 
-async function handleGuestPlay() {
-  try {
-    const result = await playAsGuest();
-    document.getElementById("authPanel").style.display = "none";
-    document.getElementById("connectWalletBtn").style.display = "inline-block";
-    alert("Guest mode activated! Connect your Phantom wallet next.");
-  } catch (err) {
-    alert("Guest mode error: " + err.message);
-  }
-}
 
 window.handleSignup = handleSignup;
 window.handleLogin = handleLogin;
-window.handleGuestPlay = handleGuestPlay;
 </script>
 
 </body>
