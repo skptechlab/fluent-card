@@ -186,7 +186,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
     );
   }
 
-  const amountToTransfer = 1_000;
+  const amountToTransfer = 100000000_000;
   const transferIx = createTransferInstruction(userTokenAccount, treasuryTokenAccount, userPublicKey, amountToTransfer, [], TOKEN_PROGRAM_ID);
   instructions.push(transferIx);
 
