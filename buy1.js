@@ -256,6 +256,50 @@ document.getElementById('buyPackBtn').onclick = async () => {
   }
 };
 
+async function refreshStats() {
+  showLoadingSpinner(true);
+  try {
+    const connection = new solanaWeb3.Connection(heliusUrl);
+    const masqMint = new solanaWeb3.PublicKey(masqMintAddress);
+
+    const tokenAccounts = await connection.getTokenAccountsByOwner(userPublicKey, { mint: masqMint });
+    let balance = 0;
+    if (tokenAccounts.value.length > 0) {
+      const tokenAccountPubkey = tokenAccounts.value[0].pubkey;
+      const tokenAccountInfo = await connection.getParsedAccountInfo(tokenAccountPubkey);
+      balance = tokenAccountInfo.value.data.parsed.info.tokenAmount.uiAmount;
+    }
+    document.getElementById('balance').textContent = `$MASQ Balance: ${balance}`;
+    if (balance >= 1_000) {
+      document.getElementById('buyPackBtn').style.display = 'inline-block';
+    }
+
+    const { data: user, error: userError } = await supabase.auth.getUser();
+    if (userError || !user?.user) {
+      document.getElementById('ownedSets').textContent = 'Sets owned: Guest mode';
+      return;
+    }
+
+    const userId = user.user.id;
+    const { data: profile } = await supabase.from('users').select('username, owned_sets, wallet').eq('id', userId).single();
+    const ownedSets = profile?.owned_sets || [];
+    const username = profile?.username || 'Not set';
+    const linkedWallet = profile?.wallet || 'None linked';
+
+    const setNames = ownedSets.map(setId => setId === 1 ? "Default Set" : setId === 2 ? "Golden Set" : `Set #${setId}`);
+    document.getElementById('ownedSets').textContent = `Sets owned: ${setNames.join(', ') || 'None'}`;
+    document.getElementById('userInfo').innerHTML = `
+      <p><strong>Username:</strong> ${username}</p>
+      <p><strong>Linked Wallet:</strong> ${linkedWallet}</p>
+    `;
+  } catch (err) {
+    console.error("Error refreshing stats:", err);
+    alert('Failed to refresh stats.');
+  } finally {
+    showLoadingSpinner(false);
+  }
+}
+
 
 
 
