@@ -460,24 +460,40 @@ document.getElementById('buyPackBtn').onclick = async () => {
       throw new Error('Transaction failed to confirm');
     }
 
-    // Verify token balance change (optional but recommended)
-    const tokenAccountInfo = await connection.getParsedAccountInfo(userTokenAccount);
-    const newBalance = tokenAccountInfo.value?.data?.parsed?.info?.tokenAmount?.uiAmount || 0;
-    if (newBalance >= 1000) {
-      throw new Error('Token balance not updated as expected');
-    }
+    // // Update owned_sets in Supabase using array_append
+    // const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
+    // const { error } = await supabase
+    //   .from('users')
+    //   .update({
+    //     owned_sets: supabase.rpc('array_append', {
+    //       array: 'owned_sets',
+    //       value: 2
+    //     })
+    //   })
+    //   .eq('id', userId);
 
-    // Update owned_sets in Supabase using array_append
-    const updatedSets = ownedSets.includes(2) ? ownedSets : [...ownedSets, 2];
-    const { error } = await supabase
+    const { data: userData, error: fetchError } = await supabase
       .from('users')
-      .update({
-        owned_sets: supabase.rpc('array_append', {
-          array: 'owned_sets',
-          value: 2
-        })
-      })
-      .eq('id', userId);
+      .select('owned_sets')
+      .eq('id', userId)
+      .single();
+    
+    if (fetchError) {
+      console.error('Error fetching user data:', fetchError);
+      return;
+    }
+    
+    const currentOwnedSets = userData.owned_sets || [];
+    
+    // Append new value if it doesn't exist
+    if (!currentOwnedSets.includes(2)) {
+      const updatedOwnedSets = [...currentOwnedSets, 2];
+    
+      // Update the database
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({ owned_sets: updatedOwnedSets })
+        .eq('id', userId);
 
     if (updateError) {
       console.error('Failed to update owned_sets:', updateError);
