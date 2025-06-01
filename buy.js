@@ -248,10 +248,28 @@ document.getElementById('buyPackBtn').onclick = async () => {
       alert('Transaction succeeded, but failed to update owned sets.');
     } else {
       console.log('Successfully updated owned_sets in DB!');
-      alert(`Pack purchased and sets updated! Tx: ${signature}`);
+      // alert(`Pack purchased and sets updated! Tx: ${signature}`);
       document.getElementById('ownedSets').textContent = `Sets owned: ${
         newOwnedSets.map(setId => (setId === 1 ? 'Default Set' : setId === 2 ? 'Golden Set' : `Set #${setId}`)).join(', ') || 'None'
       }`;
+      // Additional step: update wallet if it's empty
+    if (!profile.wallet) {
+      console.log('No wallet set. Updating wallet field in Supabase...');
+      const { error: updateWalletError } = await supabase
+        .from('users')
+        .update({ wallet: connectedWallet })
+        .eq('id', userId);
+  
+      if (updateWalletError) {
+        console.error('Failed to update wallet field:', updateWalletError);
+        alert('Sets updated, but failed to update wallet address.');
+      } else {
+        console.log('Successfully updated wallet field in DB!');
+      }
+    }
+  
+    alert(`Pack purchased and sets updated! Tx: ${signature}`);
+        
     }
   } catch (err) {
     console.error('Transaction error:', err);
