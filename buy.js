@@ -262,7 +262,7 @@ document.getElementById('buyPackBtn').onclick = async () => {
   
       if (updateWalletError) {
         console.error('Failed to update wallet field:', updateWalletError);
-        alert('Sets updated, but failed to update wallet address.');
+        alert('Sets updated, but failed to update wallet address. Check if wallet is already linked with another account.');
       } else {
         console.log('Successfully updated wallet field in DB!');
       }
