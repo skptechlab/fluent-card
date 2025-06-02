@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   try {
     const { mintAddress } = req.body;
-    const heliusKey = process.env.HELIUS_KEY;
+    const heliusKey = process.env.HELIUS_API_KEY;
 
     const heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
     const requestBody = {
