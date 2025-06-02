@@ -28,7 +28,7 @@
     </table>
   </div>
 
- <script>
+<!--  <script>
   let allHolders = [];
 
   async function getTokenHolders() {
@@ -104,6 +104,31 @@
     console.log("[window.onload] Page loaded. Calling getTokenHolders...");
     getTokenHolders();
   };
+</script> -->
+
+  <script>
+let allHolders = [];
+
+async function getTokenHolders() {
+  console.log("[getTokenHolders] Fetching data from backend...");
+
+  try {
+    const response = await fetch('/api/getTokenHolders');
+    const { holders } = await response.json();
+    console.log("[getTokenHolders] Received data:", holders);
+
+    if (!holders || holders.length === 0) {
+      alert("No token holders found.");
+      return;
+    }
+
+    allHolders = holders;
+    renderTable(allHolders);
+  } catch (error) {
+    console.error("[getTokenHolders] Error fetching data:", error);
+    alert("Failed to fetch token holders. Check console for details.");
+  }
+}
 </script>
 
 </body>
