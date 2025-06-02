@@ -11,9 +11,9 @@ export default async function handler(req, res) {
     const requestBody = {
       jsonrpc: "2.0",
       id: 1,
-      method: "searchAssets", // Use 'searchAssets' for token holders
+      method: "getTokenAccounts", // Use 'searchAssets' for token holders
       params: {
-        ownerAddress: mintAddress,
+        mint: mintAddress,
         page: 1,
         limit: 1000
       }
