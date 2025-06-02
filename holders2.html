@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>$MASQ Token Holders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://cdn.glitch.global/6176929a-9680-423d-874d-28c1ae4cb8d5/logomasq1-red.gif" />
+  <link rel="stylesheet" href="styles.css" />
+  
+  <style>
+    /* Your existing styles here */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>$MASQ Holders</h2>
+    <input type="text" id="searchInput" placeholder="Search by wallet address..." />
+    <table id="holdersTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Owner Address</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+ <script>
+  let allHolders = [];
+
+  async function getTokenHolders() {
+  const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
+
+  try {
+    const response = await fetch('/api/getTokenHolders', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mintAddress })
+    });
+
+    const data = await response.json();
+
+    if (!data.result || !data.result.token_accounts) {
+      alert("No token holders found.");
+      return;
+    }
+
+    // Add original rank
+    allHolders = data.result.token_accounts
+      .sort((a, b) => b.amount - a.amount)
+      .map((holder, index) => ({ ...holder, rank: index + 1 }));
+
+    renderTable(allHolders);
+  } catch (err) {
+    console.error('Error fetching holders:', err);
+    alert('Failed to fetch token holders.');
+  }
+}
+
+  function renderTable(data) {
+    console.log("[renderTable] Rendering data:", data);
+    const holdersTable = document.querySelector("#holdersTable tbody");
+    holdersTable.innerHTML = "";
+
+    data.forEach((account) => {
+      const row = holdersTable.insertRow();
+      if (account.rank <= 25) {
+        row.classList.add("golden-row");
+        console.log(`[renderTable] Golden row for rank ${account.rank}`);
+      }
+      row.insertCell(0).textContent = account.rank;
+      row.insertCell(1).textContent = account.owner;
+      row.insertCell(2).textContent = (account.amount / 1e9).toFixed(6);
+    });
+    console.log("[renderTable] Table rendering complete.");
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    console.log("[searchInput] Input changed:", e.target.value);
+    const searchValue = e.target.value.trim().toLowerCase();
+
+    if (!searchValue) {
+      console.log("[searchInput] No search value. Displaying all holders.");
+      renderTable(allHolders);
+      return;
+    }
+
+    console.log("[searchInput] Filtering for:", searchValue);
+    const found = allHolders.find(holder => holder.owner.toLowerCase() === searchValue);
+    if (found) {
+      console.log("[searchInput] Found matching holder:", found);
+      renderTable([found]);
+    } else {
+      console.log("[searchInput] No matching holder found. Displaying 'No results'.");
+      const holdersTable = document.querySelector("#holdersTable tbody");
+      holdersTable.innerHTML = "<tr><td colspan='3'>No results found.</td></tr>";
+    }
+  });
+
+  window.onload = () => {
+    console.log("[window.onload] Page loaded. Calling getTokenHolders...");
+    getTokenHolders();
+  };
+</script>
+
+</body>
+</html>
