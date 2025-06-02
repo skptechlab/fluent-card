@@ -28,13 +28,14 @@
     </table>
   </div>
 
-<!--  <script>
+ <script>
   let allHolders = [];
 
   async function getTokenHolders() {
-  const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
+  console.log("[getTokenHolders] Fetching from backend API...");
 
   try {
+    const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
     const response = await fetch('/api/getTokenHolders', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -42,23 +43,26 @@
     });
 
     const data = await response.json();
+    console.log("[getTokenHolders] Backend API response:", data);
 
     if (!data.result || !data.result.token_accounts) {
+      console.warn("[getTokenHolders] No token holders found in backend response.");
       alert("No token holders found.");
       return;
     }
 
-    // Add original rank
     allHolders = data.result.token_accounts
       .sort((a, b) => b.amount - a.amount)
       .map((holder, index) => ({ ...holder, rank: index + 1 }));
 
     renderTable(allHolders);
-  } catch (err) {
-    console.error('Error fetching holders:', err);
-    alert('Failed to fetch token holders.');
+
+  } catch (error) {
+    console.error("[getTokenHolders] Backend fetch error:", error);
+    alert("Failed to fetch token holders.");
   }
 }
+
 
   function renderTable(data) {
     console.log("[renderTable] Rendering data:", data);
@@ -104,32 +108,8 @@
     console.log("[window.onload] Page loaded. Calling getTokenHolders...");
     getTokenHolders();
   };
-</script> -->
-
-  <script>
-let allHolders = [];
-
-async function getTokenHolders() {
-  console.log("[getTokenHolders] Fetching data from backend...");
-
-  try {
-    const response = await fetch('/api/getTokenHolders');
-    const { holders } = await response.json();
-    console.log("[getTokenHolders] Received data:", holders);
-
-    if (!holders || holders.length === 0) {
-      alert("No token holders found.");
-      return;
-    }
-
-    allHolders = holders;
-    renderTable(allHolders);
-  } catch (error) {
-    console.error("[getTokenHolders] Error fetching data:", error);
-    alert("Failed to fetch token holders. Check console for details.");
-  }
-}
 </script>
+
 
 </body>
 </html>
