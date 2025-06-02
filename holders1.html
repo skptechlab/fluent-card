@@ -28,89 +28,109 @@
     </table>
   </div>
 
-  <script type="module">
-    let allHolders = [];
-    let heliusUrl = '';
+ <script>
+  let allHolders = [];
 
-    async function fetchHeliusKey() {
-      try {
-        const response = await fetch('/api/helius-key');
-        const { heliusKey } = await response.json();
-        heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
-      } catch (error) {
-        console.error('Failed to fetch Helius key:', error);
-        alert('Could not load data. Try again later.');
-      }
-    }
+  async function getTokenHolders() {
+    console.log("[getTokenHolders] Initializing fetch for Helius key...");
 
-    async function getTokenHolders() {
+    try {
+      const response = await fetch('/api/helius-key');
+      const { heliusKey } = await response.json();
+      console.log("[getTokenHolders] Helius key fetched:", heliusKey);
+
       const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
-      await fetchHeliusKey();
+      const url = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
+      console.log("[getTokenHolders] Constructed Helius URL:", url);
 
       const requestBody = {
-        jsonrpc: '2.0',
+        jsonrpc: "2.0",
         id: 1,
-        method: 'getTokenAccounts',
+        method: "getTokenAccounts",
         params: {
           mint: mintAddress,
           page: 1,
           limit: 1000
         }
       };
+      console.log("[getTokenHolders] Request body:", requestBody);
 
-      try {
-        const response = await fetch(heliusUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-
-        if (!data.result || !data.result.token_accounts) {
-          alert('No token holders found.');
-          return;
-        }
-
-        allHolders = data.result.token_accounts
-          .sort((a, b) => b.amount - a.amount)
-          .map((holder, index) => ({ ...holder, rank: index + 1 }));
-
-        renderTable(allHolders);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        alert('Failed to fetch token holders. Check console for details.');
-      }
-    }
-
-    function renderTable(data) {
-      const holdersTable = document.querySelector('#holdersTable tbody');
-      holdersTable.innerHTML = '';
-      data.forEach(account => {
-        const row = holdersTable.insertRow();
-        if (account.rank <= 25) row.classList.add('golden-row');
-        row.insertCell(0).textContent = account.rank;
-        row.insertCell(1).textContent = account.owner;
-        row.insertCell(2).textContent = (account.amount / 1e9).toFixed(6);
+      console.log("[getTokenHolders] Sending POST request to Helius...");
+      const heliusResponse = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
       });
-    }
 
-    document.getElementById('searchInput').addEventListener('input', e => {
-      const searchValue = e.target.value.trim().toLowerCase();
-      if (!searchValue) {
-        renderTable(allHolders);
+      const data = await heliusResponse.json();
+      console.log("[getTokenHolders] Helius response:", data);
+
+      if (!data.result || !data.result.token_accounts) {
+        console.warn("[getTokenHolders] No token holders found in response!");
+        alert("No token holders found.");
         return;
       }
-      const found = allHolders.find(holder => holder.owner.toLowerCase() === searchValue);
-      if (found) {
-        renderTable([found]);
-      } else {
-        const holdersTable = document.querySelector('#holdersTable tbody');
-        holdersTable.innerHTML = "<tr><td colspan='3'>No results found.</td></tr>";
-      }
-    });
 
-    window.onload = getTokenHolders;
-  </script>
+      console.log("[getTokenHolders] Processing token accounts...");
+      allHolders = data.result.token_accounts
+        .sort((a, b) => b.amount - a.amount)
+        .map((holder, index) => ({ ...holder, rank: index + 1 }));
+
+      console.log("[getTokenHolders] Processed and sorted token holders:", allHolders);
+
+      renderTable(allHolders);
+
+    } catch (error) {
+      console.error("[getTokenHolders] Error fetching data:", error);
+      alert("Failed to fetch token holders. Check console for details.");
+    }
+  }
+
+  function renderTable(data) {
+    console.log("[renderTable] Rendering data:", data);
+    const holdersTable = document.querySelector("#holdersTable tbody");
+    holdersTable.innerHTML = "";
+
+    data.forEach((account) => {
+      const row = holdersTable.insertRow();
+      if (account.rank <= 25) {
+        row.classList.add("golden-row");
+        console.log(`[renderTable] Golden row for rank ${account.rank}`);
+      }
+      row.insertCell(0).textContent = account.rank;
+      row.insertCell(1).textContent = account.owner;
+      row.insertCell(2).textContent = (account.amount / 1e9).toFixed(6);
+    });
+    console.log("[renderTable] Table rendering complete.");
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    console.log("[searchInput] Input changed:", e.target.value);
+    const searchValue = e.target.value.trim().toLowerCase();
+
+    if (!searchValue) {
+      console.log("[searchInput] No search value. Displaying all holders.");
+      renderTable(allHolders);
+      return;
+    }
+
+    console.log("[searchInput] Filtering for:", searchValue);
+    const found = allHolders.find(holder => holder.owner.toLowerCase() === searchValue);
+    if (found) {
+      console.log("[searchInput] Found matching holder:", found);
+      renderTable([found]);
+    } else {
+      console.log("[searchInput] No matching holder found. Displaying 'No results'.");
+      const holdersTable = document.querySelector("#holdersTable tbody");
+      holdersTable.innerHTML = "<tr><td colspan='3'>No results found.</td></tr>";
+    }
+  });
+
+  window.onload = () => {
+    console.log("[window.onload] Page loaded. Calling getTokenHolders...");
+    getTokenHolders();
+  };
+</script>
+
 </body>
 </html>
