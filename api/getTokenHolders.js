@@ -11,12 +11,13 @@ export default async function handler(req, res) {
     const requestBody = {
       jsonrpc: "2.0",
       id: 1,
-      method: "getTokenAccounts", // Use 'searchAssets' for token holders
-      params: {
-        mint: mintAddress,
-        page: 1,
-        limit: 1000
-      }
+      method: "getTokenLargestAccounts", // Use 'searchAssets' for token holders
+      params: [mintAddress]
+      // params: {
+      //   mint: mintAddress,
+      //   page: 1,
+      //   limit: 1000
+      // }
     };
 
     const response = await fetch(heliusUrl, {
