@@ -1,23 +1,56 @@
+// export default async function handler(req, res) {
+//   if (req.method !== "POST") {
+//     return res.status(405).json({ error: "Method not allowed" });
+//   }
+
+//   try {
+//     const { mintAddress } = req.body;
+//     const heliusKey = process.env.HELIUS_KEY; // Your key in Vercel environment variables!
+
+//     const heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
+//     const requestBody = {
+//       jsonrpc: "2.0",
+//       id: 1,
+//       method: "getTokenLargestAccounts", // Use 'searchAssets' for token holders
+//       params: [mintAddress]
+//       // params: {
+//       //   mint: mintAddress,
+//       //   page: 1,
+//       //   limit: 1000
+//       // }
+//     };
+
+//     const response = await fetch(heliusUrl, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(requestBody)
+//     });
+
+//     const data = await response.json();
+//     res.status(200).json(data);
+//   } catch (err) {
+//     console.error('Helius API error:', err);
+//     res.status(500).json({ error: 'Failed to fetch token holders' });
+//   }
+// }
+
+
+// /api/getTokenHolders.js
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { mintAddress } = req.body;
-    const heliusKey = process.env.HELIUS_KEY; // Your key in Vercel environment variables!
-
+    const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
+    const heliusKey = process.env.HELIUS_KEY; // Set this in Vercel environment variables
     const heliusUrl = `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`;
+
     const requestBody = {
       jsonrpc: "2.0",
       id: 1,
-      method: "getTokenLargestAccounts", // Use 'searchAssets' for token holders
+      method: "getTokenLargestAccounts", // Better for getting top holders!
       params: [mintAddress]
-      // params: {
-      //   mint: mintAddress,
-      //   page: 1,
-      //   limit: 1000
-      // }
     };
 
     const response = await fetch(heliusUrl, {
@@ -27,7 +60,15 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    res.status(200).json(data);
+
+    // Transform data for the frontend
+    const holders = data.result?.value?.map((account, index) => ({
+      rank: index + 1,
+      owner: account.address,
+      amount: account.amount
+    })) || [];
+
+    res.status(200).json({ holders });
   } catch (err) {
     console.error('Helius API error:', err);
     res.status(500).json({ error: 'Failed to fetch token holders' });
