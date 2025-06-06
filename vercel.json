@@ -5,6 +5,6 @@
     { "source": "/whitepaper", "destination": "/whitepaper.html" },
     { "source": "/roadmap", "destination": "/roadmap.html" },
     { "source": "/buy", "destination": "/buy.html" },
-    { "source": "/holders", "destination": "/holders.html" },
+    { "source": "/holders", "destination": "/holders.html" }
   ]
 }
