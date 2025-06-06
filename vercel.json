@@ -3,6 +3,8 @@
     { "source": "/about", "destination": "/about.html" },
     { "source": "/cards", "destination": "/cards.html" },
     { "source": "/whitepaper", "destination": "/whitepaper.html" },
-    { "source": "/roadmap", "destination": "/roadmap.html" }
+    { "source": "/roadmap", "destination": "/roadmap.html" },
+    { "source": "/buy", "destination": "/buy.html" },
+    { "source": "/holders", "destination": "/holders.html" },
   ]
 }
