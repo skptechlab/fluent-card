@@ -1094,9 +1094,11 @@ window.endTheGame = async function() {
   returnToMenu();
 
   // Refresh the stats on the menu after a short delay
-  setTimeout(() => {
-    refreshPlayerStats();
-  }, 500);
+  await refreshPlayerStats();
+  
+  // setTimeout(() => {
+  //   refreshPlayerStats();
+  // }, 500);
 };
 
 
