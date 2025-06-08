@@ -874,6 +874,11 @@ function returnToMenu() {
   document.getElementById('postLogin').style.display = 'flex';
   document.getElementById('header').style.display = 'flex';
   log("Returned to main menu");
+
+  setTimeout(() => {
+  refreshPlayerStats();
+}, 500);
+  
 }
 
 export function resetGame() {
@@ -1094,11 +1099,10 @@ window.endTheGame = async function() {
   returnToMenu();
 
   // Refresh the stats on the menu after a short delay
-  await refreshPlayerStats();
   
-  // setTimeout(() => {
-  //   refreshPlayerStats();
-  // }, 500);
+  setTimeout(() => {
+    refreshPlayerStats();
+  }, 500);
 };
 
 
