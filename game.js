@@ -30,7 +30,7 @@ async function getUserProfile(userId) {
   const { data, error } = await supabase.from('users').select('owned_sets').eq('id', userId).single();
   if (error) {
     console.error("Error fetching user profile:", error);
-    return { owned_sets: [1] }; // fallback to Core Set
+    return { owned_sets: [1] }; 
   }
   return data;
 }
@@ -76,48 +76,6 @@ async function startCountdown() {
   });
 }
 
-// Grok API configuration
-// const grokEndpoint = 'https://api.x.ai/v1/chat/completions';
-// const grokApiKey = '';
-
-// async function fetchGrokResponse(prompt) {
-//   // log("[Grok API] Sending prompt:", prompt); 
-  
-//   try {
-//     const response = await fetch(grokEndpoint, {
-//       method: 'POST',
-//       headers: {
-//         'Authorization': `Bearer ${grokApiKey}`,
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify({
-//         messages: [
-//           {
-//             "role": "system",
-//             "content": "You are Grok, a rogue AI opponent in a card game. Analyze the game state and pick a card to play from my hand based on strategy. Return only the card name or 'pass' if no play is optimal."
-//           },
-//           {
-//             "role": "user",
-//             "content": prompt
-//           }
-//         ],
-//         "model": "grok-2-latest",
-//         "stream": false,
-//         "temperature": 0.7 // Slightly higher for strategic variation
-//       })
-//     });
-
-//     if (!response.ok) throw new Error(`Grok API error: ${response.status}`);
-//     const data = await response.json();
-//     // log("[Grok API] Response data:", data); 
-    
-//     return data.choices[0].message.content.trim();
-//   } catch (error) {
-//     console.error('Grok API fetch failed:', error);
-//     return null; // Fallback to default logic
-//   }
-// }
-
 async function fetchGrokResponse(prompt) {
   console.log("[Grok API] Sending prompt to /api/grok:", prompt);
 
@@ -132,13 +90,10 @@ async function fetchGrokResponse(prompt) {
 
     const data = await response.json();
     console.log("[Grok API] Response data:", data);
-
-    // The Grok API in /api/grok returns the whole data object
-    // Adjust how you extract the message content
     return data.choices[0].message.content.trim();
   } catch (error) {
     console.error('[Grok API] Fetch failed:', error);
-    return null; // Fallback to default logic
+    return null; 
   }
 }
 
@@ -454,8 +409,6 @@ Pick a card to queue by name or 'pass'.`;
     log("Opponent has finished queuing cards");
   }
 }
-
-// ... (resolveTurn, startTurnTimer, canComputerQueueMore, checkGameOver, showGameOverScreen, returnToMenu, resetGame unchanged)
 
 export function resolveTurn() {
   gameState.isTurnActive = false;
@@ -1004,57 +957,6 @@ export function animate() {
   }
 }
 
-// window.endTheGame = async function() {
-//   const confirmEnd = confirm("Are you sure you want to end the game? This will count as a loss.");
-//   if (!confirmEnd) return;
-
-//   console.log("Game ended. Counting as player loss.");
-
-//   // Clear the scene and stop animations/timers
-//   if (window.cancelAnimationFrame) window.cancelAnimationFrame(window.animationFrameId);
-//   if (gameState.turnTimer) clearInterval(gameState.turnTimer);
-//   if (gameState.opponentQueueTimer) clearTimeout(gameState.opponentQueueTimer);
-
-//   // Update the player's loss stats in Supabase
-//   try {
-//     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-//     const supabase = createClient(
-//       "https://pklmlttcycefshwxqcwu.supabase.co",
-//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
-//     );
-
-//     const { data: user, error: userError } = await supabase.auth.getUser();
-//     if (userError || !user?.user) {
-//       console.warn("No user session found. Stats not updated.");
-//     } else {
-//       const userId = user.user.id;
-
-//       // Update local game state
-//       gameState.player.winStreak = 0;
-//       gameState.player.totalLosses += 1;
-
-//       // Update Supabase stats
-//       await updateUserStats(
-//         userId,
-//         gameState.player.totalWins,
-//         gameState.player.totalLosses,
-//         gameState.player.winStreak
-//       );
-
-//       console.log("Loss counted in database.");
-//     }
-//   } catch (error) {
-//     console.error("Failed to update loss in database:", error);
-//   }
-
-//   // Return to the main menu
-//   returnToMenu();
-
-//   // Refresh the stats on the menu after a short delay
-//   setTimeout(() => {
-//     refreshPlayerStats();
-//   }, 500);
-// };
 
 window.endTheGame = async function() {
   const confirmEnd = confirm("Are you sure you want to end the game? This will count as a loss.");
@@ -1105,42 +1007,6 @@ window.endTheGame = async function() {
   }, 500);
 };
 
-
-// Function to refresh the player stats displayed in the menu
-// async function refreshPlayerStats() {
-//   console.log("Refreshing player stats...");
-
-//   try {
-//     const { createClient } = await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm");
-//     const supabase = createClient(
-//       "https://pklmlttcycefshwxqcwu.supabase.co",
-//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbG1sdHRjeWNlZnNod3hxY3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMxMDE0OTQsImV4cCI6MjA1ODY3NzQ5NH0.1NxMlj8YvWHpntGXRlXjB4ntxW5aO-uJH8USLvlGm4Y"
-//     );
-
-//     const { data: user } = await supabase.auth.getUser();
-//     if (!user?.user) {
-//       console.warn("No user session. Skipping stats refresh.");
-//       return;
-//     }
-
-//     const userId = user.user.id;
-//     const { data: stats, error } = await supabase.from('users').select('total_wins, total_losses, win_streak').eq('id', userId).single();
-//     if (error) {
-//       console.error("Failed to fetch updated stats:", error);
-//       return;
-//     }
-
-//     console.log("Updated stats:", stats);
-
-//     // Update the DOM elements with latest stats
-//     document.getElementById('totalWins').textContent = `Wins: ${stats.total_wins}`;
-//     document.getElementById('totalLosses').textContent = `Losses: ${stats.total_losses}`;
-//     document.getElementById('winStreak').textContent = `Win Streak: ${stats.win_streak}`;
-//     console.log("Player stats refreshed in the menu!");
-//   } catch (error) {
-//     console.error("Error refreshing stats:", error);
-//   }
-// }
 
 async function refreshPlayerStats() {
   console.log("Refreshing player stats...");
