@@ -1,59 +1,3 @@
-<!-- about.html -->
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MASQuerades - About</title>
-    <link rel="icon" type="image/png" href="/assets/logomasq1-g11o.gif" />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <video class="video-bg" autoplay loop muted>
-        <source src="/assets/MASQ1.webm" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-        <div class="header" id="header">
-        <a href="/">
-            <img src="/assets/logomasq1-g11o.gif" alt="Logo" class="logo">
-        </a>
-        <div class="title-container">
-            <div class="title glow">the MASQuerades</div>
-            <div class="subtitle">$MASQ</div>
-        </div>
-    </div>
-    <main>
-        <h1>About MASQuerades</h1>
-        <p>MASQuerades is a strategic card game built on the Solana blockchain. It’s a battle of wits where you use a deck of unique cards to outsmart an AI opponent Grok. This page explains how the game works behind the scenes in simple terms.</p>
-
-        <h2>Authentication</h2>
-        <p>The game uses a service called Supabase to handle signing up, logging in, and tracking player stats. When you sign up with an email (treat like username but in email format) and password, Supabase creates your account and no verification email required. Logging in checks your credentials, and you can also play as a guest without saving progress. Your wins, losses, and streaks are stored in a database and updated after each game (unless you’re a guest).</p>
-
-        <h2>Game Initialization</h2>
-        <p>When you start a game, both you and Grok get a deck of 35 cards randomly picked from a big list called `cardLibrary`. These decks are shuffled, and you each draw 3 cards to start. You both begin with 30 health and 1 mana (which grows each turn up to 10). The game keeps track of everything—your hand, deck, health, and mana—in a central “game state” object.</p>
-
-        <h2>Card Mechanics</h2>
-        <p>Cards have stats like cost (mana needed to play), attack (damage dealt to the opponent), health (healing for you), and sometimes special abilities (like drawing more cards). You drag cards from your hand to a play area to queue them up, spending mana right away. Grok does the same using smart AI logic. Some cards have “Combo” abilities that trigger extra effects if played after specific other cards.</p>
-
-        <h2>Turn-Based Gameplay</h2>
-        <p>Each turn lasts 20 seconds. You queue up cards, and when you hit “End Turn” (or time runs out), all queued cards take effect at once. Your cards’ attack lowers Grok’s health, and their health heals you. Grok’s cards do the opposite. Each turn, you draw a card, gain mana, and plan your next move. If your deck runs out, you take damage from “fatigue.”</p>
-
-        <h2>UI Interactions</h2>
-        <p>The interface lets you drag cards to play them, hover over cards to see details in a tooltip, and click buttons like “End Turn” or “Pause.” The screen shows your health, mana, and stats, updating as the game changes. Logs at the bottom tell you what’s happening, like “You queued X” or “Grok attacked!”</p>
-
-        <h2>Three.js Rendering</h2>
-        <p>The game looks cool thanks to Three.js, a tool that creates 3D graphics. Cards are flat 3D objects with textures (images) on them. You see your card fronts, but Grok’s stay hidden until played. The board is a 3D space with a background, and cards move smoothly when you drag or play them. Shaders (special effects code) add glowing gold borders to cards.</p>
-
-        <h2>Roadmap & Future Updates</h2>
-        <p>For details on upcoming features, planned expansions, and the evolution of the MASQ universe, visit <a href="roadmap" style="color:#FFD700; text-decoration: underline;">roadmap.html</a>.</p>
-    </main>
-</body>
-</html> -->
-
-<!-- about.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +70,7 @@
     <div class="about-container">
       <h1>About MASQuerades</h1>
       <p>
-        MASQuerades is a strategic card game built on the Solana blockchain. It’s a battle of wits where you use a deck of unique cards to outsmart an AI opponent Grok. This page explains how the game works behind the scenes in simple terms.
+        MASQuerades is a strategic card game built on the Solana blockchain. It’s a battle of wits where you use a deck of unique cards to outsmart the AI opponent Grok, powered by xAPI. This page explains how the game works behind the scenes in simple terms. For more expanded technical explanation please visit the github page.
       </p>
 
       <h2>Authentication</h2>
