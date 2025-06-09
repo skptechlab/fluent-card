@@ -162,25 +162,30 @@
     <div class="roadmap-timeline">
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q1 2025</div>
           <h2 class="timeline-title">Solana Wallet Integration</h2>
           <p class="timeline-description">
-            Implement seamless Solana wallet login for user authentication, enabling secure and decentralized access to the MASQ platform. Players can connect their Solana wallets to manage in-game assets and transactions.
+            Implement seamless Solana wallet login for user authentication, enabling secure and decentralized access to the MASQ platform. Players can connect their Solana wallets to manage in-game assets and transactions. (Currently wallet integration is already available for buying packs but not for logins)
           </p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q2 2025</div>
-          <h2 class="timeline-title">$MASQ Token Integration</h2>
+          <h2 class="timeline-title">Online multiplayer PvP gameplay</h2>
           <p class="timeline-description">
-            Enable players to purchase card packs and in-game items using $MASQ tokens. Integrate a marketplace for trading assets on the Solana blockchain, ensuring transparency and security.
+            Launch real-time online PvP battles where players match against global opponents using their customized decks. Introduce ranked ladders, seasonal rewards, and matchmaking algorithms to ensure fair and competitive gameplay. 
           </p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q3 2025</div>
+          <h2 class="timeline-title">$MASQ assets marketplace</h2>
+          <p class="timeline-description">
+            Integrate a marketplace for trading MASQ assets on the Solana blockchain, ensuring transparency and security. More assets related to the game to be rolled out.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
           <h2 class="timeline-title">Enhanced Animations & Sounds</h2>
           <p class="timeline-description">
             Introduce dynamic card animations, immersive sound effects, and particle effects for in-game actions. Enhance the visual and auditory experience to create a more engaging gameplay environment.
@@ -189,7 +194,6 @@
       </div>
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q4 2025</div>
           <h2 class="timeline-title">Mobile App Development</h2>
           <p class="timeline-description">
             Launch MASQ as a full-fledged mobile game on the iOS App Store and Google Play Store. Optimize the game for mobile devices, including touch controls, offline play, and cross-platform synchronization.
@@ -198,7 +202,6 @@
       </div>
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q1 2026</div>
           <h2 class="timeline-title">Competitive Tournaments & Leaderboards</h2>
           <p class="timeline-description">
             Introduce global tournaments, ranked leaderboards, and seasonal events. Offer $MASQ rewards for top players, fostering a competitive community and increasing player engagement.
@@ -207,19 +210,23 @@
       </div>
       <div class="timeline-item">
         <div class="timeline-content">
-          <div class="timeline-date">Q2 2026</div>
           <h2 class="timeline-title">Expanded Game Modes & Story</h2>
           <p class="timeline-description">
             Add new game modes, including single-player campaigns and co-op challenges. Develop a rich lore and narrative to deepen the MASQ universe, with player-driven story events.
           </p>
         </div>
       </div>
+      <div class="timeline-item">
+        <div class="timeline-content">
+          <h2 class="timeline-title">Staked PvP Arenas & Competitive Progression System</h2>
+          <p class="timeline-description">
+            Integrate token-powered matchmaking tiers — players can stake $MASQ to enter high-stakes PvP pools with on-chain rewards. 
+            Enable dynamic balancing based on player performance and card meta-evolution. Incorporate win streak multipliers, leaderboard prestige titles, and cosmetic-only card skin unlocks.
+          </p>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- Audio for Interactions -->
-  <audio id="hover-sound" src="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/hover.mp3?v=1746977326714"></audio>
-  <audio id="click-sound" src="https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/click.mp3?v=1746977326714"></audio>
 
   <script>
     // Scroll Animation for Timeline Items
@@ -235,21 +242,6 @@
       }, { threshold: 0.2 });
 
       timelineItems.forEach(item => observer.observe(item));
-
-      // Audio for hover and click
-      const hoverSound = document.getElementById('hover-sound');
-      const clickSound = document.getElementById('click-sound');
-
-      document.querySelectorAll('.nav-link, .connect-btn, .timeline-content').forEach(element => {
-        element.addEventListener('mouseenter', () => {
-          hoverSound.currentTime = 0;
-          hoverSound.play();
-        });
-        element.addEventListener('click', () => {
-          clickSound.currentTime = 0;
-          clickSound.play();
-        });
-      });
     });
   </script>
 </body>
