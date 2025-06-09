@@ -44,15 +44,6 @@ function showLoadingSpinner(show = true) {
 await getHeliusUrl();
 await initSupabase();
 
-// document.getElementById('connectWalletBtn').onclick = async () => {
-//   showLoadingSpinner(true);
-//   if ('solana' in window) {
-//     provider = window.solana;
-//     try {
-//       const resp = await provider.connect();
-//       userPublicKey = resp.publicKey;
-//       document.getElementById('status').textContent = `Connected Wallet: ${userPublicKey.toBase58()}`;
-
 document.getElementById('connectWalletBtn').onclick = async () => {
   showLoadingSpinner(true);
   if ('solana' in window) {
