@@ -118,7 +118,7 @@
   </div>
   <div class="container">
     <h2>$MASQ Holders</h2>
-    <input type="text" id="searchInput" placeholder="Search by wallet address..." />
+    <input type="text" id="searchInput" style="background: rgba(255, 0, 0, 0.3); color: white;" placeholder="Search by wallet address..." />
     <table id="holdersTable">
       <thead>
         <tr>
@@ -138,7 +138,7 @@
   console.log("[getTokenHolders] Fetching from backend API...");
 
   try {
-    const mintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
+    const mintAddress = '';
     const response = await fetch('/api/getTokenHolders', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
