@@ -656,18 +656,18 @@ body {
 
 .play-btn {
   animation: pulseGlow 2s infinite ease-in-out;
-}
-
-.how-to-btn {
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   border: 2px solid #FF0000;
   color: #FFD700;
 }
 
-.how-to-btn:hover {
-  background: linear-gradient(90deg, #3C3C3C, #4A4A4A);
-  box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+.buy-btn {
+  animation: pulseGlow 2s infinite ease-in-out;
+  background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
+  border: 2px solid #FF0000;
+  color: #FFD700;
 }
+
 
 .ui-overlay {
   position: absolute;
