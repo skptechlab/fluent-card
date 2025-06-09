@@ -30,7 +30,7 @@
         <p>MASQuerades is a strategic card game built on the Solana blockchain. It’s a battle of wits where you use a deck of unique cards to outsmart an AI opponent Grok. This page explains how the game works behind the scenes in simple terms.</p>
 
         <h2>Authentication</h2>
-        <p>The game uses a service called Supabase to handle signing up, logging in, and tracking player stats. When you sign up with an email and password, Supabase creates your account and sends a verification email. Logging in checks your credentials, and you can also play as a guest without saving progress. Your wins, losses, and streaks are stored in a database and updated after each game (unless you’re a guest).</p>
+        <p>The game uses a service called Supabase to handle signing up, logging in, and tracking player stats. When you sign up with an email (treat like username but in email format) and password, Supabase creates your account and no verification email required. Logging in checks your credentials, and you can also play as a guest without saving progress. Your wins, losses, and streaks are stored in a database and updated after each game (unless you’re a guest).</p>
 
         <h2>Game Initialization</h2>
         <p>When you start a game, both you and Grok get a deck of 35 cards randomly picked from a big list called `cardLibrary`. These decks are shuffled, and you each draw 3 cards to start. You both begin with 30 health and 1 mana (which grows each turn up to 10). The game keeps track of everything—your hand, deck, health, and mana—in a central “game state” object.</p>
@@ -46,6 +46,9 @@
 
         <h2>Three.js Rendering</h2>
         <p>The game looks cool thanks to Three.js, a tool that creates 3D graphics. Cards are flat 3D objects with textures (images) on them. You see your card fronts, but Grok’s stay hidden until played. The board is a 3D space with a background, and cards move smoothly when you drag or play them. Shaders (special effects code) add glowing gold borders to cards.</p>
+
+        <h2>Roadmap & Future Updates</h2>
+        <p>For details on upcoming features, planned expansions, and the evolution of the MASQ universe, visit <a href="roadmap" style="color:#FFD700; text-decoration: underline;">roadmap.html</a>.</p>
     </main>
 </body>
 </html>
