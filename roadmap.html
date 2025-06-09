@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" href="/assets/logomasq1-g11o.gif" />
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Additional styles specific to the Roadmap page */
     .roadmap-container {
       max-width: 1000px;
       margin: 100px auto;
@@ -22,6 +21,8 @@
       text-shadow: 0 0 5px #FF0000;
       position: relative;
       z-index: 1;
+      border: 20px solid transparent;
+      border-image: url('/assets/button2.png') 300 round;
     }
 
     .roadmap-title {
@@ -46,6 +47,8 @@
       opacity: 0;
       transform: translateY(50px);
       transition: opacity 0.5s ease, transform 0.5s ease;
+      border: 10px solid transparent;
+      border-image: url('/assets/button2.png') 300 round;
     }
 
     .timeline-item.visible {
