@@ -6,57 +6,37 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    
-    <!-- Primary Meta Tags -->
     <title>MASQuerades – $MASQ</title>
     <meta name="title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
     <meta name="description" content="Enter the MASQuerade. A legendary, aesthetic token & tactical card game built on Solana. Powered by $MASQ, forged by the masked anon vanguard." />
-
-    <!-- Favicon & App Icons -->
     <link rel="icon" type="image/png" href="/assets/logomasq1-g11o.gif" />
     <link rel="apple-touch-icon" href="/assets/logomasq1-g11o.gif" />
     <meta name="theme-color" content="#0B0B0B" />
-
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://masq.club/" />
     <meta property="og:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
     <meta property="og:description" content="Step into the masked realm. Just pure anon-powered gameplay and decentralized art." />
     <meta property="og:image" content="/assets/logomasq1-g11o.gif" />
-
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://x.com/MASQ_game" />
     <meta property="twitter:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
     <meta property="twitter:description" content="Join the masked vanguard of Solana. Play. Collect. Conquer. One token. Infinite strategy." />
     <meta property="twitter:image" content="/assets/logomasq1-g11o.gif" />
-
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
-
-    <!-- Styles -->
     <link rel="stylesheet" href="styles.css"/>
-
-    <!-- External Scripts -->
     <script src="https://public.bnbstatic.com/unpkg/growth-widget/cryptoCurrencyWidget@0.0.20.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
-  
-    <!-- Loading Screen -->
+
     <div id="loadingScreen" class="loading-screen" style="display: none;">
         <img src="/assets/nullman1-red1.gif" alt="Loading GIF">
         <div id="loadingText" class="loading-text">Initializing MASQ...</div>
     </div>
-  
-  
-    <!-- Background Video -->
     <video class="video-bg" autoplay loop muted>
         <source src="/assets/MASQ1.webm" type="video/mp4">
         Your browser does not support the video tag.
     </video>
-
-    <!-- Header -->
     <div class="header" id="header">
         <a href="/">
             <img src="/assets/logomasq1-g11o.gif" alt="Logo" class="logo">
@@ -66,16 +46,13 @@
             <div class="subtitle">$MASQ</div>
         </div>
     </div>
-    <!-- Audio for Typing Sound -->
-    <audio id="bg-audio" autoplay muted>
+    <audio id="bg-audio" autoplay muted loop>
         <source src="/assets/bg_score.mp3" type="audio/mpeg">
     </audio>
 
       <button id="muteToggle" class="mute-toggle">
       🔇
     </button>
-
-    <!-- Homepage -->
     <div id="homepage" class="homepage">
 <!--         <div class="marquee">
             <div>
@@ -108,28 +85,6 @@
           
             </div>
         </div>
-
-<!--       <ul class="angled-btn-group">
-        <li>
-          <a href="#" onclick="navigateTo('https://pump.fun/')">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-            <span>BUY $MASQ</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="showAuthPanel()">
-            <i class="fa fa-play" aria-hidden="true"></i>
-            <span>PLAY GAME</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="navigateTo('holders.html')">
-            <i class="fa fa-users" aria-hidden="true"></i>
-            <span>HOLDERS</span>
-          </a>
-        </li>
-      </ul>        -->
-
 
     <ul class="angled-btn-group">
         <li>
@@ -195,11 +150,7 @@
       </div>
 
     </div>
-
-    <!-- Game Canvas -->
     <canvas id="gameCanvas" style="display: none;"></canvas>
-
-    <!-- AUTH PANEL -->
     <div class="auth-panel" id="authPanel" style="display: none;">
         <h2>Signup / Login / Play as Guest</h2>
         <input type="email" id="email" placeholder="Email"/>
@@ -214,8 +165,6 @@
                   * Email confirmation not required. Treat like username in email format
               </p>
     </div>
-
-    <!-- POST LOGIN PANEL -->
     <div id="postLogin" class="post-login" style="display: none;">
         <h2 id="welcomeMessage" class="post-login-title">Welcome, Anon</h2>
         <div class="player-stats" id="playerStats" style="display: none;">
@@ -243,12 +192,10 @@
         </div>
         <div class="post-login-buttons">
             <button class="post-login-btn play-btn" onclick="startGame()">PLAY the Game</button>
-<!--             <button class="post-login-btn how-to-btn" onclick="showHowTo()">Unveil the Secrets</button> -->
             <button class="post-login-btn buy-btn" onclick="navigateTo('buy.html')">Buy packs</button>
         </div>
     </div>
 
-    <!-- GAME UI -->
     <div class="ui-overlay" id="gameUI" style="display: none;">
         <div class="player-info">
             <div>Health: <span id="playerHealth">30</span> / ∞</div>
@@ -268,7 +215,6 @@
         <div class="right-buttons">
             <button class="how-to-play-btn" id="howToPlayBtn" onclick="showHowTo()">How to Play</button>
             <button class="end-game-btn" id="endGame" onclick="endTheGame()">End Game</button>
-<!--             <button class="lore-btn" id="loreBtn">Lore</button> -->
         </div>
         <div class="game-log" id="gameLog"></div>
         <div class="card-tooltip" id="cardTooltip"></div>
@@ -412,8 +358,7 @@
                     document.getElementById("postLoginWins").textContent = stats.total_wins;
                     document.getElementById("postLoginLosses").textContent = stats.total_losses;
                     document.getElementById("postLoginStreak").textContent = stats.win_streak;
-                  
-                    // document.getElementById("packsOwned").textContent = packs.join(", ");
+                
                   
                     const setNames = packs.map(setId => {
                       if (setId === 1) return "Default Set";
@@ -496,10 +441,6 @@
             window.location.href = page;
         };
 
-        // document.getElementById('buyBtn').addEventListener('click', function() {
-        //     window.open('', '_blank');
-        // });
-
         const cards = document.querySelectorAll('.card');
 
         function shuffleCards() {
@@ -536,13 +477,9 @@
       
       // Set target EST time
 // Example: June 10, 2025, 5:30 PM EST
-const targetTimeEST = new Date('2025-06-10T17:30:00-04:00'); // EST time (UTC-4 in daylight saving)
-
-// Update every second
+const targetTimeEST = new Date('2025-06-10T17:30:00-04:00');
 function updateCountdown() {
   const now = new Date();
-
-  // Convert EST target to UTC and get the diff
   const diff = targetTimeEST - now;
 
   if (diff > 0) {
@@ -559,29 +496,22 @@ function updateCountdown() {
   }
 }
 
-// Initial call
 updateCountdown();
-// Repeat every second
 setInterval(updateCountdown, 1000);
 
-  const muteToggle = document.getElementById('muteToggle');
-
-  // Start as muted
+  const muteToggle = document.getElementById('muteToggle')
   audio.muted = true;
 
   muteToggle.addEventListener('click', () => {
     audio.muted = !audio.muted;
     muteToggle.textContent = audio.muted ? '🔇' : '🔊';
-    // Play audio if unmuted
     if (!audio.muted && audio.paused) {
       audio.play().catch(err => console.log("Autoplay blocked:", err));
     }
   });
 
  if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    // Show mobile message
     document.getElementById('mobileMessage').style.display = 'block';
-    // Hide all other children of body
     document.body.querySelectorAll('*:not(#mobileMessage)').forEach(el => {
       el.style.display = 'none';
     });
