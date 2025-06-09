@@ -6,8 +6,8 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID
 } from "https://esm.sh/@solana/spl-token@0.3.5";
 
-const masqMintAddress = '68o1DHL3XoEESBmMU1a1qQwe5BMAV2HFVPCCb5qmpump';
-const treasuryPublicKey = new solanaWeb3.PublicKey('GANrTbdEBQqMGdNRen1XQAC2CZtzZwhovc68KH8Bzaga');
+const masqMintAddress = '';
+const treasuryPublicKey = new solanaWeb3.PublicKey('');
 
 let heliusUrl = "";
 let provider = null;
