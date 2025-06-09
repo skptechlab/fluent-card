@@ -504,7 +504,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background:
-    linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.2)),
+    linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.9)),
     url('https://cdn.glitch.me/7afac5ad-533c-46e9-a9f4-9aea53064124/loading-moshed-04-06-20-34-52.gif?v=1743951944802') center/cover no-repeat;
   padding: 40px;
   border-radius: 20px;
