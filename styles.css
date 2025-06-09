@@ -60,7 +60,7 @@ body {
 }
 
 .header {
-  background: url('https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/banner_skelF22.gif') no-repeat center center;
+  background: url('/assets/banner_skelF22.gif') no-repeat center center;
   background-size: cover; /* make sure it covers the whole header */
   height: 7vh;
   width: 100%;
@@ -453,7 +453,7 @@ body {
   transform: translate(-50%, -50%);
   padding: 32px;
   border: 50px solid transparent;
-  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
+  border-image: url('/assets/button2.gif') 300 round;
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.4));
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 6px rgba(255, 0, 0, 0.1);
@@ -512,11 +512,11 @@ body {
   transform: translate(-50%, -50%);
   background:
     linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.9)),
-    url('https://cdn.glitch.me/7afac5ad-533c-46e9-a9f4-9aea53064124/loading-moshed-04-06-20-34-52.gif?v=1743951944802') center/cover no-repeat;
+    url('/assets/loading.gif') center/cover no-repeat;
   padding: 40px;
   border-radius: 20px;
   border: 50px solid transparent;
-  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
+  border-image: url('/assets/button2.gif') 300 round;
   box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
   z-index: 90;
   display: none;
@@ -1180,7 +1180,7 @@ p {
     clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
     animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 20ms), glitch 2s ease infinite 2s alternate-reverse;
     color: #FFD700;
-    background-image: url('https://cdn.glitch.global/86892e0d-4ded-4d68-8e3d-39ec5e89294b/button_f.png?v=1746977326714');
+    background-image: url('/assets/button_f.png');
     background-size: cover;
     background-position: center;
   
@@ -1235,7 +1235,6 @@ p {
   padding: 0;
   z-index: 1001;
   font-family: 'Orbitron', sans-serif;
-/*   background: url('https://cdn.glitch.global/9bc8dda2-a128-422d-9b7a-5839e2af8c3b/banner_skelF22.gif'); */
 }
 
 .angled-btn-group li {
@@ -1260,7 +1259,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   position: relative;
-  background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover;
+  background: url('/assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1276,7 +1275,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   transform: skewY(-45deg);
-  background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover;
+  background: url('/assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1292,7 +1291,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   transform: skewX(-45deg);
-  background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover;
+  background: url('/assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1321,15 +1320,13 @@ p {
 .angled-btn-group li a:hover {
   transform: rotate(0deg) skew(5deg) translate(20px, -15px);
   box-shadow: -50px 50px 50px rgba(0, 0, 0, 0.5);
-  background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover;
+  background: url('/assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
 .angled-btn-group li a:hover i,
 .angled-btn-group li a:hover span {
   box-shadow: -50px 50px 50px rgba(0, 0, 0, 0.5);
-/*   background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover; */
-/*   opacity: 0.7; */
 }
 
 .angled-btn-group li:hover a:before {
