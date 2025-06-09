@@ -858,7 +858,7 @@ button:hover {
   padding: 18px;
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.85), rgba(43, 43, 43, 0.8));
   border: 10px solid transparent;
-  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.png') 300 round;
+  border-image: url('/assets/button2.png') 300 round;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.1), inset 0 0 5px rgba(255, 0, 0, 0.05);
   font-family: 'Cinzel', serif;
