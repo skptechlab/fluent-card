@@ -17,8 +17,6 @@ export function updateUI() {
   document.getElementById('opponentMaxMana').textContent = gameState.opponent.maxMana;
   document.getElementById('opponentManaFill').style.width = `${(gameState.opponent.mana / gameState.opponent.maxMana) * 100}%`;
   document.getElementById('turnTimer').textContent = gameState.turnTimeLeft;
-
-  // Update game stats
   document.getElementById('totalWins').textContent = gameState.player.totalWins;
   document.getElementById('totalLosses').textContent = gameState.player.totalLosses;
   document.getElementById('gameWinStreak').textContent = gameState.player.winStreak;
@@ -67,7 +65,6 @@ export function initUIEvents() {
         }
       }, 1000);
 
-      // Restart opponent queue timer
       gameState.opponentQueueTimer = setInterval(() => {
         if (!gameState.isPaused && gameState.isTurnActive && !gameState.computerReady) {
           log("Opponent attempting to queue a card");
@@ -77,9 +74,9 @@ export function initUIEvents() {
             log("Computer has finished queuing cards");
           }
         }
-      }, 2000); // Opponent queues every 2 seconds
+      }, 2000); 
 
-      animate(); // Resume animation
+      animate();
     }
   });
 
@@ -88,7 +85,7 @@ export function initUIEvents() {
   howToPlayBtn.addEventListener('mouseover', () => {
     howToPlayTooltip.textContent = `How to Play:
 - Each player starts with 30 Health and 1 Mana (max 10).
-- Draw 5 cards initially, then 1 per turn. Max. 10 cards at a time in hand.
+- Draw 3 cards initially, then 1 per turn. Max. 10 cards at a time in hand.
 - Click cards in your hand to the play area to queue them. Mana is deducted immediately.
 - Press "End Turn" to apply queued cards' effects: Attack damages the opponent, Health heals you. Combo cards gain bonuses if played after specific cards.
 - If you don’t press "End Turn," the turn ends after 20 seconds.
@@ -100,16 +97,6 @@ export function initUIEvents() {
   howToPlayBtn.addEventListener('mouseout', () => {
     howToPlayTooltip.style.display = 'none';
   });
-
-  // const loreBtn = document.getElementById('loreBtn');
-  // const loreTooltip = document.getElementById('loreTooltip');
-  // loreBtn.addEventListener('mouseover', () => {
-  //   loreTooltip.textContent = cardLibrary.map(card => `${card.name}: ${card.lore}`).join('\n\n');
-  //   loreTooltip.style.display = 'block';
-  // });
-  // loreBtn.addEventListener('mouseout', () => {
-  //   loreTooltip.style.display = 'none';
-  // });
 }
 
 initUIEvents();
