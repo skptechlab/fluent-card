@@ -55,7 +55,6 @@
     background: url('/assets/button2.png') no-repeat center center / cover;
   }
 
-
   .auth-panel .auth-buttons button:hover {
     background: #FF0000;
     color: #FFD700;
@@ -71,6 +70,33 @@
     object-fit: cover;
     z-index: -1;
     opacity: 0.8;
+  }
+  #connectWalletBtn,
+  #buyPackBtn {
+    padding: 14px 28px;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    color: #FFD700;
+    background: linear-gradient(145deg, #1a1a1a, #2c2c2c);
+    border: 2px solid #FF0000;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5), inset 0 0 5px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(2px);
+    margin: 10px auto;
+    display: block;
+    background: url('/assets/button2.png') no-repeat center center / cover;
+  }
+  
+  #connectWalletBtn:hover,
+  #buyPackBtn:hover {
+    background: linear-gradient(145deg, #2c2c2c, #3a3a3a);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8), 0 0 35px rgba(255, 69, 0, 0.4);
+    transform: scale(1.05);
+    color: #ffffff;
   }
 
 #status, #userInfo, #ownedSets, #balance {
@@ -130,7 +156,7 @@
   margin: 0 auto 20px auto;
   animation: pulse 1s infinite alternate;
   border: 10px solid transparent;
-      border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
+  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
 }
 
 #buy-widget h1 {
@@ -178,11 +204,6 @@
   
   <button id="connectWalletBtn" style="display: none;">Connect Phantom</button>
   <button id="buyPackBtn" style="display: none;">Buy Pack (1M $MASQ)</button>
-
-  
-<!--   <p id="balance"></p>
-  <p id="ownedSets"></p>
-  <div id="userInfo"></div> -->
   
   <div id="userInfoContainer">
     <p id="status"></p>
@@ -200,7 +221,6 @@
   <div class="auth-buttons">
     <button onclick="handleSignup()">Sign Up</button>
     <button onclick="handleLogin()">Login</button>
-<!--     <button onclick="handleGuestPlay()">Guest</button> -->
   </div>
   <p style="font-size: 0.8rem; color: #aaa; margin-top: 0.5rem;">* * Email confirmation not required. Treat like username in email format</p>
 </div>
