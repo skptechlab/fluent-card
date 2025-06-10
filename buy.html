@@ -10,31 +10,6 @@
 <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
 <script type="module" src="buy.js"></script>
 <style>
-  button {
-    font-family: 'Orbitron', sans-serif;
-    margin: 10px;
-    padding: 12px 30px;
-    background: rgba(255, 215, 0, 0.9);
-    border: none;
-    border-radius: 8px;
-    color: #000;
-    font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 0 15px #FF0000, 0 0 5px #FF0000 inset;
-    transition: transform 0.2s ease, box-shadow 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 30px;
-  }
-
-  button:hover {
-    background: #FF0000;
-    color: #FFD700;
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 0 20px #FFD700, 0 0 10px #FF0000 inset;
-  }
-
-  /* Auth Panel Styles */
   .auth-panel {
     position: fixed;
     top: 50%;
@@ -73,9 +48,13 @@
     margin: 5px;
     width: 120px;
     background: rgba(255, 215, 0, 0.9);
-    color: #000;
+    text-shadow: 0 0 5px #FF0000;
+    color: white;
+    font-weight: bold;
     box-shadow: 0 0 10px #FF0000;
+    background: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') no-repeat center center / cover;
   }
+
 
   .auth-panel .auth-buttons button:hover {
     background: #FF0000;
