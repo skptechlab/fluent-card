@@ -2,7 +2,7 @@
 
 > *The complete on-chain strategic collectible card game with native token integration—powered by vanilla JS, Supabase, and WebGL via Three.js.*
 
-![MASQ Logo](/assets/banner_skelF22.gif)
+![MASQ Logo](/assets/00banner11.gif)
 
 ---
 
