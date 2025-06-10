@@ -494,7 +494,7 @@ body {
   margin: 0 5px;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   border: 10px solid transparent;
-  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
+  border-image: url('/assets/button2.gif') 300 round;
   text-shadow: 0 0 5px #FF0000;
   color: white;
   font-weight: bold;
