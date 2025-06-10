@@ -497,6 +497,7 @@ body {
   flex: 1;
   margin: 0 5px;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
+  background: url('/assets/button2.gif') no-repeat center center / cover;
 }
 
 .auth-buttons button:hover {
@@ -666,6 +667,7 @@ body {
 .play-btn {
   animation: pulseGlow 2s infinite ease-in-out;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
+  background: url('/assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
   color: #FFD700;
 }
@@ -673,6 +675,7 @@ body {
 .buy-btn {
   animation: pulseGlow 2s infinite ease-in-out;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
+  background: url('/assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
   color: #FFD700;
 }
