@@ -498,6 +498,9 @@ body {
   margin: 0 5px;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   background: url('/assets/button2.gif') no-repeat center center / cover;
+  text-shadow: 0 0 5px #FF0000;
+  color: white;
+  font-weight: bold;
 }
 
 .auth-buttons button:hover {
@@ -669,7 +672,9 @@ body {
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   background: url('/assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
-  color: #FFD700;
+  text-shadow: 0 0 5px #FF0000;
+  color: white;
+  font-weight: bold;
 }
 
 .buy-btn {
@@ -677,7 +682,9 @@ body {
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   background: url('/assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
-  color: #FFD700;
+  text-shadow: 0 0 5px #FF0000;
+  color: white;
+  font-weight: bold;
 }
 
 
