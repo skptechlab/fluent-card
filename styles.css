@@ -93,6 +93,8 @@ body {
   font-family: 'Orbitron', sans-serif;
   text-shadow: 0 0 10px #FF0000;
   margin: 0;
+  border: 10px solid transparent;
+  border-image: url('/assets/button2.png') 300 round;
 }
 
 .subtitle {
@@ -715,10 +717,10 @@ body {
 
 .health-fill {
   height: 100%;
-  background: linear-gradient(to right, #FF4500, #FF0000);
+  background: linear-gradient(to right, #8B4513, #D4AF37);
   transition: width 0.5s ease-in-out;
   border-radius: 5px 0 0 5px;
-  box-shadow: 0 0 8px rgba(255, 69, 0, 0.4);
+  box-shadow: 0 0 8px rgba(139, 69, 19, 0.4);
 }
 
 .mana-fill {
