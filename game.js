@@ -547,6 +547,16 @@ export function resolveTurn() {
             log(`Hyperledger Oracle triggers extra draw of ${drawCount} cards!`);
           }
         }
+        if (card.data.name === "Bonk Pup") {
+          drawCards(gameState.player, 1);
+          const lastCard = gameState.player.hand[gameState.player.hand.length - 1];
+          if (lastCard && lastCard.data.cost <= 2) {
+            card.data.attack += 1;
+            log("Bonk Pup barks! Drawn card costs 2 or less — gains +1 Attack this turn.");
+          } else {
+            log("Bonk Pup draws, but no bonus this time.");
+          }
+        }
       }
 
       gameState.opponent.health -= attack;
@@ -678,6 +688,16 @@ export function resolveTurn() {
             const drawCount = parseInt(drawCard.data.ability.match(/\d+/) || 1);
             drawCards(gameState.opponent, drawCount);
             log(`Opponent Hyperledger Oracle triggers extra draw of ${drawCount} cards!`);
+          }
+        }
+        if (card.data.name === "Bonk Pup") {
+          drawCards(gameState.player, 1);
+          const lastCard = gameState.player.hand[gameState.player.hand.length - 1];
+          if (lastCard && lastCard.data.cost <= 2) {
+            card.data.attack += 1;
+            log("Bonk Pup barks! Drawn card costs 2 or less — gains +1 Attack this turn.");
+          } else {
+            log("Bonk Pup draws, but no bonus this time.");
           }
         }
       }
