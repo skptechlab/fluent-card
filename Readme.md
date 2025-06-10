@@ -396,11 +396,17 @@ Own your destiny.
 
 ---
 
-## 15. Disclaimers
+## Disclaimers
 
 - Blockchain assets are volatile.  
 - MASQ is not financial advice.  
 - Always research before participating.  
 - Game is for entertainment purposes only.  
+
+---
+
+## Contact
+
+support@masq.club
 
 ---
