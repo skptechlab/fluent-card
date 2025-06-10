@@ -791,7 +791,7 @@ button {
   box-shadow: inset 0 0 8px rgba(255, 0, 0, 0.05);
 }
 
-.card-tooltip, .how-to-play-tooltip, .lore-tooltip {
+.card-tooltip, .lore-tooltip {
   position: absolute;
   background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.85));
   border: 1px solid #FF0000;
@@ -806,6 +806,26 @@ button {
   max-width: 420px;
   white-space: pre-wrap;
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+}
+
+.how-to-play-tooltip {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.85));
+  border-radius: 8px;
+  padding: 14px;
+  color: #FFD700;
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  pointer-events: none;
+  z-index: 20;
+  display: none;
+  max-width: 420px;
+  white-space: pre-wrap;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+  top: 50%;
+  left: 50%;
+  border: 10px solid transparent;
+  border-image: url('/assets/button2.png') 300 round;
 }
 
 .timer {
