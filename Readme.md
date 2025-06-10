@@ -36,7 +36,7 @@ MASQuerades champions:
 
 ## Gameplay Overview
 
-Turn-based battles against Grok, the AI opponent. Cards have attack, health, and abilities. Mana grows each turn. Win by reducing your opponent’s health to zero.
+Turn-based battles against Grok, AI opponent powered by xAPI. Cards have attack, health, and abilities. Mana grows each turn. Win by reducing your opponent’s health to zero.
 
 ![MASQ gameplay](/assets/gameplay.png)
 
