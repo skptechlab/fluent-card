@@ -184,7 +184,7 @@ lore: "Forged from every chain, born of every whisper, the masked Singularity de
   lore: "A colossus of molten value, towering over the blockchain’s shifting sands."
 }
 ```
-![MASQ#73](/cards/a73.webp)
+![MASQ#73](/cards/g5.webp)
 #### 🧩 Deck Logic
 
 - Draws based on `weight` for rarity  
