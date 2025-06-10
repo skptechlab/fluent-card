@@ -392,16 +392,12 @@ body {
   background: transparent;
   padding: 20px 40px;
   font-family: 'Cinzel', serif;
-/*   font-size: 24px; */
-/*   font-weight: 700; */
   text-transform: uppercase;
   border: 3px solid #FFD700;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.5), inset 0 0 5px rgba(255, 215, 0, 0.3);
   cursor: pointer;
   z-index: 1001;
-/*   transition: all 0.3s ease; */
-/*   animation: vintagePulse 2s infinite ease-in-out; */
 }
 
 .play-game-btn:hover {
@@ -497,7 +493,8 @@ body {
   flex: 1;
   margin: 0 5px;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  border: 10px solid transparent;
+  border-image: url('https://cdn.glitch.global/7b91c8dc-0f09-40c5-90d2-26cac98db2c2/button2.gif') 300 round;
   text-shadow: 0 0 5px #FF0000;
   color: white;
   font-weight: bold;
