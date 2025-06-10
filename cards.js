@@ -8,7 +8,7 @@ export const cardSets = [
     name: "Core Set",
     cards: [
       
-    { id: 1, name: "Mog Masquaredes Broker", cost: 2, attack: 2, health: 3, texture: "/cards/a1.webp", weight: 4, lore: "A shadowy figure trading secrets for bitcoin in gilded parlors." },
+            { id: 1, name: "Mog Masquaredes Broker", cost: 2, attack: 2, health: 3, texture: "/cards/a1.webp", weight: 4, lore: "A shadowy figure trading secrets for bitcoin in gilded parlors." },
             { id: 2, name: "Velvet Trump Enforcer", cost: 3, attack: 3, health: 2, texture: "/cards/a2.webp", weight: 3, lore: "Old money’s muscle, enforcing debts with silk-gloved fists and a trump card." },
             { id: 3, name: "Gilded Pepe Vault", cost: 2, attack: 0, health: 5, texture: "/cards/a3.webp", weight: 3, lore: "A crypt of wealth, safeguarding fortunes in blockchain with pepe memes." },
             { id: 4, name: "Crypto AI Baron", cost: 6, attack: 5, health: 0, texture: "/cards/a4.webp", weight: 2, lore: "A lord of digital gold, ruthless in his ledgered empire powered by AI." },
@@ -75,7 +75,8 @@ export const cardSets = [
             { id: 65, name: "Infinite Finality Wall", cost: 10, attack: 0, health: 12, texture: "/cards/a65.webp", weight: 0, lore: "No consensus breaks it. No exploit cracks it. Only time may dissolve its permanence." },
             { id: 66, name: "Dust Indexer", cost: 1, attack: 0, health: 1, ability: "Draw 1 card. If it costs 1, draw another.", texture: "/cards/a66.webp", weight: 4, lore: "Rummages through the detritus of the ledger, sifting for overlooked value." },
             { id: 67, name: "Node Librarian", cost: 4, attack: 2, health: 3, ability: "Draw 2 cards. If both are unique types, gain +1 mana next turn.", texture: "/cards/a67.webp", weight: 3, lore: "Curates the knowledge of every node, connecting ideas across fractured data streams." },
-            { id: 68, name: "Hyperledger Oracle", cost: 7, attack: 4, health: 6, ability: "Draw 3 cards. If any of those 3 cards is a draw card, draw number of cards equal to the first draw card again.", texture: "/cards/a68.webp", weight: 1, lore: "Its memory spans every fork, recalling futures where knowledge becomes cheaper." }
+            { id: 68, name: "Hyperledger Oracle", cost: 7, attack: 4, health: 6, ability: "Draw 3 cards. If any of those 3 cards is a draw card, draw number of cards equal to the first draw card again.", texture: "/cards/a68.webp", weight: 1, lore: "Its memory spans every fork, recalling futures where knowledge becomes cheaper." },
+            { id: 74, name: "Bonk Pup", cost: 0, attack: 5, health: 3, ability: "Battlecry: Draw a card. If it costs 2 or less, gain +1 Attack this turn.", texture: "https://cdn.glitch.global/your-path/a84.png", weight: 4,lore: "A scrappy Solana street pup, scrounging dust and sparking community chaos."}
         ],
   },
   {
