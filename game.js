@@ -15,7 +15,7 @@ export const gameState = {
   turnTimeLeft: 20,
   turnTimer: null,
   opponentQueueTimer: null,
-  maxHandSize: 10,
+  maxHandSize: 7,
   maxDeckSize: 35,
   isPaused: false,
   isTurnActive: false,
