@@ -275,7 +275,7 @@ export function drawCards(player, count) {
 }
 
 export function updateBoard() {
-  const centerSpacing = 2.5;
+  const centerSpacing = 2;
 
   gameState.player.hand.forEach((card, index) => {
     card.targetPosition.set((index - (gameState.player.hand.length - 1) / 2) * centerSpacing, -5, 0.5);
