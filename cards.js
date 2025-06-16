@@ -130,24 +130,31 @@ export class Card {
   }
 
   createCardMesh() {
-    const geometry = new THREE.PlaneGeometry(2, 3);
-    const texture = new THREE.TextureLoader().load(this.data.texture);
+  // Detect screen width
+  const isMobile = window.innerWidth <= 768;
 
-    const material = new THREE.ShaderMaterial({
-      uniforms: {
-        cardTexture: { value: this.isPlayer ? texture : cardBackMaterial.map },
-      },
-      vertexShader,
-      fragmentShader,
-      transparent: true,
-      side: THREE.DoubleSide,
-    });
+  // Smaller size for mobile
+  const width = isMobile ? 1.2 : 2;
+  const height = isMobile ? 1.8 : 3;
 
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.userData = this;
-    scene.add(mesh);
-    return mesh;
-  }
+  const geometry = new THREE.PlaneGeometry(width, height);
+  const texture = new THREE.TextureLoader().load(this.data.texture);
+
+  const material = new THREE.ShaderMaterial({
+    uniforms: {
+      cardTexture: { value: this.isPlayer ? texture : cardBackMaterial.map },
+    },
+    vertexShader,
+    fragmentShader,
+    transparent: true,
+    side: THREE.DoubleSide,
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.userData = this;
+  scene.add(mesh);
+  return mesh;
+}
 
   reveal() {
     if (!this.isPlayer) {
