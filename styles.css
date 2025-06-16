@@ -1380,24 +1380,906 @@ p {
 
 
 
-#mobileMessage {
-  display: none;
-}
-
 @media (max-width: 768px) {
-  #mobileMessage {
-    display: block;
-    position: fixed;
-    bottom: 50%;
-    left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    font-size: 1rem;
-    text-align: center;
-    z-index: 9999;
+  /* Body */
+  body {
+    font-size: 7px; /* 14px * 0.5 */
+    cursor: auto;
+    min-height: 100vh;
+    flex-direction: column;
   }
 
+  /* Homepage */
+  .homepage {
+    height: 100vh;
+  }
+
+  /* Loading Screen */
+  .loading-screen {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Loading Text */
+  .loading-text {
+    font-size: 9px; /* 18px * 0.5 */
+    margin-top: 7.5px; /* 15px * 0.5 */
+  }
+
+  /* Video Background */
+  .video-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.1; /* 0.2 * 0.5 */
+  }
+
+  /* Header */
+  .header {
+    height: 2.5vh; /* 5vh * 0.5 */
+    padding: 0 5px; /* 10px * 0.5 */
+    background-size: contain;
+  }
+
+  /* Logo */
+  .logo {
+    width: 20px; /* 40px * 0.5 */
+    margin-left: 2.5px; /* 5px * 0.5 */
+  }
+
+  /* Title Container */
+  .title-container {
+    flex-grow: 1;
+  }
+
+  /* Title */
+  .title {
+    font-size: 12px; /* 24px * 0.5 */
+    border-image: url('/assets/button2.png') 75 round; /* 150 * 0.5 */
+  }
+
+  /* Subtitle */
+  .subtitle {
+    font-size: 5px; /* 10px * 0.5 */
+    margin-left: 2.5px; /* 5px * 0.5 */
+  }
+
+  /* Connect Container */
+  .connect-container {
+    bottom: 5px; /* 10px * 0.5 */
+    right: 5px; /* 10px * 0.5 */
+  }
+
+  /* Connect Button */
+  .connect-btn {
+    padding: 4px 8px; /* 8px 16px * 0.5 */
+    font-size: 7px; /* 14px * 0.5 */
+    border-radius: 4px; /* 8px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+  }
+
+  /* Connect Button Pseudo Elements */
+  .connect-btn::before,
+  .connect-btn::after {
+    width: 75%; /* 150% * 0.5 */
+    height: 75%; /* 150% * 0.5 */
+  }
+
+  /* Connect Button Hover */
+  .connect-btn:hover {
+    transform: scale(1.025); /* 1.05 * ~0.5 */
+    box-shadow: 0 0 5px #FFD700, 0 0 7.5px #FF0000; /* 10px, 15px * 0.5 */
+  }
+
+  /* Pulse Glow Animation */
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 1.5px #FFD700, 0 0 3px #FF0000; /* 3px, 6px * 0.5 */
+    }
+    100% {
+      box-shadow: 0 0 5px #FFD700, 0 0 7.5px #FF0000; /* 10px, 15px * 0.5 */
+    }
+  }
+
+  /* Glow Flicker Animation */
+  @keyframes glowFlicker {
+    0% {
+      opacity: 0.05; /* 0.1 * 0.5 */
+      transform: rotate(30deg) scale(1);
+    }
+    50% {
+      opacity: 0.15; /* 0.3 * 0.5 */
+      transform: rotate(30deg) scale(1.015); /* 1.03 * ~0.5 */
+    }
+    100% {
+      opacity: 0.05; /* 0.1 * 0.5 */
+      transform: rotate(30deg) scale(1);
+    }
+  }
+
+  /* Marquee */
+  .marquee {
+    font-size: 9px; /* 18px * 0.5 */
+    top: 2.5vh; /* 5vh * 0.5 */
+    border-bottom-width: 0.5px; /* 1px * 0.5 */
+  }
+
+  /* Marquee Div and Span */
+  .marquee div,
+  .marquee span {
+    padding-right: 15px; /* 30px * 0.5 */
+  }
+
+  /* Marquee Scroll Animation */
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Border Green */
+  .border-green {
+    border-width: 0.5px; /* 1px * 0.5 */
+  }
+
+  /* Typewriter Container */
+  .typewriter-container {
+    margin-top: 4vh; /* 8vh * 0.5 */
+    padding: 7.5px; /* 15px * 0.5 */
+  }
+
+  /* Typewriter Text */
+  .typewriter-text {
+    font-size: 7px; /* 14px * 0.5 */
+    margin: 5px 0; /* 10px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Glow Animation */
+  @keyframes glow-animation {
+    0% { text-shadow: 0 0 1.5px #FF0000; /* 3px * 0.5 */
+    }
+    50% { text-shadow: 0 0 4px #FF0000, 0 0 5px #FF4500; /* 8px, 10px * 0.5 */
+    }
+    100% { text-shadow: 0 0 1.5px #FF0000; /* 3px * 0.5 */
+    }
+  }
+
+  /* Cursor */
+  .cursor {
+    border-right: 0.5px solid #FF0000; /* 1px * 0.5 */
+  }
+
+  /* Cursor Blink Animation */
+  @keyframes cursor-blink {
+    0% { border-color: #FF0000; }
+    50% { border-color: transparent; }
+  }
+  
+  /* Angled Button Group */
+  .angled-btn-group {
+    top: 37.5%; /* 75% * 0.5 */
+    flex-direction: row;
+    gap: 5px; /* 10px * 0.5 */
+    margin-top: 40vh;
+  }
+
+  /* Angled Button Group List Item */
+  .angled-btn-group li {
+    margin: 5px 0; /* 10px * 0.5 */
+    margin: 0 2vw;
+  }
+
+  /* Angled Button Group Link */
+  .angled-btn-group li a {
+    width: 60px; /* 120px * 0.5 */
+    height: 50px; /* 100px * 0.5 */
+    padding-left: 10px; /* 20px * 0.5 */
+    transform: rotate(0deg) skew(1.5deg); /* 3deg * 0.5 */
+    box-shadow: inset 0 0 5px #000, 0 0 5px #FFD700; /* 10px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 6px; /* 12px * 0.5 */
+  }
+
+  /* Angled Button Group Link Before */
+  .angled-btn-group li a:before {
+    top: 2.5px; /* 5px * 0.5 */
+    left: -7.5px; /* -15px * 0.5 */
+    width: 7.5px; /* 15px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 6px; /* 12px * 0.5 */
+  }
+
+  /* Angled Button Group Link After */
+  .angled-btn-group li a:after {
+    bottom: -7.5px; /* -15px * 0.5 */
+    left: -2.5px; /* -5px * 0.5 */
+    height: 7.5px; /* 15px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 6px; /* 12px * 0.5 */
+  }
+
+  /* Angled Button Group Icon */
+  .angled-btn-group li a i {
+    font-size: 12px; /* 24px * 0.5 */
+    line-height: 30px; /* 60px * 0.5 */
+    padding-right: 7px; /* 14px * 0.5 */
+  }
+
+  /* Angled Button Group Span */
+  .angled-btn-group li a span {
+    font-size: 7px; /* 14px * 0.5 */
+    letter-spacing: 2px; /* 4px * 0.5 */
+    text-shadow: 1px 1px red; /* 2px * 0.5 */
+  }
+
+  /* Angled Button Group Link Hover */
+  .angled-btn-group li a:hover {
+    transform: rotate(0deg) skew(1.5deg) translate(5px, -5px); /* 10px, -10px * 0.5 */
+    box-shadow: -15px 15px 15px rgba(0, 0, 0, 0.15); /* 30px * 0.5 */
+  }
+
+  /* Angled Button Group Before Hover */
+  .angled-btn-group li:hover a:before {
+    background: #aa0000;
+  }
+
+  /* Angled Button Group After Hover */
+  .angled-btn-group li:hover a:after {
+    background: #ff3333;
+  }
+
+  /* Controls Text */
+  .controls-text {
+    font-size: 6px; /* 12px * 0.5 */
+    bottom: 2.5px; /* 5px * 0.5 */
+    left: 2.5px; /* 5px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Clickable Word */
+  .clickable-word {
+    font-size: 10px; /* 20px * 0.5 */
+    bottom: 2.5px; /* 5px * 0.5 */
+  }
+
+  /* Clickable Word Span */
+  .clickable-word span {
+    margin: 0 5px; /* 10px * 0.5 */
+  }
+
+  /* Clickable Word Span Hover */
+  .clickable-word span:hover {
+    text-shadow: 0 0 4px #FFD700; /* 8px * 0.5 */
+  }
+
+  /* Tokenomics Popup */
+  .tokenomics-popup {
+    width: 40%; /* 80% * 0.5 */
+    max-width: 125px; /* 250px * 0.5 */
+    bottom: 15px; /* 30px * 0.5 */
+    padding: 5px; /* 10px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 4px; /* 8px * 0.5 */
+    box-shadow: 0 0 7.5px #FF0000; /* 15px * 0.5 */
+  }
+
+  /* Tokenomics Title */
+  .tokenomics-title {
+    font-size: 8px; /* 16px * 0.5 */
+    text-shadow: 0 0 5px #FF0000; /* 10px * 0.5 */
+    margin-bottom: 5px; /* 10px * 0.5 */
+  }
+
+  /* Tokenomics Subtitle */
+  .tokenomics-subtitle {
+    font-size: 7px; /* 14px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+    margin: 5px 0 2.5px; /* 10px, 5px * 0.5 */
+  }
+
+  /* Tokenomics Text */
+  .tokenomics-text {
+    font-size: 6px; /* 12px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+    margin: 2.5px 0; /* 5px * 0.5 */
+  }
+
+  /* Tokenomics Link */
+  .tokenomics-link {
+    font-size: 6px; /* 12px * 0.5 */
+  }
+
+  /* Tokenomics Link Hover */
+  .tokenomics-link:hover {
+    text-shadow: 0 0 4px #FFD700; /* 8px * 0.5 */
+  }
+
+  /* Top Right GIF */
+  .top-right-gif {
+    width: 100px; /* 200px * 0.5 */
+    bottom: -10px; /* -20px * 0.5 */
+    right: -2.5px; /* -5px * 0.5 */
+  }
+
+  /* Binance Widget Marquee */
+  .binance-widget-marquee {
+    margin-top: 2.5px; /* 5px * 0.5 */
+  }
+
+  /* Play Game Button */
+  .play-game-btn {
+    padding: 7.5px 15px; /* 15px 30px * 0.5 */
+    top: 35%; /* 70% * 0.5 */
+    font-size: 7px; /* 14px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 5px; /* 10px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 215, 0, 0.25); /* 15px * 0.5, 0.5 * 0.5 */
+  }
+
+  /* Play Game Button Hover */
+  .play-game-btn:hover {
+    transform: translate(-50%, -50%) scale(1.015); /* 1.03 * ~0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 215, 0, 0.3); /* 15px * 0.5, 0.6 * 0.5 */
+  }
+
+  /* Vintage Pulse Animation */
+  @keyframes vintagePulse {
+    0% {
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.2); /* 10px * 0.5 */
+      text-shadow: 0 0 1.5px #FFD700; /* 3px * 0.5 */
+    }
+    50% {
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); /* 20px * 0.5 */
+      text-shadow: 0 0 5px #FFD700; /* 10px * 0.5 */
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.2); /* 10px * 0.5 */
+      text-shadow: 0 0 1.5px #FFD700; /* 3px * 0.5 */
+    }
+  }
+
+  /* Game Canvas */
+  #gameCanvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Countdown Screen */
+  .countdown-screen {
+    font-size: 24px; /* 48px * 0.5 */
+    text-shadow: 0 0 7.5px #FF0000, 0 0 12.5px #FF4500; /* 15px, 25px * 0.5 */
+  }
+
+  /* Auth Panel */
+  .auth-panel {
+    padding: 10px; /* 20px * 0.5 */
+    min-width: 125px; /* 250px * 0.5 */
+    max-width: 45%; /* 90% * 0.5 */
+    border-image: url('/assets/button2.png') 75 round; /* 150 * 0.5 */
+    border-width: 25px; /* 50px * 0.5 */
+    border-radius: 6px; /* 12px * 0.5 */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.075); /* 30px * 0.5 */
+  }
+
+  /* Auth Panel Input */
+  .auth-panel input {
+    font-size: 7px; /* 14px * 0.5 */
+    padding: 4px; /* 8px * 0.5 */
+    margin: 5px 0; /* 10px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    border-radius: 3px; /* 6px * 0.5 */
+    box-shadow: inset 0 0 2.5px rgba(255, 0, 0, 0.05); /* 5px * 0.5 */
+  }
+
+  /* Auth Panel Input Focus */
+  .auth-panel input:focus {
+    border-color: #FF0000;
+    box-shadow: 0 0 4px rgba(255, 0, 0, 0.1); /* 8px * 0.5 */
+    outline: none;
+  }
+
+  /* Auth Buttons */
+  .auth-buttons {
+    flex-direction: column;
+    gap: 5px; /* 10px * 0.5 */
+    margin-top: 7px; /* 14px * 0.5 */
+  }
+
+  /* Auth Buttons Button */
+  .auth-buttons button {
+    margin: 2.5px 0; /* 5px * 0.5 */
+    padding: 4px; /* 8px * 0.5 */
+    font-size: 7px; /* 14px * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-image: url('/assets/button2.gif') 150 round; /* 300 * 0.5 */
+  }
+
+  /* Auth Buttons Button Hover */
+  .auth-buttons button:hover {
+    transform: scale(1.015); /* 1.03 * ~0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.35); /* 15px * 0.5 */
+  }
+
+  /* Post Login */
+  .post-login {
+    width: 100%; /* 90% * 0.5 */
+    max-width: 80vh; /* 350px * 0.5 */
+    padding: 10px; /* 20px * 0.5 */
+    border-image: url('/assets/button2.png') 75 round; /* 150 * 0.5 */
+    border-width: 25px; /* 50px * 0.5 */
+    border-radius: 10px; /* 20px * 0.5 */
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.15); /* 40px * 0.5 */
+    gap: 15px; /* 30px * 0.5 */
+  }
+
+  /* Post Login Before */
+  .post-login::before {
+    top: -5px; /* -10px * 0.5 */
+    left: -5px; /* -10px * 0.5 */
+    right: -5px; /* -10px * 0.5 */
+    bottom: -5px; /* -10px * 0.5 */
+    border-radius: 15px; /* 30px * 0.5 */
+  }
+
+  /* Post Login Title */
+  .post-login-title {
+    font-size: 11px; /* 22px * 0.5 */
+    text-shadow: 0 0 5px #FF0000, 0 0 10px #FF4500; /* 10px, 20px * 0.5 */
+    padding-bottom: 5px; /* 10px * 0.5 */
+    border-bottom-width: 1px; /* 2px * 0.5 */
+  }
+
+  /* Player Stats */
+  .player-stats {
+    padding: 7.5px; /* 15px * 0.5 */
+    border-radius: 7.5px; /* 15px * 0.5 */
+    box-shadow: inset 0 0 5px rgba(255, 0, 0, 0.1); /* 10px * 0.5 */
+  }
+
+  /* Player Stats Before */
+  .player-stats::before {
+    top: -2.5px; /* -5px * 0.5 */
+    left: -2.5px; /* -5px * 0.5 */
+    right: -2.5px; /* -5px * 0.5 */
+    bottom: -2.5px; /* -5px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 10px; /* 20px * 0.5 */
+  }
+
+  /* Stats Header */
+  .stats-header {
+    font-size: 8px; /* 16px * 0.5 */
+    text-shadow: 0 0 4px #FFD700; /* 8px * 0.5 */
+    margin-bottom: 7.5px; /* 15px * 0.5 */
+  }
+
+  /* Stats Item */
+  .stats-item {
+    padding: 4px 0; /* 8px * 0.5 */
+    border-bottom-width: 0.5px; /* 1px * 0.5 */
+  }
+
+  /* Stats Label */
+  .stats-label {
+    font-size: 7px; /* 14px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Stats Value */
+  .stats-value {
+    font-size: 9px; /* 18px * 0.5 */
+  }
+
+  /* Post Login Buttons */
+  .post-login-buttons {
+    gap: 7.5px; /* 15px * 0.5 */
+  }
+
+  /* Post Login Button */
+  .post-login-btn {
+    padding: 5px 10px; /* 10px 20px * 0.5 */
+    font-size: 8px; /* 16px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    border-radius: 7.5px; /* 15px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.25); /* 15px * 0.5 */
+  }
+
+  /* Post Login Button Before */
+  .post-login-btn::before {
+    width: 75%; /* 150% * 0.5 */
+    height: 75%; /* 150% * 0.5 */
+  }
+
+  /* Post Login Button Hover */
+  .post-login-btn:hover {
+    transform: scale(1.015); /* 1.03 * ~0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.35); /* 15px * 0.5 */
+  }
+
+  /* Play Button */
+  .play-btn {
+    padding: 5px 10px; /* 10px 20px * 0.5 */
+    font-size: 7px; /* 14px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Buy Button */
+  .buy-btn {
+    padding: 5px 10px; /* 10px 20px * 0.5 */
+    font-size: 7px; /* 14px * 0.5 */
+    border-width: 1px; /* 2px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* UI Overlay */
+  .ui-overlay {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Player Info */
+  .player-info {
+    width: 90px; /* 180px * 0.5 */
+    min-height: 50px; /* 100px * 0.5 */
+    bottom: 5px; /* 10px * 0.5 */
+    left: 5px; /* 10px * 0.5 */
+    padding: 6px; /* 12px * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-radius: 5px; /* 10px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.05); /* 15px * 0.5 */
+    gap: 5px; /* 10px * 0.5 */
+  }
+
+  /* Opponent Info */
+  .opponent-info {
+    width: 90px; /* 180px * 0.5 */
+    min-height: 50px; /* 100px * 0.5 */
+    top: 5px; /* 10px * 0.5 */
+    right: 5px; /* 10px * 0.5 */
+    padding: 6px; /* 12px * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-radius: 5px; /* 10px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.05); /* 15px * 0.5 */
+    gap: 5px; /* 10px * 0.5 */
+  }
+
+  /* Health Bar and Mana Bar */
+  .health-bar,
+  .mana-bar {
+    width: 70px; /* 140px * 0.5 */
+    height: 6px; /* 12px * 0.5 */
+    border-radius: 3px; /* 6px * 0.5 */
+    margin-top: 3px; /* 6px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    box-shadow: inset 0 0 2px rgba(255, 0, 0, 0.075); /* 4px * 0.5 */
+  }
+
+  /* Health Fill and Mana Fill */
+  .health-fill,
+  .mana-fill {
+    border-radius: 2px 0 0 2px; /* 4px * 0.5 */
+    box-shadow: 0 0 4px rgba(139, 69, 19, 0.2); /* 8px * 0.5, 0.4 * 0.5 */
+  }
+
+  /* Button */
+  button {
+    font-size: 5px; /* 10px * 0.5 */
+    padding: 3px 6px; /* 6px 12px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    border-radius: 4px; /* 8px * 0.5 */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.075); /* 10px * 0.5 */
+  }
+
+  /* End Turn Button */
+  .end-turn-btn {
+    bottom: 5px; /* 10px * 0.5 */
+    font-size: 6px; /* 12px * 0.5 */
+    padding: 3px 6px; /* 6px 12px * 0.5 */
+  }
+
+  /* Pause Button */
+  .pause-btn {
+    top: 5px; /* 10px * 0.5 */
+    font-size: 6px; /* 12px * 0.5 */
+    padding: 3px 6px; /* 6px 12px * 0.5 */
+  }
+
+  /* Right Buttons */
+  .right-buttons {
+    right: 5px; /* 10px * 0.5 */
+    gap: 4px; /* 8px * 0.5 */
+  }
+
+  /* Game Log */
+  .game-log {
+    width: 100px; /* 200px * 0.5 */
+    max-height: 100px; /* 200px * 0.5 */
+    font-size: 5px; /* 10px * 0.5 */
+    padding: 4px; /* 8px * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-radius: 3px; /* 6px * 0.5 */
+    box-shadow: inset 0 0 4px rgba(255, 0, 0, 0.025); /* 8px * 0.5 */
+  }
+
+  /* Card Tooltip and Lore Tooltip */
+  .card-tooltip,
+  .lore-tooltip {
+    font-size: 6px; /* 12px * 0.5 */
+    padding: 5px; /* 10px * 0.5 */
+    max-width: 150px; /* 300px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    border-radius: 4px; /* 8px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.1); /* 15px * 0.5 */
+  }
+
+  /* How to Play Tooltip */
+  .how-to-play-tooltip {
+    font-size: 6px; /* 12px * 0.5 */
+    padding: 5px; /* 10px * 0.5 */
+    max-width: 150px; /* 300px * 0.5 */
+    top: 20%; /* 40% * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-radius: 4px; /* 8px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.1); /* 15px * 0.5 */
+  }
+
+  /* Timer */
+  .timer {
+    font-size: 24px; /* 48px * 0.5 */
+    text-shadow: 0 0 6px #FF0000, 0 0 10px #FF4500; /* 12px, 20px * 0.5 */
+  }
+
+  /* Button Hover */
+  button:hover,
+  .end-turn-btn:hover,
+  .pause-btn:hover {
+    transform: scale(1.015); /* 1.03 * ~0.5 */
+    box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); /* 10px * 0.5 */
+  }
+
+  /* Game Stats */
+  .game-stats {
+    width: 90px; /* 180px * 0.5 */
+    padding: 6px; /* 12px * 0.5 */
+    bottom: 5px; /* 10px * 0.5 */
+    right: 5px; /* 10px * 0.5 */
+    border-width: 5px; /* 10px * 0.5 */
+    border-radius: 5px; /* 10px * 0.5 */
+    box-shadow: 0 0 7.5px rgba(255, 0, 0, 0.05); /* 15px * 0.5 */
+    gap: 5px; /* 10px * 0.5 */
+  }
+
+  /* Game Over Screen */
+  .game-over-screen {
+    padding: 10px; /* 20px * 0.5 */
+    width: 45%; /* 90% * 0.5 */
+    max-width: 150px; /* 300px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    border-radius: 6px; /* 12px * 0.5 */
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); /* 40px * 0.5 */
+  }
+
+  /* Game Over Screen Heading */
+  .game-over-screen h2 {
+    font-size: 12px; /* 24px * 0.5 */
+    margin-bottom: 9px; /* 18px * 0.5 */
+    text-shadow: 0 0 4px rgba(255, 0, 0, 0.15); /* 8px * 0.5 */
+  }
+
+  /* Game Over Screen Paragraph */
+  .game-over-screen p {
+    font-size: 7px; /* 14px * 0.5 */
+    margin-bottom: 12.5px; /* 25px * 0.5 */
+  }
+
+  /* Game Over Screen Button */
+  .game-over-screen button {
+    font-size: 6px; /* 12px * 0.5 */
+    padding: 4px 8px; /* 8px 16px * 0.5 */
+    margin: 0 4px; /* 8px * 0.5 */
+  }
+
+  /* Game Over Screen Button Hover */
+  .game-over-screen button:hover {
+    transform: scale(1.015); /* 1.03 * ~0.5 */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.25); /* 20px * 0.5 */
+  }
+
+  /* Fade Pulse Animation */
+  @keyframes fadePulse {
+    0% { opacity: 0.35; /* 0.7 * 0.5 */
+    }
+    50% { opacity: 0.5; /* 1 * 0.5 */
+    }
+    100% { opacity: 0.35; /* 0.7 * 0.5 */
+    }
+  }
+
+  /* Glow Shift Animation */
+  @keyframes glowShift {
+    0% { box-shadow: 0 0 2px rgba(255, 0, 0, 0.1); /* 4px * 0.5 */
+    }
+    50% { box-shadow: 0 0 4px rgba(255, 0, 0, 0.15); /* 8px * 0.5 */
+    }
+    100% { box-shadow: 0 0 2px rgba(255, 0, 0, 0.1); /* 4px * 0.5 */
+    }
+  }
+
+  /* Timer Pulse Animation */
+  @keyframes timerPulse {
+    0% { text-shadow: 0 0 4px #FF0000, 0 0 6px #FF4500; /* 8px, 12px * 0.5 */
+    }
+    50% { text-shadow: 0 0 6px #FF0000, 0 0 9px #FF4500; /* 12px, 18px * 0.5 */
+    }
+    100% { text-shadow: 0 0 4px #FF0000, 0 0 6px #FF4500; /* 8px, 12px * 0.5 */
+    }
+  }
+
+  /* Card Container and Card Container New */
+  #card-container,
+  #card-container-new {
+    width: 60px; /* 120px * 0.5 */
+    height: 90px; /* 180px * 0.5 */
+    top: 27.5%; /* 55% * 0.5 */
+    margin-top: 20vh;
+  }
+
+  /* Card */
+  .card {
+    width: 100%;
+    height: 100%;
+    border-radius: 6px; /* 12px * 0.5 */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25); /* 12px, 30px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.15); /* 10px * 0.5 */
+  }
+
+  /* Mana Label */
+  #mana-label {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+    left: -60px; /* -120px * 0.5 */
+    padding: 3px 5px; /* 6px 10px * 0.5 */
+    text-shadow: 0 0 3px #00f0ff; /* 6px * 0.5 */
+    gap: 3px; /* 6px * 0.5 */
+  }
+
+  /* Mana Label After */
+  #mana-label::after {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+  }
+
+  /* Attack Label */
+  #attack-label {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+    right: 80px; /* 160px * 0.5 */
+    padding: 3px 5px; /* 6px 10px * 0.5 */
+    text-shadow: 0 0 2px #ff4444; /* 4px * 0.5 */
+  }
+
+  /* Attack Label After */
+  #attack-label::after {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+  }
+
+  /* Health Label */
+  #health-label {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+    left: 70px; /* 140px * 0.5 */
+    padding: 3px 5px; /* 6px 10px * 0.5 */
+    text-shadow: 0 0 2px #44ff44; /* 4px * 0.5 */
+  }
+
+  /* Health Label Before */
+  #health-label::before {
+    font-size: 0.6rem; /* 1.2rem * 0.5 */
+  }
+
+  /* Main */
+  main {
+    padding: 7.5px; /* 15px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Headings */
+  h1, h2 {
+    font-size: 10px; /* 20px * 0.5 */
+    text-shadow: 0 0 5px #FF0000; /* 10px * 0.5 */
+  }
+
+  /* Paragraph */
+  p {
+    font-size: 7px; /* 14px * 0.5 */
+  }
+
+  /* Home Link */
+  .home-link {
+    font-size: 7px; /* 14px * 0.5 */
+    top: 5px; /* 10px * 0.5 */
+    left: 5px; /* 10px * 0.5 */
+    text-shadow: 0 0 2.5px #FF0000; /* 5px * 0.5 */
+  }
+
+  /* Home Link Hover */
+  .home-link:hover {
+    text-shadow: 0 0 4px #FFD700; /* 8px * 0.5 */
+  }
+
+  /* Masq Navbar */
+  .masq-navbar {
+    gap: 8px; /* 16px * 0.5 */
+    flex-direction: row;
+    bottom: 0px;
+  }
+
+  /* Nav Link */
+  .nav-link {
+    font-size: 8px; /* 16px * 0.5 */
+    padding: 4px; /* 8px * 0.5 */
+  }
+
+  
+
+  /* Mute Toggle */
+  .mute-toggle {
+    width: 20px; /* 40px * 0.5 */
+    height: 20px; /* 40px * 0.5 */
+    font-size: 10px; /* 20px * 0.5 */
+    bottom: 5px; /* 10px * 0.5 */
+    left: 5px; /* 10px * 0.5 */
+  }
+
+  /* Loading Spinner */
+  #loadingSpinner {
+    width: 15px; /* 30px * 0.5 */
+    height: 15px; /* 30px * 0.5 */
+  }
+
+  /* Spinner Circle */
+  #loadingSpinner .spinner-circle {
+    border-width: 1.5px; /* 3px * 0.5 */
+  }
+
+  /* Notification Widget */
+  #notification-widget {
+    width: 60px; /* 120px * 0.5 */
+    bottom: 40px; /* 80px * 0.5 */
+    right: 10px; /* 20px * 0.5 */
+    font-size: 0.2rem; /* 0.4rem * 0.5 */
+    padding: 4px; /* 8px * 0.5 */
+    border-width: 0.5px; /* 1px * 0.5 */
+    border-radius: 8px; /* 16px * 0.5 */
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.25); /* 10px * 0.5 */
+  }
+
+  /* Notification Title */
+  #notification-title {
+    font-size: 0.25rem; /* 0.5rem * 0.5 */
+    margin-bottom: 2.5px; /* 5px * 0.5 */
+    text-shadow: 0 0 3px gold; /* 6px * 0.5 */
+  }
+
+  /* Notification Countdown */
+  #notification-countdown {
+    font-size: 0.175rem; /* 0.35rem * 0.5 */
+    margin-bottom: 3px; /* 6px * 0.5 */
+    text-shadow: 0 0 2px gold; /* 4px * 0.5 */
+  }
+
+  /* Notification Message */
+  #notification-message {
+    font-size: 0.15rem; /* 0.3rem * 0.5 */
+  }
+
+  /* Notification Images */
+  #notification-images img {
+    width: 15px; /* 30px * 0.5 */
+    height: 22.5px; /* 45px * 0.5 */
+    margin: 0 1.5px; /* 3px * 0.5 */
+    border-radius: 2px; /* 4px * 0.5 */
+    box-shadow: 0 0 2.5px rgba(255, 215, 0, 0.15); /* 5px * 0.5 */
+  }
+}
 
 
 
