@@ -1059,6 +1059,90 @@ async function refreshPlayerStats() {
   }
 }
 
+function onTouchStart(event) {
+  if (gameState.isPaused || !event.touches.length) return;
+  const touch = event.touches[0];
+  handleMouseDownLikeInput(touch.clientX, touch.clientY);
+}
+
+function onTouchMove(event) {
+  if (gameState.isPaused || !event.touches.length) return;
+  const touch = event.touches[0];
+  handleMouseMoveLikeInput(touch.clientX, touch.clientY);
+}
+
+function onTouchEnd(event) {
+  if (gameState.isPaused) return;
+  handleMouseUpLikeInput();
+}
+
+function handleMouseDownLikeInput(x, y) {
+  mouse.x = (x / window.innerWidth) * 2 - 1;
+  mouse.y = -(y / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(scene.children);
+  if (intersects.length > 0) {
+    const card = intersects[0].object.userData;
+    if (gameState.player.hand.includes(card)) {
+      gameState.draggingCard = card;
+      gameState.selectedCard = card;
+    }
+  }
+}
+
+function handleMouseMoveLikeInput(x, y) {
+  mouse.x = (x / window.innerWidth) * 2 - 1;
+  mouse.y = -(y / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const tooltip = document.getElementById('cardTooltip');
+  const intersects = raycaster.intersectObjects(scene.children);
+
+  let hovered = false;
+  if (intersects.length > 0) {
+    const card = intersects[0].object.userData;
+    const allCards = [...gameState.player.hand, ...gameState.player.playedCards.slice(-5), ...gameState.opponent.playedCards.slice(-5)];
+
+    if (card && allCards.includes(card)) {
+      hovered = true;
+      const isPlayedCard = gameState.player.playedCards.includes(card) || gameState.opponent.playedCards.includes(card);
+      const scale = isPlayedCard ? 1 : 2;
+      card.mesh.scale.set(scale, scale, scale);
+      card.mesh.position.z = 2;
+
+      const currentTexture = card.mesh.material?.uniforms?.cardTexture?.value;
+      if (card.isPlayer || (currentTexture && currentTexture.image && currentTexture.image.src === card.data.texture)) {
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${x + 10}px`;
+        tooltip.style.top = `${y - 10}px`;
+        tooltip.innerHTML = `${card.data.name}<br>Cost: ${card.data.cost} | Attack: ${card.data.attack} | Health: ${card.data.health}${card.data.ability ? '<br>' + card.data.ability : ''}`;
+      } else {
+        tooltip.style.display = 'none';
+      }
+    }
+  }
+
+  if (!hovered) {
+    [...gameState.player.hand, ...gameState.player.playedCards.slice(-5), ...gameState.opponent.playedCards.slice(-5)].forEach(card => {
+      const isPlayedCard = gameState.player.playedCards.includes(card) || gameState.opponent.playedCards.includes(card);
+      const scale = isPlayedCard ? 0.25 : 1;
+      card.mesh.scale.set(scale, scale, scale);
+      card.targetPosition.z = 0.5;
+    });
+    tooltip.style.display = 'none';
+  }
+}
+
+function handleMouseUpLikeInput() {
+  if (!gameState.draggingCard) return;
+  if (mouse.y < -0.2) {
+    playCard(gameState.draggingCard);
+  }
+  gameState.draggingCard = null;
+  gameState.selectedCard = null;
+}
+
 
 
       
@@ -1066,3 +1150,7 @@ async function refreshPlayerStats() {
 window.addEventListener('mousemove', onMouseMove);
 window.addEventListener('mousedown', onMouseDown);
 window.addEventListener('mouseup', onMouseUp);
+
+window.addEventListener('touchstart', onTouchStart, { passive: false });
+window.addEventListener('touchmove', onTouchMove, { passive: false });
+window.addEventListener('touchend', onTouchEnd, { passive: false });
