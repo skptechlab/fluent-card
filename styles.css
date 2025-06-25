@@ -1163,8 +1163,6 @@ p {
     justify-content: center;
     flex-wrap: wrap;
     gap: 24px;
-/*     display: grid;
-    grid-template-columns: 1fr; */
 }
 
 .nav-link {
