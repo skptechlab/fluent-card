@@ -1,6 +1,7 @@
 # the MASQuerades
 
 > *The complete on-chain strategic collectible card game with native token integration—powered by vanilla JS, Supabase, and WebGL via Three.js.*
+> [Official MASQ website](https://www.masq.club/)
 
 ![MASQ Logo](/assets/00banner11.gif)
 
@@ -124,6 +125,9 @@ MASQ-main/
 ---
 
 ### 🃏 cards.js – Card Library & Deck Logic
+
+#### Total cards count during launch: 75
+[View all cards](https://www.masq.club/cards)
 
 #### 📜 Card Schema
 
