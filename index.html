@@ -54,16 +54,6 @@
       🔇
     </button>
     <div id="homepage" class="homepage">
-<!--         <div class="marquee">
-            <div>
-                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
-                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
-                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
-                <span>$MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ $MASQ</span>
-            </div>
-        </div> -->
-
-<!--         <div class="border-green"></div> -->
 
         <div class="typewriter-container">
             <div class="typewriter-text glow"><span id="line1"> > </span><span class="cursor"></span></div>
@@ -72,7 +62,8 @@
             <div class="typewriter-text glow"><span id="line4"> > </span><span class="cursor"></span></div>
             <div class="typewriter-text glow"><span id="line5"> > </span><span class="cursor"></span></div>
             <div class="typewriter-text glow"><span id="line6"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line7"> > </span><span class="cursor"></span></div>
+            <br>
+            <span id="copyCA" class="ca-line glow" title="Tap to copy">CA: </span>
         </div>
         
             <div class="clickable-word glow">
@@ -517,6 +508,18 @@ setInterval(updateCountdown, 1000);
       el.style.display = 'none';
     });
   }
+
+document.getElementById("copyCA").addEventListener("click", function () {
+    const address = this.textContent.replace("CA: ", "").trim();
+    navigator.clipboard.writeText(address).then(() => {
+      this.classList.add("copied");
+      this.textContent = "Copied!";
+      setTimeout(() => {
+        this.classList.remove("copied");
+        this.textContent = "CA: " + address;
+      }, 1500);
+    });
+  });
       
     </script>
 </body>
