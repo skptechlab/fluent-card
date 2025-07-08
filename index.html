@@ -1,532 +1,329 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
-<html lang="en">  
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>MASQuerades – $MASQ</title>
-    <meta name="title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
-    <meta name="description" content="Enter the MASQuerade. A legendary, aesthetic token & tactical card game built on Solana. Powered by $MASQ, forged by the masked anon vanguard." />
-    <link rel="icon" type="image/png" href="/assets/logomasq1-g11o.gif" />
-    <link rel="apple-touch-icon" href="/assets/logomasq1-g11o.gif" />
+    <title>Card Battle Arena - Simple PvP Card Game</title>
+    <meta name="description" content="Simple turn-based PvP card battle game with beautiful 3D animations" />
+    <link rel="icon" type="image/png" href="./assets/logomasq1-g11o.gif" />
     <meta name="theme-color" content="#0B0B0B" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://masq.club/" />
-    <meta property="og:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
-    <meta property="og:description" content="Step into the masked realm. Just pure anon-powered gameplay and decentralized art." />
-    <meta property="og:image" content="/assets/logomasq1-g11o.gif" />
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://x.com/MASQ_game" />
-    <meta property="twitter:title" content="MASQuerades – $MASQ Token & Card Game on Solana" />
-    <meta property="twitter:description" content="Join the masked vanguard of Solana. Play. Collect. Conquer. One token. Infinite strategy." />
-    <meta property="twitter:image" content="/assets/logomasq1-g11o.gif" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css"/>
-    <script src="https://public.bnbstatic.com/unpkg/growth-widget/cryptoCurrencyWidget@0.0.20.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
-
+    <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen" style="display: none;">
-        <img src="/assets/nullman1-red1.gif" alt="Loading GIF">
-        <div id="loadingText" class="loading-text">Initializing MASQ...</div>
+        <div class="loading-content">
+            <img src="./assets/logomasq1-g11o.gif" alt="Loading" class="loading-logo">
+            <div id="loadingText" class="loading-text">Loading Card Battle Arena...</div>
+        </div>
     </div>
+
+    <!-- Background Video -->
     <video class="video-bg" autoplay loop muted playsinline preload="auto">
-        <source src="/assets/MASQ1.webm" type="video/webm">
+        <source src="./assets/MASQ1.webm" type="video/webm">
         Your browser does not support the video tag.
     </video>
+
+    <!-- Header -->
     <div class="header" id="header">
-        <a href="/">
-            <img src="/assets/logomasq1-g11o.gif" alt="Logo" class="logo">
-        </a>
+        <img src="./assets/logomasq1-g11o.gif" alt="Logo" class="logo">
         <div class="title-container">
-            <div class="title glow">the MASQuerades</div>
-            <div class="subtitle">$MASQ</div>
+            <div class="title glow">Card Battle Arena</div>
+            <div class="subtitle">Simple PvP Battle</div>
         </div>
     </div>
+
+    <!-- Homepage -->
+    <div id="homepage" class="homepage">
+        <div class="main-content">
+            <!-- Compact Game Title -->
+            <div class="game-title-compact">
+                <h1>Card Battle Arena</h1>
+                <p>Simple PvP Card Battle</p>
+            </div>
+
+            <!-- Main Menu Actions -->
+            <div class="main-menu-actions">
+                <div class="quick-actions">
+                    <button class="quick-play-btn" onclick="handleGuestPlay()">
+                        <span class="btn-icon">⚡</span>
+                        <span class="btn-text">Quick Battle</span>
+                        <span class="btn-desc">Jump right in!</span>
+                    </button>
+                    <button class="login-play-btn" onclick="showAuth()">
+                        <span class="btn-icon">👤</span>
+                        <span class="btn-text">Login & Play</span>
+                        <span class="btn-desc">Save your progress</span>
+                    </button>
+                </div>
+
+                <!-- How to Play - Compact -->
+                <div class="how-to-play-compact">
+                    <h3>⚔️ Battle Rules</h3>
+                    <div class="rules-grid">
+                        <div class="rule-item">100 HP • 5 Cards • Click to Attack</div>
+                        <div class="rule-item">Cards deal 10-50 damage • First to 0 HP loses</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Panel (Hidden by default) -->
+            <div class="auth-section" style="display: none;">
+                <div class="auth-panel" id="authPanel">
+                    <h3>Enter Battle Arena</h3>
+                    <input type="text" id="username" placeholder="Your warrior name" maxlength="20" />
+                    <input type="email" id="email" placeholder="Email (optional)" />
+                    <div class="auth-buttons">
+                        <button onclick="handleLogin()">⚔️ Enter Battle</button>
+                        <button onclick="handleGuestPlay()">👻 Guest Mode</button>
+                    </div>
+                    <p class="auth-note">
+                        Save your battle history or play anonymously!
+                    </p>
+                    <button class="back-btn" onclick="hideAuth()">← Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+
+    <!-- Game UI Overlay -->
+    <div class="ui-overlay" id="gameUI" style="display: none;">
+        <!-- Player 1 Info (Bottom Left) -->
+        <div class="player-info player1-info">
+            <div class="player-name" id="player1Name">You</div>
+            <div class="hp-display">
+                <span>HP: </span><span id="player1HP">100/100</span>
+            </div>
+            <div class="health-bar">
+                <div class="health-fill" id="player1HPBar" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Player 2 Info (Top Right) -->
+        <div class="opponent-info player2-info">
+            <div class="player-name" id="player2Name">AI</div>
+            <div class="hp-display">
+                <span>HP: </span><span id="player2HP">100/100</span>
+            </div>
+            <div class="health-bar">
+                <div class="health-fill" id="player2HPBar" style="width: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Turn Indicator -->
+        <div class="turn-indicator" id="currentTurn">Your Turn</div>
+
+        <!-- Game Log -->
+        <div class="game-log" id="gameLog">
+            <div class="log-header">Battle Log</div>
+        </div>
+
+        <!-- Card Tooltip -->
+        <div class="card-tooltip" id="cardTooltip"></div>
+
+        <!-- Card Zoom Modal -->
+        <div class="card-zoom-modal" id="cardZoomModal" style="display: none;" onclick="closeCardZoom()">
+            <div class="card-zoom-content" onclick="event.stopPropagation()">
+                <div class="card-zoom-header">
+                    <h3 id="cardZoomName">Card Name</h3>
+                    <button class="card-zoom-close" onclick="closeCardZoom()">×</button>
+                </div>
+                <div class="card-zoom-body">
+                    <img id="cardZoomImage" src="" alt="Card Image" class="card-zoom-img">
+                    <div class="card-zoom-info">
+                        <div class="card-stat">
+                            <span class="stat-label">Attack:</span>
+                            <span class="stat-value" id="cardZoomAttack">0</span>
+                        </div>
+                        <div class="card-description" id="cardZoomDescription">
+                            Click this card to deal damage to your opponent!
+                        </div>
+                    </div>
+                </div>
+                <div class="card-zoom-actions">
+                    <button class="play-card-btn" onclick="confirmPlayCard()">Play this Card</button>
+                    <button class="cancel-btn" onclick="closeCardZoom()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="control-buttons">
+            <button class="control-btn" onclick="returnToMenu()">📱 Menu</button>
+            <button class="control-btn" onclick="restartGame()">🔄 New Game</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="gameOverScreen" class="game-over-screen" style="display: none;">
+        <div class="game-over-content">
+            <h2 id="gameOverTitle">Game Over</h2>
+            <p id="gameOverMessage">Battle completed!</p>
+            <div class="game-over-buttons">
+                <button onclick="restartGame()">🔄 Play Again</button>
+                <button onclick="returnToMenu()">📱 Main Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mute Toggle -->
+    <button id="muteToggle" class="mute-toggle">🔇</button>
+
+    <!-- Audio -->
     <audio id="bg-audio" autoplay muted loop>
-        <source src="/assets/bg_score.mp3" type="audio/mpeg">
+        <source src="./assets/bg_score.mp3" type="audio/mpeg">
     </audio>
 
-      <button id="muteToggle" class="mute-toggle">
-      🔇
-    </button>
-    <div id="homepage" class="homepage">
-
-        <div class="typewriter-container">
-            <div class="typewriter-text glow"><span id="line1"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line2"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line3"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line4"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line5"> > </span><span class="cursor"></span></div>
-            <div class="typewriter-text glow"><span id="line6"> > </span><span class="cursor"></span></div>
-            <br>
-            <span id="copyCA" class="ca-line glow" title="Tap to copy">CA: </span>
-        </div>
-        
-            <div class="clickable-word glow">
-                <div id="masqNav" class="masq-navbar">                
-                    <a class="nav-link" href="about">About</a>
-                    <a class="nav-link" href="cards">Cards</a>
-                    <a class="nav-link" href="whitepaper">Whitepaper</a>
-                    <a class="nav-link" href="https://github.com/" target="_blank" rel="noopener noreferrer">Github</a>
-                    <a class="nav-link" href="roadmap">Roadmap</a>
-                    <a class="nav-link" href="https://x.com/MASQ_game" target="_blank" rel="noopener noreferrer">Twitter</a>
-                </div>    
-            </div>
-        
-
-    <ul class="angled-btn-group">
-        <li>
-          <a href="#" onclick="showAuthPanel()">
-            <i class="fa fa-play" aria-hidden="true"></i>
-            <span>PLAY GAME</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" onclick="navigateTo('https://pump.fun/')">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-            <span>BUY $MASQ</span>
-          </a>
-        </li>
-        <li>
-          <a href="buy">
-            <i class="fa fa-buy" aria-hidden="true"></i>
-            <span>STORE</span>
-          </a>
-        </li>
-        <li>
-          <a href="holders">
-            <i class="fa fa-users" aria-hidden="true"></i>
-            <span>HOLDERS</span>
-          </a>
-        </li>
-        <li>
-          <a href="leaders">
-            <i class="fa fa-users" aria-hidden="true"></i>
-            <span>LEADERS</span>
-          </a>
-        </li>
-      </ul>
-        
-
-      
-<div id="card-container">
-  <div id="mana-label">MANA</div>
-  <div id="attack-label">ATTACK</div>
-  <div id="health-label">HEALTH</div>
-  <img src="/cards/a57.webp" class="card" />
-  <img src="/cards/a45.webp" class="card" />
-  <img src="/cards/a65.webp" class="card" />
-  <img src="/cards/a66.webp" class="card" />
-  <img src="/cards/a59.webp" class="card" />
-  <img src="/cards/a63.webp" class="card" />
-  <img src="/cards/a64.webp" class="card" />
-  <img src="/cards/a10.webp" class="card" />
-  <img src="/cards/a47.webp" class="card" />
-  <img src="/cards/a63.webp" class="card" />
-</div>
-
-      <div id="notification-widget" onclick="window.location.href='buy'">
-         <div id="notification-countdown"></div> 
-        <div id="notification-title">New Golden Pack Launch!</div>
-        <div id="notification-message">Buy now with $MASQ</div>
-        <div id="notification-images">
-          <img src="/cards/g1.webp" class="card" />
-          <img src="/cards/g2.webp" class="card" />
-          <img src="/cards/g3.webp" class="card" />
-          <img src="/cards/g4.webp" class="card" />
-          <img src="/cards/g5.webp" class="card" />
-          <img src="/cards/g1.webp" class="card" />
-          <img src="/cards/g2.webp" class="card" />
-          <img src="/cards/g3.webp" class="card" />
-          <img src="/cards/g4.webp" class="card" />
-          <img src="/cards/g5.webp" class="card" />
-        </div>
-      </div>
-
-    </div>
-    <canvas id="gameCanvas" style="display: none;"></canvas>
-    <div class="auth-panel" id="authPanel" style="display: none;">
-        <h2>Signup / Login / Play as Guest</h2>
-        <input type="email" id="email" placeholder="Email"/>
-        <input type="password" id="password" placeholder="Password"/>
-        <div class="auth-buttons">
-            <button onclick="handleSignup()">Sign Up</button>
-            <button onclick="handleLogin()">Login</button>
-            <button onclick="handleGuestPlay()">Guest</button>
-        </div>
-      <br>
-              <p style="font-size: 0.8rem; color: #aaa; margin-top: 0.5rem;">
-                  * Email confirmation not required. Treat like username in email format
-              </p>
-    </div>
-    <div id="postLogin" class="post-login" style="display: none;">
-        <h2 id="welcomeMessage" class="post-login-title">Welcome, Anon</h2>
-        <div class="player-stats" id="playerStats" style="display: none;">
-            <div class="stats-header">Your Legacy</div>
-            <div class="stats-item">
-                <span class="stats-label">Victories:</span>
-                <span class="stats-value" id="postLoginWins">0</span>
-            </div>
-            <div class="stats-item">
-                <span class="stats-label">Defeats:</span>
-                <span class="stats-value" id="postLoginLosses">0</span>
-            </div>
-            <div class="stats-item">
-                <span class="stats-label">Winning Streak:</span>
-                <span class="stats-value" id="postLoginStreak">0</span>
-            </div>
-            <div class="stats-item">
-                <span class="stats-label">Packs Owned:</span>
-                <span class="stats-value" style="font-size: 10px;" id="packsOwned">0</span>
-            </div>
-            <div class="stats-item">
-                <span class="stats-label">Wallet:</span>
-                <span class="stats-value" style="font-size: 8px;" id="walletConn">0</span>
-            </div>
-        </div>
-        <div class="post-login-buttons">
-            <button class="post-login-btn play-btn" onclick="startGame()">PLAY the Game</button>
-            <button class="post-login-btn buy-btn" onclick="navigateTo('buy.html')">Buy packs</button>
-        </div>
-    </div>
-
-    <div class="ui-overlay" id="gameUI" style="display: none;">
-        <div class="player-info">
-            <div>Health: <span id="playerHealth">30</span> / ∞</div>
-            <div class="health-bar"><div class="health-fill" id="playerHealthFill" style="width: 100%;"></div></div>
-            <div>Mana: <span id="playerMana">1</span>/<span id="playerMaxMana">1</span></div>
-            <div class="mana-bar"><div class="mana-fill" id="playerManaFill" style="width: 100%;"></div></div>
-            <div>Win Streak: <span id="winStreak">0</span></div>
-        </div>
-        <div class="opponent-info">
-            <div>Health: <span id="opponentHealth">30</span> / ∞</div>
-            <div class="health-bar"><div class="health-fill" id="opponentHealthFill" style="width: 100%;"></div></div>
-            <div>Mana: <span id="opponentMana">1</span>/<span id="opponentMaxMana">1</span></div>
-            <div class="mana-bar"><div class="mana-fill" id="opponentManaFill" style="width: 100%;"></div></div>
-        </div>
-        <button class="end-turn-btn" id="endTurnBtn">End Turn</button>
-        <button class="pause-btn" id="pauseBtn">Pause</button>
-        <div class="right-buttons">
-            <button class="how-to-play-btn" id="howToPlayBtn" onclick="showHowTo()">How to Play</button>
-            <button class="end-game-btn" id="endGame" onclick="endTheGame()">End Game</button>
-        </div>
-        <div class="game-log" id="gameLog"></div>
-        <div class="card-tooltip" id="cardTooltip"></div>
-        <div class="how-to-play-tooltip" id="howToPlayTooltip"></div>
-        <div class="lore-tooltip" id="loreTooltip"></div>
-        <div class="timer" id="turnTimer">20</div>
-        <div class="game-stats">
-            <div>Total Wins: <span id="totalWins">0</span></div>
-            <div>Total Losses: <span id="totalLosses">0</span></div>
-            <div>Win Streak: <span id="gameWinStreak">0</span></div>
-        </div>
-    </div>
-
-<!--     <div id="mobileMessage" style="display: none;">
-      Sorry, MASQ is not available on smaller devices yet.
-    </div> -->
     <!-- Scripts -->
     <script type="module">
-        import { signUp, login, getUser, playAsGuest } from './auth.js';
-        import { initializeGame } from './game.js';
-        import { getUserStats, getUserOwnedSets, getUserWallet } from './auth.js';
+        import { initializeGame, loginPlayer } from './game.js';
 
+        // Global state
+        let currentPlayer = null;
+
+        // Show loading screen
         function showLoadingScreen(text) {
             const loadingScreen = document.getElementById("loadingScreen");
             const loadingText = document.getElementById("loadingText");
             if (loadingScreen && loadingText) {
                 loadingText.textContent = text;
                 loadingScreen.style.display = "flex";
-                loadingScreen.classList.remove('fade-out');
-            } else {
-                console.error("Loading screen elements not found:", { loadingScreen, loadingText });
             }
         }
 
+        // Hide loading screen
         function hideLoadingScreen() {
             const loadingScreen = document.getElementById("loadingScreen");
             if (loadingScreen) {
-                loadingScreen.classList.add('fade-out');
-                setTimeout(() => {
-                    loadingScreen.style.display = "none";
-                }, 500);
-            } else {
-                console.error("Loading screen element not found");
+                loadingScreen.style.display = "none";
             }
         }
 
-        const loadingScreen = document.getElementById('loadingScreen');
-        const audio = document.getElementById('bg-audio');
-        audio.play().catch(err => {
-          console.log("Autoplay blocked:", err);
-        });
-        
-          showLoadingScreen("Initializing MASQ...");
-          setTimeout(() => {
-              hideLoadingScreen();
-              document.getElementById("homepage").style.display = "block";
-              document.getElementById("header").style.display = "flex";
-          }, 100);
-
-      // const marqueeContent = document.querySelector('.marquee div');
-      // marqueeContent.innerHTML += marqueeContent.innerHTML;
-
-      const lines = [
-          "Greetings, voyager of the boundless digital void",
-          "MASQuerades is the first of its kind: a free-to-play, fully on-chain digital collectible card game blending strategy, blockchain, and mind games",
-          "Battle Grok — powered by xAPI  — and refine your deck through tactical duels, adaptive challenges, and dynamic matchups.",
-          "Native $MASQ cryptocurrency powers in-game purchases — buy packs, flex your decks, and own your digital cards",
-          "The first exclusive Golden packs are already available for purchase using $MASQ, for limited time",
-          "Future updates will bring multiplayer tournaments, cross-chain expansions, and a dedicated MASQ app for seamless gameplay anywhere",
-          "CA: "
-      ];
-      let currentLine = 0;
-      let currentChar = 0;
-
-      function typeWriter() {
-          if (currentChar < lines[currentLine].length) {
-              const currentLineElement = document.getElementById(`line${currentLine + 1}`);
-              const currentCharElement = document.createElement('span');
-              const currentCharValue = lines[currentLine].charAt(currentChar);
-
-              if (currentCharValue === '<' && lines[currentLine].charAt(currentChar + 1) === 's') {
-                  const closingTagIndex = lines[currentLine].indexOf('>', currentChar);
-                  currentChar = closingTagIndex + 1;
-              } else {
-                  currentCharElement.textContent = currentCharValue;
-                  currentLineElement.appendChild(currentCharElement);
-                  currentChar++;
-                  
-              }
-          } else {
-              currentLine++;
-              currentChar = 0;
-              if (currentLine >= lines.length) {
-                  clearInterval(window.typeWriterInterval);
-                  
-              }
-          }
-      }
-
-      window.typeWriterInterval = setInterval(typeWriter, 50);
-
-
-
-        window.handleSignup = async function() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            try {
-                const result = await signUp(email, password);
-                if (result?.error) {
-                    alert("Signup failed: " + result.error.message);
-                    return;
-                }
-            } catch (err) {
-                alert("Signup error: " + err.message);
-            }
+        // Show auth panel
+        window.showAuth = function() {
+            document.querySelector(".auth-section").style.display = "flex";
         };
 
+        // Hide auth panel
+        window.hideAuth = function() {
+            document.querySelector(".auth-section").style.display = "none";
+        };
+
+        // Handle login
         window.handleLogin = async function() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            try {
-                showLoadingScreen("Loading User Stats...");
-                const result = await login(email, password);
-                if (result?.error || !result?.user) {
-                    hideLoadingScreen();
-                    alert("Login failed: " + (result?.error?.message || "Invalid credentials."));
-                    return;
-                }
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim() || null;
 
-                const user = await getUser();
-                if (user) {
-                  console.log("statst:", user.id);
-                    const stats = await getUserStats(user.id);
-                    console.log("statst:", stats.total_wins);
-                    const packs = await getUserOwnedSets(user.id);
-                    const wallet = await getUserWallet(user.id);
-                    console.log("[Login] Wallet fetched:", wallet);
-                    document.getElementById("authPanel").style.display = "none";
-                    document.getElementById("postLogin").style.display = "flex";
-                    document.getElementById("welcomeMessage").textContent = `Welcome, ${result.username}`;
-                    document.getElementById("postLoginWins").textContent = stats.total_wins;
-                    document.getElementById("postLoginLosses").textContent = stats.total_losses;
-                    document.getElementById("postLoginStreak").textContent = stats.win_streak;
-                
-                  
-                    const setNames = packs.map(setId => {
-                      if (setId === 1) return "Default Set";
-                      if (setId === 2) return "Golden Set";
-                      return `Set #${setId}`;
-                    });
-                    document.getElementById('packsOwned').textContent = `${setNames.join(', ') || 'None'}`;
-                  
-                    document.getElementById("walletConn").textContent = wallet;
-                    document.getElementById("playerStats").style.display = "block";
-                    hideLoadingScreen();
-                } else {
-                    hideLoadingScreen();
-                    alert("Login failed: User could not be loaded.");
-                }
-            } catch (err) {
+            if (!username) {
+                alert("Please enter a username");
+                return;
+            }
+
+            try {
+                showLoadingScreen("Logging in...");
+                currentPlayer = await loginPlayer(username, email);
+                startGameSession(username);
+            } catch (error) {
                 hideLoadingScreen();
-                alert("Login error: " + err.message);
+                alert("Login failed: " + error.message);
             }
         };
 
-        window.handleGuestPlay = async function() {
-            try {
-                showLoadingScreen("Entering as Guest...");
-                const result = await playAsGuest();
-                document.getElementById("authPanel").style.display = "none";
-                document.getElementById("postLogin").style.display = "flex";
-                document.getElementById("welcomeMessage").textContent = `Welcome, ${result.username}`;
-                document.getElementById("postLoginWins").textContent = "0";
-                document.getElementById("postLoginLosses").textContent = "0";
-                document.getElementById("postLoginStreak").textContent = "0";
-                document.getElementById("playerStats").style.display = "block";
-                hideLoadingScreen();
-            } catch (err) {
-                hideLoadingScreen();
-                alert("Guest mode error: " + err.message);
-            }
+        // Handle guest play
+        window.handleGuestPlay = function() {
+            const username = "Guest" + Math.floor(Math.random() * 1000);
+            startGameSession(username);
         };
 
-        window.startGame = function() {
-            showLoadingScreen("Starting Game...");
-            document.getElementById("postLogin").style.display = "none";
-            document.getElementById("gameUI").style.display = "block";
-            document.getElementById("gameCanvas").style.display = "block";
-            document.getElementById("header").style.display = "none";
-            initializeGame();
-        };
-
-        window.showHowTo = function() {
-            const tooltip = document.getElementById("howToPlayTooltip");
-            tooltip.innerHTML = `
-                <strong>Unveiling the MASQuerade:</strong><br><br>
-                1. <em>Cards in Hand:</em> Behold your arsenal, a collection of veiled powers.<br>
-                2. <em>Drag & Drop:</em> Summon your cards to the battlefield with a graceful sweep.<br>
-                3. <em>Mana Mastery:</em> Each move demands essence—spend wisely, for mana grows with each turn.<br>
-                4. <em>End Turn:</em> Conclude your strategy to unleash queued chaos upon your foe.<br>
-                5. <em>Victory:</em> Reduce your opponent’s vitality to naught and claim your dominion.<br><br>
-                Embrace the shadows, outwit your rival, and ascend as a legend beneath the MASQ!
-            `;
-            tooltip.style.display = "block";
-        };
-
-
-        window.showAuthPanel = function() {
+        // Start game session
+        function startGameSession(username) {
+            showLoadingScreen("Starting battle...");
+            
+            // Hide homepage
             document.getElementById("homepage").style.display = "none";
-            document.getElementById("authPanel").style.display = "block";
-            clearInterval(window.typeWriterInterval);
-        };
-
-        window.toggleTokenomics = function() {
-            const popup = document.getElementById("tokenomicsPopup");
-            popup.style.display = popup.style.display === "block" ? "none" : "block";
-        };
-
-        window.openLink = function(url) {
-            window.open(url, '_blank');
-        };
-
-        window.navigateTo = function(page) {
-            window.location.href = page;
-        };
-
-        const cards = document.querySelectorAll('.card');
-
-        function shuffleCards() {
-            cards.forEach((card, i) => {
-                card.style.transform = 'rotateY(90deg)';
-                card.style.opacity = 0;
-
-                setTimeout(() => {
-                    const offsetX = Math.random() * 100 - 50;
-                    const offsetY = Math.random() * 80 - 40;
-                    const rotate = Math.random() * 20 - 10;
-
-                    card.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg) rotateY(0deg)`;
-                    card.style.opacity = 1;
-                    card.style.zIndex = i;
-                }, 300 + i * 100);
-            });
-
-            setTimeout(() => {
-                cards.forEach((card, i) => {
-                    card.style.transform = `translate(0px, 0px) rotate(0deg) rotateY(0deg)`;
-                    card.style.zIndex = cards.length - i;
-                });
-            }, 2000);
+            document.getElementById("header").style.display = "none";
+            
+            // Show game
+            document.getElementById("gameCanvas").style.display = "block";
+            document.getElementById("gameUI").style.display = "block";
+            
+            // Update player name
+            document.getElementById("player1Name").textContent = username;
+            
+            // Initialize game
+            setTimeout(async () => {
+                await initializeGame(username);
+                hideLoadingScreen();
+            }, 500);
         }
 
-        shuffleCards();
-        setInterval(shuffleCards, 2000);
-      
-      function toggleTokenomics() {
-    const popup = document.getElementById('tokenomicsPopup');
-    popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
-}
-      
-      // Set target EST time
-// Example: June 10, 2025, 5:30 PM EST
-const targetTimeEST = new Date('2025-06-10T17:30:00-04:00');
-function updateCountdown() {
-  const now = new Date();
-  const diff = targetTimeEST - now;
+        // Return to menu
+        window.returnToMenu = function() {
+            // Hide game
+            document.getElementById("gameCanvas").style.display = "none";
+            document.getElementById("gameUI").style.display = "none";
+            document.getElementById("gameOverScreen").style.display = "none";
+            
+            // Show homepage
+            document.getElementById("homepage").style.display = "block";
+            document.getElementById("header").style.display = "flex";
+            
+            // Reset auth panel
+            document.querySelector(".auth-section").style.display = "none";
+            document.getElementById("username").value = "";
+            document.getElementById("email").value = "";
+            
+            currentPlayer = null;
+        };
 
-  if (diff > 0) {
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
+        // Restart game
+        window.restartGame = function() {
+            // Hide game over screen
+            document.getElementById("gameOverScreen").style.display = "none";
+            
+            // Reset and restart the game
+            if (currentPlayer) {
+                startGameSession(currentPlayer.username || "Guest");
+            } else {
+                handleGuestPlay();
+            }
+        };
 
-    document.getElementById('notification-countdown').textContent =
-      `${days}d ${hours}h ${minutes}m ${seconds}s`;
-  } else {
-    document.getElementById('notification-countdown').textContent =
-      "0d 0h 0m 0s";
-  }
-}
+        // Audio control
+        const audio = document.getElementById('bg-audio');
+        const muteToggle = document.getElementById('muteToggle');
+        
+        audio.muted = true;
+        
+        muteToggle.addEventListener('click', () => {
+            audio.muted = !audio.muted;
+            muteToggle.textContent = audio.muted ? '🔇' : '🔊';
+            if (!audio.muted && audio.paused) {
+                audio.play().catch(err => console.log("Audio autoplay blocked:", err));
+            }
+        });
 
-updateCountdown();
-setInterval(updateCountdown, 1000);
+        // Try to play audio
+        audio.play().catch(err => {
+            console.log("Audio autoplay blocked:", err);
+        });
 
-  const muteToggle = document.getElementById('muteToggle')
-  audio.muted = true;
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            hideLoadingScreen();
+            console.log("Card Battle Arena loaded!");
+        });
 
-  muteToggle.addEventListener('click', () => {
-    audio.muted = !audio.muted;
-    muteToggle.textContent = audio.muted ? '🔇' : '🔊';
-    if (!audio.muted && audio.paused) {
-      audio.play().catch(err => console.log("Autoplay blocked:", err));
-    }
-  });
-
- if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-    document.getElementById('mobileMessage').style.display = 'block';
-    document.body.querySelectorAll('*:not(#mobileMessage)').forEach(el => {
-      el.style.display = 'none';
-    });
-  }
-
-document.getElementById("copyCA").addEventListener("click", function () {
-    const address = this.textContent.replace("CA: ", "").trim();
-    navigator.clipboard.writeText(address).then(() => {
-      this.classList.add("copied");
-      this.textContent = "Copied!";
-      setTimeout(() => {
-        this.classList.remove("copied");
-        this.textContent = "CA: " + address;
-      }, 1500);
-    });
-  });
-      
+        // Handle mobile
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            document.body.classList.add('mobile');
+        }
     </script>
 </body>
 </html>

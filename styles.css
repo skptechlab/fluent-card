@@ -54,13 +54,13 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 1;
   object-fit: cover;
-  opacity: 0.3;
+  opacity: 0.4;
 }
 
 .header {
-  background: url('/assets/banner_skelF22.gif') no-repeat center center;
+  background: url('./assets/banner_skelF22.gif') no-repeat center center;
   background-size: cover; /* make sure it covers the whole header */
   height: 7vh;
   width: 100%;
@@ -94,7 +94,7 @@ body {
   text-shadow: 0 0 10px #FF0000;
   margin: 0;
   border: 10px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
 }
 
 .subtitle {
@@ -276,7 +276,7 @@ body {
   display: inline-block;
   margin-top: 8px;
   border: 10px solid transparent;
-  border-image: url('/assets/button2.gif') 100 round;
+  border-image: url('./assets/button2.gif') 100 round;
   border-radius: 12px;
   cursor: pointer;
   user-select: none;
@@ -423,10 +423,14 @@ body {
 }
 
 #gameCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   display: none;
   filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.1));
+  z-index: 5;
 }
 
 .countdown-screen {
@@ -449,7 +453,7 @@ body {
   transform: translate(-50%, -50%);
   padding: 32px;
   border: 50px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.4));
   box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 6px rgba(255, 0, 0, 0.1);
@@ -494,7 +498,7 @@ body {
   margin: 0 5px;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
   border: 10px solid transparent;
-  border-image: url('/assets/button2.gif') 300 round;
+  border-image: url('./assets/button2.gif') 300 round;
   text-shadow: 0 0 5px #FF0000;
   color: white;
   font-weight: bold;
@@ -513,11 +517,11 @@ body {
   transform: translate(-50%, -50%);
   background:
     linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.9)),
-    url('/assets/loading.gif') center/cover no-repeat;
+    url('./assets/loading.gif') center/cover no-repeat;
   padding: 40px;
   border-radius: 20px;
   border: 50px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
   box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.1);
   z-index: 90;
   display: none;
@@ -666,7 +670,7 @@ body {
 .play-btn {
   animation: pulseGlow 2s infinite ease-in-out;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
   text-shadow: 0 0 5px #FF0000;
   color: white;
@@ -676,7 +680,7 @@ body {
 .buy-btn {
   animation: pulseGlow 2s infinite ease-in-out;
   background: linear-gradient(90deg, #2B2B2B, #3C3C3C);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
   border: 2px solid #FF0000;
   text-shadow: 0 0 5px #FF0000;
   color: white;
@@ -685,13 +689,14 @@ body {
 
 
 .ui-overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
-  z-index: 10;
+  z-index: 15;
+  display: none;
 }
 
 .player-info, .opponent-info {
@@ -699,7 +704,7 @@ body {
   padding: 18px;
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.85), rgba(43, 43, 43, 0.8));
   border: 10px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.1), inset 0 0 5px rgba(255, 0, 0, 0.05);
   font-family: 'Cinzel', serif;
@@ -802,7 +807,7 @@ button {
   overflow-y: auto;
   background: rgba(26, 26, 26, 0.9);
   border: 10px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
   border-radius: 6px;
   padding: 10px;
   color: #FFD700;
@@ -846,7 +851,7 @@ button {
   top: 50%;
   left: 50%;
   border: 10px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
 }
 
 .timer {
@@ -882,7 +887,7 @@ button:hover {
   padding: 18px;
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.85), rgba(43, 43, 43, 0.8));
   border: 10px solid transparent;
-  border-image: url('/assets/button2.png') 300 round;
+  border-image: url('./assets/button2.png') 300 round;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(255, 0, 0, 0.1), inset 0 0 5px rgba(255, 0, 0, 0.05);
   font-family: 'Cinzel', serif;
@@ -1201,7 +1206,7 @@ p {
     clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
     animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 20ms), glitch 2s ease infinite 2s alternate-reverse;
     color: #FFD700;
-    background-image: url('/assets/button_f.png');
+    background-image: url('./assets/button_f.png');
     background-size: cover;
     background-position: center;
   
@@ -1278,7 +1283,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   position: relative;
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
 }
 
 .angled-btn-group li a:before {
@@ -1293,7 +1298,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   transform: skewY(-45deg);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1309,7 +1314,7 @@ p {
   border: 2px solid red;
   border-radius: 12px;
   transform: skewX(-45deg);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1339,7 +1344,7 @@ p {
 .angled-btn-group li a:hover {
   transform: rotate(0deg) skew(5deg) translate(20px, -15px);
   box-shadow: -50px 50px 50px rgba(0, 0, 0, 0.5);
-  background: url('/assets/button2.gif') no-repeat center center / cover;
+  background: url('./assets/button2.gif') no-repeat center center / cover;
 /*   opacity: 0.7; */
 }
 
@@ -1391,6 +1396,396 @@ p {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Card Zoom Modal Styles */
+.card-zoom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.card-zoom-content {
+  background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
+  border: 3px solid #FF0000;
+  border-radius: 15px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+  animation: zoomIn 0.3s ease-out;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card-zoom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #FF0000;
+  padding-bottom: 10px;
+}
+
+.card-zoom-header h3 {
+  color: #FFD700;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  text-shadow: 0 0 10px #FF0000;
+  margin: 0;
+}
+
+.card-zoom-close {
+  background: transparent;
+  border: 2px solid #FF0000;
+  color: #FF0000;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.card-zoom-close:hover {
+  background: #FF0000;
+  color: white;
+  transform: scale(1.1);
+}
+
+.card-zoom-body {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.card-zoom-img {
+  width: 150px;
+  height: 200px;
+  border: 2px solid #FFD700;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.card-zoom-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #FF0000;
+  border-radius: 8px;
+}
+
+.stat-label {
+  color: #FFD700;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+}
+
+.stat-value {
+  color: #FF0000;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #FF0000;
+}
+
+.card-description {
+  color: #FFD700;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.card-zoom-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.play-card-btn, .cancel-btn {
+  flex: 1;
+  padding: 15px 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border: 2px solid;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.play-card-btn {
+  background: linear-gradient(135deg, #FF0000, #FF4500);
+  border-color: #FFD700;
+  color: white;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.play-card-btn:hover {
+  background: linear-gradient(135deg, #FF4500, #FFD700);
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #2B2B2B, #3C3C3C);
+  border-color: #666;
+  color: #FFD700;
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(135deg, #3C3C3C, #4A4A4A);
+  border-color: #FF0000;
+  transform: scale(1.05);
+}
+
+/* Mobile responsive adjustments for card zoom */
+@media (max-width: 768px) {
+  .card-zoom-content {
+    max-width: 95%;
+    padding: 15px;
+  }
+  
+  .card-zoom-body {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .card-zoom-img {
+    width: 120px;
+    height: 160px;
+  }
+  
+  .card-zoom-actions {
+    flex-direction: column;
+  }
+}
+
+/* Compact Menu Styles */
+.main-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  z-index: 100;
+}
+
+.game-title-compact {
+  margin-bottom: 30px;
+}
+
+.game-title-compact h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  color: #FF0000;
+  text-shadow: 0 0 20px #FF0000, 0 0 40px #FF4500;
+  margin: 0;
+  margin-bottom: 10px;
+  animation: glow-animation 2s ease-in-out infinite alternate;
+}
+
+.game-title-compact p {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  color: #FFD700;
+  margin: 0;
+  text-shadow: 0 0 10px #FF0000;
+}
+
+.main-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.quick-play-btn, .login-play-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 30px;
+  background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.7));
+  border: 3px solid;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-play-btn {
+  border-color: #FFD700;
+}
+
+.login-play-btn {
+  border-color: #FF0000;
+}
+
+.quick-play-btn:hover, .login-play-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(255, 0, 0, 0.4);
+}
+
+.quick-play-btn:hover {
+  background: linear-gradient(145deg, #FFD700, #FF8C00);
+  color: #000;
+}
+
+.login-play-btn:hover {
+  background: linear-gradient(145deg, #FF0000, #FF4500);
+  color: #FFF;
+}
+
+.btn-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.btn-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.btn-desc {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  color: #CCC;
+  display: block;
+}
+
+.how-to-play-compact {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #FF0000;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+}
+
+.how-to-play-compact h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: #FFD700;
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  text-shadow: 0 0 10px #FF0000;
+}
+
+.rules-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-item {
+  font-family: 'Roboto', sans-serif;
+  color: #FFD700;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+.auth-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.back-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid #666;
+  color: #FFD700;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: #FF0000;
+  background: rgba(255, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+/* Mobile responsive for new menu */
+@media (max-width: 768px) {
+  .game-title-compact h1 {
+    font-size: 36px;
+  }
+  
+  .quick-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quick-play-btn, .login-play-btn {
+    min-width: 250px;
+  }
+  
+  .main-content {
+    width: 95%;
+  }
+  
+  .how-to-play-compact {
+    max-width: 100%;
+  }
 }
 
 /* ----responsiveForHandhelds---- */
@@ -1450,7 +1845,7 @@ p {
   /* Title */
   .title {
     font-size: 12px;
-    border-image: url('/assets/button2.png') 75 round;
+    border-image: url('./assets/button2.png') 75 round;
   }
 
   /* Subtitle */
@@ -1770,7 +2165,7 @@ p {
     padding: 10px;
     min-width: 125px;
     max-width: 45%; 
-    border-image: url('/assets/button2.png') 75 round;
+    border-image: url('./assets/button2.png') 75 round;
     border-width: 25px;
     border-radius: 6px; 
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.075); 
@@ -1806,7 +2201,7 @@ p {
     padding: 4px; 
     font-size: 7px; 
     border-width: 5px; 
-    border-image: url('/assets/button2.gif') 150 round; 
+    border-image: url('./assets/button2.gif') 150 round; 
   }
 
   /* Auth Buttons Button Hover */
@@ -1820,7 +2215,7 @@ p {
     width: 100%; 
     max-width: 80vh; 
     padding: 10px; 
-    border-image: url('/assets/button2.png') 75 round; 
+    border-image: url('./assets/button2.png') 75 round; 
     border-width: 25px; 
     border-radius: 10px; 
     box-shadow: 0 0 20px rgba(255, 0, 0, 0.15); 
