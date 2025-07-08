@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Card Battle Arena - Referee View</title>
+    <meta name="description" content="Referee interface for evaluating card plays in real-time" />
+    <link rel="icon" type="image/png" href="./assets/logomasq1-g11o.gif" />
+    <meta name="theme-color" content="#0B0B0B" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="referee.css"/>
+</head>
+<body class="referee-body">
+    <!-- Background removed for better referee focus -->
+
+    <!-- Header -->
+    <div class="referee-header">
+        <img src="./assets/logomasq1-g11o.gif" alt="Logo" class="logo">
+        <div class="title-container">
+            <div class="title glow">Referee Dashboard</div>
+            <div class="subtitle">Card Battle Evaluation Center</div>
+        </div>
+        <div class="status-indicator" id="connectionStatus">
+            <span class="status-dot offline"></span>
+            <span>Offline</span>
+        </div>
+    </div>
+
+    <!-- Main Referee Interface -->
+    <div class="referee-container">
+        <!-- Game Status Bar -->
+        <div class="game-status-bar">
+            <div class="player-hp">
+                <span class="player-label" id="player1Name">Player 1</span>
+                <div class="hp-display">
+                    <span id="player1HP">100/100</span>
+                    <div class="hp-bar"><div class="hp-fill" id="player1HPBar" style="width: 100%;"></div></div>
+                </div>
+            </div>
+            <div class="status-center">
+                <div id="currentTurnInfo">Waiting for game...</div>
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot offline"></span>
+                    <span>Offline</span>
+                </div>
+            </div>
+            <div class="player-hp">
+                <span class="player-label" id="player2Name">AI</span>
+                <div class="hp-display">
+                    <span id="player2HP">100/100</span>
+                    <div class="hp-bar"><div class="hp-fill" id="player2HPBar" style="width: 100%;"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Evaluation (Main Focus) -->
+        <div class="evaluation-main" id="evaluationPanel" style="display: none;">
+            <div class="card-preview">
+                <img id="evalCardImage" src="" alt="Card" class="card-image">
+                <div class="card-info">
+                    <h2 id="evalCardName">Card Name</h2>
+                    <div class="card-meta">
+                        <span class="player-badge" id="evalCardPlayer">Player 1</span>
+                        <span class="arrow">→</span>
+                        <span class="target-badge" id="evalCardTarget">Opponent</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="evaluation-controls">
+                <div class="damage-section">
+                    <label>Damage:</label>
+                    <div class="damage-controls">
+                        <button onclick="adjustDamage(-5)">-5</button>
+                        <input type="number" id="damageInput" value="0" min="0" max="100">
+                        <button onclick="adjustDamage(5)">+5</button>
+                    </div>
+                    <span class="original-damage">Original: <span id="evalCardAttack">0</span></span>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="approve-btn" onclick="approveCard()">✅ Approve</button>
+                    <button class="modify-btn" onclick="modifyCard()">🔧 Modify</button>
+                    <button class="reject-btn" onclick="rejectCard()">❌ Reject</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting State -->
+        <div class="waiting-state" id="waitingState">
+            <div class="waiting-content">
+                <div class="waiting-icon">⚖️</div>
+                <h3>Waiting for Cards</h3>
+                <p>No cards pending evaluation</p>
+                <div class="quick-controls">
+                    <button onclick="pauseGame()">⏸️ Pause</button>
+                    <button onclick="resumeGame()">▶️ Resume</button>
+                    <button onclick="viewMainGame()">👁️ View Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simplified Action Log -->
+        <div class="action-log">
+            <h4>Recent Actions</h4>
+            <div class="log-content" id="actionLog">
+                <div class="log-entry">
+                    <span class="log-message">Referee view initialized</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="referee.js"></script>
+</body>
+</html>

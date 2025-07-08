@@ -3,7 +3,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #000;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #0f0f0f);
   color: #FFF;
   font-family: 'Roboto', sans-serif;
   overflow-x: hidden;
@@ -13,6 +13,26 @@ body {
   min-height: 100vh;
   cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 22c-5.514 0-10-4.486-10-10s4.486-10 10-10 10 4.486 10 10-4.486 10-10 10z"/></svg>'), auto;
   position: relative;
+}
+
+/* Damage Animation */
+@keyframes damageFloat {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100px) scale(0.8);
+  }
+}
+
+.damage-animation {
+  animation: damageFloat 2s ease-out forwards;
 }
 
 .homepage {

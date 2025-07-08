@@ -16,7 +16,9 @@ export const gameState = {
   animationInProgress: false,
   availableCards: [],
   currentPlayerObj: null, // For authentication
-  zoomedCard: null // Card currently being viewed in zoom modal
+  zoomedCard: null, // Card currently being viewed in zoom modal
+  refereeMode: false, // Whether referee evaluation is enabled
+  pendingEvaluation: null // Card waiting for referee approval
 };
 
 // API helper functions
@@ -171,6 +173,10 @@ export async function initializeGame(username = null) {
   updateUI();
   
   log('Game initialized! Click cards to attack.');
+  
+  // Initialize referee integration
+  initializeRefereeIntegration();
+  
   animate();
 }
 
@@ -225,24 +231,29 @@ export function updateBoard() {
     card.targetScale.set(1, 1, 1);
   });
   
-  // Played cards (smaller, on sides)
-  const sideSpacing = 0.8;
-  gameState.player1.playedCards.slice(-5).forEach((card, index) => {
+  // Played cards (left side, face down, stacked)
+  gameState.player1.playedCards.slice(-10).forEach((card, index) => {
+    const stackOffset = index * 0.1;
     card.targetPosition.set(
-      (index - 2) * sideSpacing + 8, 
-      -2, 
-      0.3
+      -7, 
+      -2 + stackOffset, 
+      0.1 + stackOffset
     );
-    card.targetScale.set(0.4, 0.4, 0.4);
+    card.targetRotation.set(0, 0, 0); // Keep flat
+    card.targetScale.set(0.8, 0.8, 0.8);
+    card.showBack(); // Show card back
   });
   
-  gameState.player2.playedCards.slice(-5).forEach((card, index) => {
+  gameState.player2.playedCards.slice(-10).forEach((card, index) => {
+    const stackOffset = index * 0.1;
     card.targetPosition.set(
-      (index - 2) * sideSpacing + 8, 
-      2, 
-      0.3
+      -7, 
+      2 + stackOffset, 
+      0.1 + stackOffset
     );
-    card.targetScale.set(0.4, 0.4, 0.4);
+    card.targetRotation.set(0, 0, 0); // Keep flat
+    card.targetScale.set(0.8, 0.8, 0.8);
+    card.showBack(); // Show card back
   });
 }
 
@@ -252,11 +263,22 @@ export async function playCard(card) {
   if (gameState.currentPlayer !== 1) return; // Only player 1 can click
   if (!gameState.player1.hand.includes(card)) return;
   
+  // Check if referee mode is enabled
+  console.log('Referee mode status:', gameState.refereeMode);
+  if (gameState.refereeMode) {
+    console.log('Redirecting to referee evaluation');
+    await sendCardForEvaluation(card);
+    return;
+  }
+  
   gameState.animationInProgress = true;
   
   // Remove card from hand
   const cardIndex = gameState.player1.hand.indexOf(card);
   gameState.player1.hand.splice(cardIndex, 1);
+  
+  // Ensure card starts at normal scale (1x) before flying
+  card.mesh.scale.set(1, 1, 1);
   
   // Animate card flying across screen
   await animateCardFlight(card, true);
@@ -270,7 +292,7 @@ export async function playCard(card) {
     await playCardAPI(card.data.id, damage);
   }
   
-  // Move to played cards
+  // Move to played cards (will be handled by animation)
   gameState.player1.playedCards.push(card);
   
   // Draw new card
@@ -284,16 +306,18 @@ export async function playCard(card) {
     return;
   }
   
-  // Switch to AI turn
-  gameState.currentPlayer = 2;
-  updateBoard();
-  updateUI();
-  
-  // AI plays after short delay
-  setTimeout(async () => {
-    await aiPlayCard();
-    gameState.animationInProgress = false;
-  }, 1500);
+  // Switch to AI turn after animation completes
+  setTimeout(() => {
+    gameState.currentPlayer = 2;
+    updateBoard();
+    updateUI();
+    
+    // AI plays after short delay
+    setTimeout(async () => {
+      await aiPlayCard();
+      gameState.animationInProgress = false;
+    }, 1500);
+  }, 2000); // Wait for damage animation to complete
 }
 
 // AI plays a card
@@ -305,24 +329,132 @@ async function aiPlayCard() {
   const randomIndex = Math.floor(Math.random() * gameState.player2.hand.length);
   const aiCard = gameState.player2.hand[randomIndex];
   
+  // Check if referee mode is enabled for AI cards too
+  if (gameState.refereeMode) {
+    console.log('AI card needs referee evaluation:', aiCard.data.name);
+    await sendAICardForEvaluation(aiCard);
+    return;
+  }
+  
+  // Execute AI card play normally
+  await executeAICardPlay(aiCard);
+}
+
+// Send AI card for referee evaluation
+async function sendAICardForEvaluation(card) {
+  console.log('Sending AI card for evaluation:', card.data.name);
+  gameState.pendingEvaluation = card;
+  
+  const evaluationData = {
+    id: `${card.data.id}_${Date.now()}_AI`, // Unique ID for AI evaluation
+    name: card.data.name,
+    atk: card.data.atk,
+    imagePath: card.data.imagePath,
+    playerName: gameState.player2.username || 'AI Opponent',
+    targetPlayer: 'Player',
+    isAI: true, // Flag to indicate this is an AI card
+    timestamp: new Date().toISOString()
+  };
+  
+  // Add to pending evaluations queue
+  const pendingEvaluations = JSON.parse(localStorage.getItem('pendingCardEvaluations') || '[]');
+  pendingEvaluations.push(evaluationData);
+  localStorage.setItem('pendingCardEvaluations', JSON.stringify(pendingEvaluations));
+  
+  console.log('AI card evaluation stored:', evaluationData);
+  
+  // Update game state for referee
+  saveGameStateForReferee();
+  
+  log(`AI card sent for referee evaluation: ${card.data.name}`);
+  
+  // Wait for referee decision
+  waitForAIRefereeDecision(evaluationData.id);
+}
+
+// Wait for AI card referee decision
+function waitForAIRefereeDecision(evaluationId) {
+  const checkForResult = () => {
+    const result = localStorage.getItem('cardEvaluationResult');
+    if (result) {
+      try {
+        const evaluation = JSON.parse(result);
+        if (evaluation.cardId === evaluationId) {
+          localStorage.removeItem('cardEvaluationResult');
+          handleAIRefereeDecision(evaluation);
+          return;
+        }
+      } catch (error) {
+        console.error('Error parsing AI evaluation result:', error);
+      }
+    }
+    
+    // Continue polling if game is still active
+    if (gameState.isGameActive && gameState.pendingEvaluation) {
+      setTimeout(checkForResult, 500);
+    }
+  };
+  
+  checkForResult();
+}
+
+// Handle AI card referee decision
+async function handleAIRefereeDecision(evaluation) {
+  if (!gameState.pendingEvaluation) return;
+  
+  const card = gameState.pendingEvaluation;
+  gameState.pendingEvaluation = null;
+  
+  if (evaluation.approved) {
+    // Execute AI card play with potentially modified damage
+    const damage = evaluation.modifiedDamage || card.data.atk;
+    await executeAICardPlay(card, damage);
+    
+    if (evaluation.modifiedDamage && evaluation.modifiedDamage !== card.data.atk) {
+      log(`Referee modified AI damage: ${card.data.atk} → ${damage}`);
+    } else {
+      log(`Referee approved AI card: ${card.data.name}`);
+    }
+  } else {
+    // AI card was rejected - AI draws a new card and continues
+    log(`Referee rejected AI card: ${card.data.name}`);
+    drawCard(gameState.player2);
+    
+    // Switch back to player turn
+    gameState.currentPlayer = 1;
+    updateBoard();
+    updateUI();
+    gameState.animationInProgress = false;
+  }
+  
+  saveGameStateForReferee();
+}
+
+// Execute AI card play with specified damage
+async function executeAICardPlay(card, damage = null) {
   // Remove from AI hand
-  gameState.player2.hand.splice(randomIndex, 1);
+  const cardIndex = gameState.player2.hand.indexOf(card);
+  if (cardIndex !== -1) {
+    gameState.player2.hand.splice(cardIndex, 1);
+  }
   
   // Reveal and animate
-  aiCard.reveal();
-  await animateCardFlight(aiCard, false);
+  card.reveal();
+  // Ensure card starts at normal scale (1x) before flying
+  card.mesh.scale.set(1, 1, 1);
+  await animateCardFlight(card, false);
   
-  // Deal damage to player
-  const damage = aiCard.data.atk;
-  gameState.player1.hp = Math.max(0, gameState.player1.hp - damage);
+  // Deal specified damage (potentially modified by referee)
+  const finalDamage = damage || card.data.atk;
+  gameState.player1.hp = Math.max(0, gameState.player1.hp - finalDamage);
   
   // Move to played cards
-  gameState.player2.playedCards.push(aiCard);
+  gameState.player2.playedCards.push(card);
   
   // Draw new card
   drawCard(gameState.player2);
   
-  log(`AI played ${aiCard.data.name} dealing ${damage} damage! Your HP: ${gameState.player1.hp}`);
+  log(`AI played ${card.data.name} dealing ${finalDamage} damage! Your HP: ${gameState.player1.hp}`);
   
   // Check win condition
   if (gameState.player1.hp <= 0) {
@@ -330,17 +462,19 @@ async function aiPlayCard() {
     return;
   }
   
-  // Switch back to player
-  gameState.currentPlayer = 1;
-  updateBoard();
-  updateUI();
+  // Switch back to player after animation completes
+  setTimeout(() => {
+    gameState.currentPlayer = 1;
+    updateBoard();
+    updateUI();
+  }, 2000); // Wait for damage animation to complete
 }
 
-// Animate card flying across battlefield
+// Animate card flying to center and inflicting damage
 function animateCardFlight(card, playerToAI) {
   return new Promise((resolve) => {
     const startY = playerToAI ? -5 : 5;
-    const endY = playerToAI ? 2 : -2;
+    const centerY = 0; // Center of battlefield
     const duration = 1000; // 1 second
     const startTime = Date.now();
     
@@ -351,22 +485,113 @@ function animateCardFlight(card, playerToAI) {
       // Smooth animation curve
       const eased = 1 - Math.pow(1 - progress, 3);
       
-      // Calculate position
-      const currentY = startY + (endY - startY) * eased;
-      const currentZ = 2 + Math.sin(progress * Math.PI) * 3; // Arc motion
+      // Calculate position - move to center
+      const currentY = startY + (centerY - startY) * eased;
+      const currentZ = 2 + Math.sin(progress * Math.PI) * 2; // Arc motion
+      
+      // Scale up to 2x size when reaching center
+      const scale = 1 + (1 * progress); // 1x to 2x
       
       card.targetPosition.set(0, currentY, currentZ);
-      card.mesh.scale.set(1.2, 1.2, 1.2); // Slightly larger during flight
+      card.mesh.scale.set(scale, scale, scale);
       
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        resolve();
+        // Keep card in center at 2x size briefly
+        setTimeout(() => {
+          // Show damage animation
+          showDamageAnimation(card, playerToAI);
+          resolve();
+        }, 500);
       }
     }
     
     animate();
   });
+}
+
+// Show damage animation with floating damage number
+function showDamageAnimation(card, playerToAI) {
+  const damage = card.data.atk;
+  
+  // Create floating damage text
+  const damageElement = document.createElement('div');
+  damageElement.className = 'damage-animation';
+  damageElement.textContent = `-${damage}`;
+  damageElement.style.cssText = `
+    position: fixed;
+    left: 50%;
+    top: ${playerToAI ? '20%' : '80%'};
+    transform: translateX(-50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: #FF0000;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px #FF0000, 0 0 20px #FF0000;
+    z-index: 1000;
+    pointer-events: none;
+    animation: damageFloat 2s ease-out forwards;
+  `;
+  
+  document.body.appendChild(damageElement);
+  
+  // Remove after animation
+  setTimeout(() => {
+    damageElement.remove();
+  }, 2000);
+  
+  // Move card to played cards area after damage shown
+  setTimeout(() => {
+    moveCardToPlayedArea(card, playerToAI);
+  }, 1000);
+}
+
+// Move card to played cards area (left side, face down, stacked)
+function moveCardToPlayedArea(card, playerToAI) {
+  const player = playerToAI ? gameState.player1 : gameState.player2;
+  const playedCards = player.playedCards;
+  
+  // Position on left side, stacked
+  const stackOffset = playedCards.length * 0.1; // Small offset for stacking
+  const baseY = playerToAI ? -2 : 2;
+  
+  const finalPosition = new THREE.Vector3(-7, baseY + stackOffset, 0.1 + stackOffset);
+  const finalScale = new THREE.Vector3(0.8, 0.8, 0.8);
+  
+  // Animate to final position
+  const duration = 800;
+  const startTime = Date.now();
+  const startPos = card.mesh.position.clone();
+  const startScale = card.mesh.scale.clone(); // Keep current 2x scale
+  
+  function animateToPlayedArea() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    
+    // Animate position
+    const currentPos = startPos.clone().lerp(finalPosition, eased);
+    card.mesh.position.copy(currentPos);
+    
+    // Animate scale down from 2x to 0.8x
+    const currentScale = startScale.clone().lerp(finalScale, eased);
+    card.mesh.scale.copy(currentScale);
+    
+    // Animate rotation to show card back (face down)
+    card.mesh.rotation.y = Math.PI * eased;
+    
+    if (progress < 1) {
+      requestAnimationFrame(animateToPlayedArea);
+    } else {
+      // Set final values
+      card.targetPosition.copy(finalPosition);
+      card.targetRotation.set(0, Math.PI, 0);
+      card.targetScale.copy(finalScale);
+    }
+  }
+  
+  animateToPlayedArea();
 }
 
 // Draw a new card
@@ -379,6 +604,32 @@ function drawCard(player) {
   
   const newCard = new Card(randomCard, player === gameState.player1);
   player.hand.push(newCard);
+  
+  // Immediately position the new card in the correct hand position (not center)
+  const centerSpacing = 2.5;
+  const handIndex = player.hand.length - 1; // New card is at end of hand
+  const totalCards = player.hand.length;
+  
+  if (player === gameState.player1) {
+    // Player 1 hand (bottom)
+    newCard.targetPosition.set(
+      (handIndex - (totalCards - 1) / 2) * centerSpacing, 
+      -5, 
+      0.5
+    );
+    newCard.mesh.position.copy(newCard.targetPosition); // Set immediately, no animation from center
+  } else {
+    // Player 2 hand (top)
+    newCard.targetPosition.set(
+      (handIndex - (totalCards - 1) / 2) * centerSpacing, 
+      5, 
+      0.5
+    );
+    newCard.mesh.position.copy(newCard.targetPosition); // Set immediately, no animation from center
+  }
+  
+  newCard.targetRotation.set(0, 0, 0);
+  newCard.targetScale.set(1, 1, 1);
 }
 
 // Update UI
@@ -421,11 +672,11 @@ function endGame(playerWon) {
   log(message);
   
   // Show game over screen
-  showGameOverScreen(playerWon, message, details);
+  showGameOverScreen(message, details);
 }
 
 // Show game over screen
-function showGameOverScreen(won, title, message) {
+function showGameOverScreen(title, message) {
   const gameOverDiv = document.createElement('div');
   gameOverDiv.className = 'game-over-screen';
   gameOverDiv.innerHTML = `
@@ -727,18 +978,55 @@ function confirmPlayCard() {
     // Hide info panel immediately
     panel.style.display = 'none';
     
-    // Clear zoom state and allow repositioning for play animation
-    card.isZoomed = false;
-    gameState.zoomedCard = null;
-    
-    // Clean up zoom positioning data
-    delete card.originalPosition;
-    delete card.originalScale;
-    delete card.originalRotation;
-    
-    // Play the card directly (it will animate across the battlefield)
-    playCard(card);
+    // First return card to hand position, then play it
+    returnCardToHandThenPlay(card);
   }
+}
+
+// Return card from zoom to hand position, then play it
+function returnCardToHandThenPlay(card) {
+  if (!card.originalPosition || !card.originalScale) return;
+  
+  gameState.animationInProgress = true;
+  
+  // Animate back to original hand position
+  const duration = 600; // 0.6 seconds
+  const startTime = Date.now();
+  const startPosition = card.mesh.position.clone();
+  const startScale = card.mesh.scale.clone();
+  const targetPosition = card.originalPosition.clone();
+  const targetScale = card.originalScale.clone();
+  
+  function animateReturn() {
+    const elapsed = Date.now() - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    
+    // Interpolate back to hand position
+    card.mesh.position.lerpVectors(startPosition, targetPosition, eased);
+    card.mesh.scale.lerpVectors(startScale, targetScale, eased);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animateReturn);
+    } else {
+      // Now clear zoom state and play the card
+      card.isZoomed = false;
+      gameState.zoomedCard = null;
+      
+      // Clean up zoom positioning data
+      delete card.originalPosition;
+      delete card.originalScale;
+      delete card.originalRotation;
+      
+      // Reset animation state so playCard can proceed
+      gameState.animationInProgress = false;
+      
+      // Now play the card (it will enlarge while flying to center)
+      playCard(card);
+    }
+  }
+  
+  animateReturn();
 }
 
 // Make functions globally accessible
@@ -776,6 +1064,260 @@ function log(message) {
 window.addEventListener('mousemove', onMouseMove);
 window.addEventListener('click', onMouseClick);
 
+// Referee Integration Functions
+
+// Send card for referee evaluation
+async function sendCardForEvaluation(card) {
+  console.log('Sending card for evaluation:', card.data.name);
+  gameState.pendingEvaluation = card;
+  
+  const evaluationData = {
+    id: `${card.data.id}_${Date.now()}`, // Unique ID for this evaluation
+    name: card.data.name,
+    atk: card.data.atk,
+    imagePath: card.data.imagePath,
+    playerName: gameState.player1.username || 'Player 1',
+    targetPlayer: 'Opponent',
+    timestamp: new Date().toISOString()
+  };
+  
+  // Add to pending evaluations queue
+  const pendingEvaluations = JSON.parse(localStorage.getItem('pendingCardEvaluations') || '[]');
+  pendingEvaluations.push(evaluationData);
+  localStorage.setItem('pendingCardEvaluations', JSON.stringify(pendingEvaluations));
+  
+  console.log('Pending evaluations stored:', pendingEvaluations);
+  
+  // Update game state for referee
+  saveGameStateForReferee();
+  
+  log(`Card sent for referee evaluation: ${card.data.name}`);
+  
+  // Wait for referee decision
+  waitForRefereeDecision(evaluationData.id);
+}
+
+// Save current game state for referee view
+function saveGameStateForReferee() {
+  const refereeGameState = {
+    player1: {
+      username: gameState.player1.username,
+      hp: gameState.player1.hp,
+      maxHp: gameState.player1.maxHp,
+      handCount: gameState.player1.hand.length
+    },
+    player2: {
+      username: gameState.player2.username,
+      hp: gameState.player2.hp,
+      maxHp: gameState.player2.maxHp,
+      handCount: gameState.player2.hand.length
+    },
+    currentPlayer: gameState.currentPlayer,
+    isGameActive: gameState.isGameActive,
+    isPaused: gameState.isPaused,
+    lastUpdate: new Date().toISOString()
+  };
+  
+  localStorage.setItem('battleArenaGameState', JSON.stringify(refereeGameState));
+}
+
+// Wait for referee decision
+function waitForRefereeDecision(evaluationId) {
+  const checkForResult = () => {
+    const result = localStorage.getItem('cardEvaluationResult');
+    if (result) {
+      try {
+        const evaluation = JSON.parse(result);
+        if (evaluation.cardId === evaluationId) {
+          localStorage.removeItem('cardEvaluationResult');
+          handleRefereeDecision(evaluation);
+          return;
+        }
+      } catch (error) {
+        console.error('Error parsing evaluation result:', error);
+      }
+    }
+    
+    // Check for game actions from referee
+    const gameAction = localStorage.getItem('gameAction');
+    if (gameAction) {
+      try {
+        const action = JSON.parse(gameAction);
+        localStorage.removeItem('gameAction');
+        handleRefereeAction(action);
+      } catch (error) {
+        console.error('Error parsing game action:', error);
+      }
+    }
+    
+    // Continue polling if game is still active
+    if (gameState.isGameActive && gameState.pendingEvaluation) {
+      setTimeout(checkForResult, 500);
+    }
+  };
+  
+  checkForResult();
+}
+
+// Handle referee decision
+async function handleRefereeDecision(evaluation) {
+  if (!gameState.pendingEvaluation) return;
+  
+  const card = gameState.pendingEvaluation;
+  gameState.pendingEvaluation = null;
+  
+  if (evaluation.approved) {
+    // Execute card play with potentially modified damage
+    const damage = evaluation.modifiedDamage || card.data.atk;
+    await executeCardPlay(card, damage);
+    
+    if (evaluation.modifiedDamage && evaluation.modifiedDamage !== card.data.atk) {
+      log(`Referee modified damage: ${card.data.atk} → ${damage}`);
+    } else {
+      log(`Referee approved: ${card.data.name}`);
+    }
+  } else {
+    // Card was rejected - return to hand and allow new selection
+    log(`Referee rejected: ${card.data.name}`);
+    gameState.animationInProgress = false;
+  }
+  
+  saveGameStateForReferee();
+}
+
+// Execute card play with specified damage
+async function executeCardPlay(card, damage) {
+  gameState.animationInProgress = true;
+  
+  // Remove card from hand
+  const cardIndex = gameState.player1.hand.indexOf(card);
+  gameState.player1.hand.splice(cardIndex, 1);
+  
+  // Ensure card starts at normal scale (1x) before flying
+  card.mesh.scale.set(1, 1, 1);
+  
+  // Animate card flying across screen
+  await animateCardFlight(card, true);
+  
+  // Deal specified damage (potentially modified by referee)
+  gameState.player2.hp = Math.max(0, gameState.player2.hp - damage);
+  
+  // Update via API if online
+  if (gameState.gameSession) {
+    await playCardAPI(card.data.id, damage);
+  }
+  
+  // Move to played cards
+  gameState.player1.playedCards.push(card);
+  
+  // Draw new card
+  drawCard(gameState.player1);
+  
+  log(`You played ${card.data.name} dealing ${damage} damage! Enemy HP: ${gameState.player2.hp}`);
+  
+  // Check win condition
+  if (gameState.player2.hp <= 0) {
+    endGame(true);
+    return;
+  }
+  
+  // Switch to AI turn after animation completes
+  setTimeout(() => {
+    gameState.currentPlayer = 2;
+    updateBoard();
+    updateUI();
+    
+    // AI plays after short delay
+    setTimeout(async () => {
+      await aiPlayCard();
+      gameState.animationInProgress = false;
+    }, 1500);
+  }, 2000); // Wait for damage animation to complete
+}
+
+// Handle referee actions (pause, resume, restart)
+function handleRefereeAction(action) {
+  switch (action.action) {
+    case 'pause':
+      gameState.isPaused = true;
+      log('Game paused by referee');
+      break;
+    case 'resume':
+      gameState.isPaused = false;
+      log('Game resumed by referee');
+      animate(); // Restart animation loop if needed
+      break;
+    case 'restart':
+      location.reload(); // Simple restart - reload the page
+      break;
+  }
+  
+  saveGameStateForReferee();
+}
+
+// Toggle referee mode
+window.toggleRefereeMode = function() {
+  gameState.refereeMode = !gameState.refereeMode;
+  const status = gameState.refereeMode ? 'enabled' : 'disabled';
+  console.log(`Referee mode ${status}`);
+  log(`Referee mode ${status}`);
+  
+  // Update UI to show referee mode status
+  updateRefereeUI();
+};
+
+// Update UI to show referee mode status
+function updateRefereeUI() {
+  let refereeIndicator = document.getElementById('refereeIndicator');
+  
+  if (gameState.refereeMode) {
+    if (!refereeIndicator) {
+      refereeIndicator = document.createElement('div');
+      refereeIndicator.id = 'refereeIndicator';
+      refereeIndicator.innerHTML = `
+        <div style="
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          background: linear-gradient(135deg, #FFD700, #FF8C00);
+          color: black;
+          padding: 10px 15px;
+          border-radius: 8px;
+          font-family: 'Orbitron', sans-serif;
+          font-weight: bold;
+          box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+          z-index: 1000;
+          border: 2px solid #FF0000;
+        ">
+          ⚖️ REFEREE MODE ACTIVE
+          <br><small>Cards require approval</small>
+        </div>
+      `;
+      document.body.appendChild(refereeIndicator);
+    }
+  } else if (refereeIndicator) {
+    refereeIndicator.remove();
+  }
+}
+
+// Initialize referee polling on game start
+function initializeRefereeIntegration() {
+  // Check if referee mode should be enabled (you can modify this logic)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('referee') === 'true') {
+    gameState.refereeMode = true;
+    updateRefereeUI();
+  }
+  
+  // Start periodic game state saving for referee
+  setInterval(() => {
+    if (gameState.isGameActive) {
+      saveGameStateForReferee();
+    }
+  }, 2000);
+}
+
 // Export for global access
 window.initializeGame = initializeGame;
 window.loginPlayer = loginPlayer;
+window.toggleRefereeMode = toggleRefereeMode;

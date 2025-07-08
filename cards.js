@@ -101,6 +101,12 @@ export class Card {
     }
   }
 
+  showBack() {
+    // Show the card back regardless of player type
+    this.mesh.material.uniforms.cardTexture.value = cardBackMaterial.map;
+    this.mesh.material.needsUpdate = true;
+  }
+
   update() {
     // Don't auto-reposition if card is zoomed
     if (this.isZoomed) return;
