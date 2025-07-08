@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
     <title>Card Battle Arena - Simple PvP Card Game</title>
     <meta name="description" content="Simple turn-based PvP card battle game with beautiful 3D animations" />
     <link rel="icon" type="image/png" href="./assets/logomasq1-g11o.gif" />
@@ -90,25 +90,28 @@
 
     <!-- Game UI Overlay -->
     <div class="ui-overlay" id="gameUI" style="display: none;">
-        <!-- Player 1 Info (Bottom Left) -->
-        <div class="player-info player1-info">
-            <div class="player-name" id="player1Name">You</div>
-            <div class="hp-display">
-                <span>HP: </span><span id="player1HP">100/100</span>
+        <!-- New Compact HP Bars -->
+        <div class="compact-hp-container">
+            <!-- Player HP Bar (Bottom Left) -->
+            <div class="compact-hp-bar player-hp" id="playerHPBar">
+                <div class="hp-label" id="player1Name">YOU</div>
+                <div class="hp-bar-wrapper">
+                    <div class="hp-bar-bg">
+                        <div class="hp-bar-fill" id="player1HPFill" style="width: 100%;"></div>
+                    </div>
+                    <div class="hp-text" id="player1HPText">100</div>
+                </div>
             </div>
-            <div class="health-bar">
-                <div class="health-fill" id="player1HPBar" style="width: 100%;"></div>
-            </div>
-        </div>
-
-        <!-- Player 2 Info (Top Right) -->
-        <div class="opponent-info player2-info">
-            <div class="player-name" id="player2Name">AI</div>
-            <div class="hp-display">
-                <span>HP: </span><span id="player2HP">100/100</span>
-            </div>
-            <div class="health-bar">
-                <div class="health-fill" id="player2HPBar" style="width: 100%;"></div>
+            
+            <!-- Opponent HP Bar (Top Right) -->
+            <div class="compact-hp-bar opponent-hp" id="opponentHPBar">
+                <div class="hp-label" id="player2Name">AI</div>
+                <div class="hp-bar-wrapper">
+                    <div class="hp-bar-bg">
+                        <div class="hp-bar-fill" id="player2HPFill" style="width: 100%;"></div>
+                    </div>
+                    <div class="hp-text" id="player2HPText">100</div>
+                </div>
             </div>
         </div>
 
@@ -182,27 +185,10 @@
     <!-- Scripts -->
     <script type="module">
         import { initializeGame, loginPlayer } from './game.js';
+        import { initializeMobile } from './mobile.js';
 
         // Global state
         let currentPlayer = null;
-
-        // Show loading screen
-        function showLoadingScreen(text) {
-            const loadingScreen = document.getElementById("loadingScreen");
-            const loadingText = document.getElementById("loadingText");
-            if (loadingScreen && loadingText) {
-                loadingText.textContent = text;
-                loadingScreen.style.display = "flex";
-            }
-        }
-
-        // Hide loading screen
-        function hideLoadingScreen() {
-            const loadingScreen = document.getElementById("loadingScreen");
-            if (loadingScreen) {
-                loadingScreen.style.display = "none";
-            }
-        }
 
         // Show auth panel
         window.showAuth = function() {
@@ -239,28 +225,6 @@
             const username = "Guest" + Math.floor(Math.random() * 1000);
             startGameSession(username);
         };
-
-        // Start game session
-        function startGameSession(username) {
-            showLoadingScreen("Starting battle...");
-            
-            // Hide homepage
-            document.getElementById("homepage").style.display = "none";
-            document.getElementById("header").style.display = "none";
-            
-            // Show game
-            document.getElementById("gameCanvas").style.display = "block";
-            document.getElementById("gameUI").style.display = "block";
-            
-            // Update player name
-            document.getElementById("player1Name").textContent = username;
-            
-            // Initialize game
-            setTimeout(async () => {
-                await initializeGame(username);
-                hideLoadingScreen();
-            }, 500);
-        }
 
         // Return to menu
         window.returnToMenu = function() {
@@ -299,6 +263,46 @@
             window.open('./referee.html', '_blank', 'width=1200,height=800');
         };
 
+        // Show loading screen
+        function showLoadingScreen(text) {
+            const loadingScreen = document.getElementById("loadingScreen");
+            const loadingText = document.getElementById("loadingText");
+            if (loadingScreen && loadingText) {
+                loadingText.textContent = text;
+                loadingScreen.style.display = "flex";
+            }
+        }
+
+        // Hide loading screen
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) {
+                loadingScreen.style.display = "none";
+            }
+        }
+
+        // Start game session
+        function startGameSession(username) {
+            showLoadingScreen("Starting battle...");
+            
+            // Hide homepage
+            document.getElementById("homepage").style.display = "none";
+            document.getElementById("header").style.display = "none";
+            
+            // Show game
+            document.getElementById("gameCanvas").style.display = "block";
+            document.getElementById("gameUI").style.display = "block";
+            
+            // Update player name
+            document.getElementById("player1Name").textContent = username;
+            
+            // Initialize game
+            setTimeout(async () => {
+                await initializeGame(username);
+                hideLoadingScreen();
+            }, 500);
+        }
+
         // Audio control
         const audio = document.getElementById('bg-audio');
         const muteToggle = document.getElementById('muteToggle');
@@ -321,10 +325,17 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             hideLoadingScreen();
+            
+            // Initialize mobile support
+            const isMobile = initializeMobile();
+            if (isMobile) {
+                console.log("Mobile device detected - touch controls enabled");
+            }
+            
             console.log("Card Battle Arena loaded!");
         });
 
-        // Handle mobile
+        // Handle mobile (legacy support)
         if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             document.body.classList.add('mobile');
         }

@@ -3,6 +3,10 @@
 import { cardData, Card } from './cards.js';
 import { shuffle } from './utils.js';
 import { scene, camera, renderer } from './threeSetup.js';
+import { mobileState } from './mobile.js';
+
+// Debug: Check if Card class is properly imported
+console.log('Card class imported:', Card);
 
 export const gameState = {
   player1: { id: null, username: null, hp: 100, maxHp: 100, hand: [], playedCards: [] },
@@ -176,6 +180,12 @@ export async function initializeGame(username = null) {
   
   // Initialize referee integration
   initializeRefereeIntegration();
+  
+  // Make sure mobile state is available
+  if (typeof mobileState === 'undefined') {
+    // Fallback if mobile module not loaded
+    window.mobileState = { isMobile: false };
+  }
   
   animate();
 }
@@ -475,7 +485,8 @@ function animateCardFlight(card, playerToAI) {
   return new Promise((resolve) => {
     const startY = playerToAI ? -5 : 5;
     const centerY = 0; // Center of battlefield
-    const duration = 1000; // 1 second
+    // Faster animation on mobile for better performance
+    const duration = (mobileState && mobileState.isMobile) ? 750 : 1000; // 0.75s on mobile, 1s on desktop
     const startTime = Date.now();
     
     // Store starting position and scale
@@ -572,8 +583,8 @@ function moveCardToPlayedArea(card, playerToAI) {
   const finalPosition = new THREE.Vector3(-7, baseY + stackOffset, 0.1 + stackOffset);
   const finalScale = new THREE.Vector3(0.8, 0.8, 0.8);
   
-  // Animate to final position
-  const duration = 800;
+  // Animate to final position - faster on mobile
+  const duration = (mobileState && mobileState.isMobile) ? 600 : 800;
   const startTime = Date.now();
   const startPos = card.mesh.position.clone();
   const startScale = card.mesh.scale.clone(); // Keep current 2x scale
@@ -647,23 +658,23 @@ function drawCard(player) {
 
 // Update UI
 function updateUI() {
-  // Update HP displays
-  const p1HPElement = document.getElementById('player1HP');
-  const p2HPElement = document.getElementById('player2HP');
-  const p1HPBar = document.getElementById('player1HPBar');
-  const p2HPBar = document.getElementById('player2HPBar');
+  // Update new compact HP displays
+  const p1HPText = document.getElementById('player1HPText');
+  const p2HPText = document.getElementById('player2HPText');
+  const p1HPFill = document.getElementById('player1HPFill');
+  const p2HPFill = document.getElementById('player2HPFill');
   
-  if (p1HPElement) {
-    p1HPElement.textContent = `${gameState.player1.hp}/100`;
-    if (p1HPBar) {
-      p1HPBar.style.width = `${(gameState.player1.hp / 100) * 100}%`;
+  if (p1HPText) {
+    p1HPText.textContent = `${gameState.player1.hp}`;
+    if (p1HPFill) {
+      p1HPFill.style.width = `${(gameState.player1.hp / 100) * 100}%`;
     }
   }
   
-  if (p2HPElement) {
-    p2HPElement.textContent = `${gameState.player2.hp}/100`;
-    if (p2HPBar) {
-      p2HPBar.style.width = `${(gameState.player2.hp / 100) * 100}%`;
+  if (p2HPText) {
+    p2HPText.textContent = `${gameState.player2.hp}`;
+    if (p2HPFill) {
+      p2HPFill.style.width = `${(gameState.player2.hp / 100) * 100}%`;
     }
   }
   
@@ -814,20 +825,32 @@ export function onMouseClick(event) {
   if (gameState.currentPlayer !== 1) return;
   if (gameState.animationInProgress) return; // Don't allow clicks during animations
   
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // Get proper canvas coordinates
+  const canvas = document.getElementById('gameCanvas');
+  const rect = canvas.getBoundingClientRect();
+  
+  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
   
   const intersects = raycaster.intersectObjects(scene.children);
+  console.log('Mouse click - intersects:', intersects.length, 'at', mouse.x, mouse.y);
+  
   if (intersects.length > 0) {
     const card = intersects[0].object.userData;
+    console.log('Clicked object:', card);
+    
     if (card instanceof Card && gameState.player1.hand.includes(card) && !gameState.zoomedCard) {
+      console.log('Showing card zoom for:', card.data.name);
       showCardZoom(card);
+    } else if (card instanceof Card && card === gameState.zoomedCard) {
+      console.log('Clicked on zoomed card, closing zoom');
+      closeCardZoom();
     }
   }
 }
 
-// Show card zoom by flying card to right side
+// Show card zoom by flying card to left side
 function showCardZoom(card) {
   if (gameState.animationInProgress || gameState.zoomedCard) return;
   
@@ -839,12 +862,12 @@ function showCardZoom(card) {
   card.originalScale = card.mesh.scale.clone();
   card.originalRotation = card.mesh.rotation.clone();
   
-  // Calculate target position (right side of screen where green X is marked)
-  const targetPosition = new THREE.Vector3(7, 1, 2);
+  // Calculate target position (left side of screen)
+  const targetPosition = new THREE.Vector3(-7, 1, 2);
   const targetScale = new THREE.Vector3(3, 3, 3); // 3x larger
   const targetRotation = new THREE.Vector3(0, 0, 0);
   
-  // Animate card flying to right side and enlarging
+  // Animate card flying to left side and enlarging
   animateCardToZoom(card, targetPosition, targetScale, targetRotation).then(() => {
     // Set final zoom position and scale, mark as zoomed to prevent repositioning
     card.mesh.position.copy(targetPosition);
@@ -903,6 +926,12 @@ function showZoomInfoPanel(card) {
   const attackEl = document.getElementById('cardZoomAttack');
   const descriptionEl = document.getElementById('cardZoomDescription');
   
+  // Check if all elements exist
+  if (!panel || !nameEl || !attackEl || !descriptionEl) {
+    console.error('Card zoom panel elements not found:', { panel, nameEl, attackEl, descriptionEl });
+    return;
+  }
+  
   // Populate panel with card data
   nameEl.textContent = card.data.name;
   attackEl.textContent = card.data.atk;
@@ -910,6 +939,7 @@ function showZoomInfoPanel(card) {
   
   // Show panel
   panel.style.display = 'block';
+  console.log('Card zoom panel shown for:', card.data.name);
 }
 
 // Close card zoom and return card to original position
@@ -920,7 +950,11 @@ function closeCardZoom() {
   const panel = document.getElementById('cardZoomPanel');
   
   // Hide info panel
-  panel.style.display = 'none';
+  if (panel) {
+    panel.style.display = 'none';
+  }
+  
+  console.log('Closing card zoom for:', card.data.name);
   
   // Animate card back to original position
   if (card.originalPosition && card.originalScale && card.originalRotation) {
@@ -1002,8 +1036,8 @@ function returnCardToHandThenPlay(card) {
   
   gameState.animationInProgress = true;
   
-  // Animate back to original hand position
-  const duration = 600; // 0.6 seconds
+  // Animate back to original hand position - faster on mobile
+  const duration = (mobileState && mobileState.isMobile) ? 400 : 600; // 0.4s on mobile, 0.6s on desktop
   const startTime = Date.now();
   const startPosition = card.mesh.position.clone();
   const startScale = card.mesh.scale.clone();
