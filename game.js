@@ -861,7 +861,7 @@ function showCardZoom(card) {
 // Animate card to zoom position
 function animateCardToZoom(card, targetPosition, targetScale, targetRotation) {
   return new Promise((resolve) => {
-    const duration = 800; // 0.8 seconds
+    const duration = 400; // 0.4 seconds - faster animation
     const startTime = Date.now();
     const startPosition = card.mesh.position.clone();
     const startScale = card.mesh.scale.clone();
