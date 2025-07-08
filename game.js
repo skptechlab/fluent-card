@@ -478,6 +478,15 @@ function animateCardFlight(card, playerToAI) {
     const duration = 1000; // 1 second
     const startTime = Date.now();
     
+    // Store starting position and scale
+    const startX = card.mesh.position.x;
+    const startZ = card.mesh.position.z;
+    const startScale = 1; // Always start from 1x
+    const targetScale = 2; // End at 2x
+    
+    // Disable automatic updates during animation
+    card.isZoomed = true;
+    
     function animate() {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -485,15 +494,17 @@ function animateCardFlight(card, playerToAI) {
       // Smooth animation curve
       const eased = 1 - Math.pow(1 - progress, 3);
       
-      // Calculate position - move to center
+      // Calculate position - move to center while flying
+      const currentX = startX + (0 - startX) * eased; // Move to center X
       const currentY = startY + (centerY - startY) * eased;
-      const currentZ = 2 + Math.sin(progress * Math.PI) * 2; // Arc motion
+      const currentZ = startZ + (2 - startZ) * eased + Math.sin(progress * Math.PI) * 1; // Arc motion
       
-      // Scale up to 2x size when reaching center
-      const scale = 1 + (1 * progress); // 1x to 2x
+      // Scale up while flying: 1x to 2x
+      const currentScale = startScale + (targetScale - startScale) * eased;
       
-      card.targetPosition.set(0, currentY, currentZ);
-      card.mesh.scale.set(scale, scale, scale);
+      // Apply position and scale directly (bypass update() method)
+      card.mesh.position.set(currentX, currentY, currentZ);
+      card.mesh.scale.set(currentScale, currentScale, currentScale);
       
       if (progress < 1) {
         requestAnimationFrame(animate);
@@ -543,6 +554,8 @@ function showDamageAnimation(card, playerToAI) {
   
   // Move card to played cards area after damage shown
   setTimeout(() => {
+    // Re-enable automatic updates for the move to played area
+    card.isZoomed = false;
     moveCardToPlayedArea(card, playerToAI);
   }, 1000);
 }
