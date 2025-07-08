@@ -62,6 +62,8 @@ export class Card {
     this.mesh = this.createCardMesh();
     this.targetPosition = new THREE.Vector3();
     this.targetRotation = new THREE.Euler();
+    this.targetScale = new THREE.Vector3(1, 1, 1);
+    this.isZoomed = false; // Flag to prevent repositioning when zoomed
   }
 
   createCardMesh() {
@@ -100,7 +102,11 @@ export class Card {
   }
 
   update() {
+    // Don't auto-reposition if card is zoomed
+    if (this.isZoomed) return;
+    
     this.mesh.position.lerp(this.targetPosition, 0.1);
+    this.mesh.scale.lerp(this.targetScale, 0.1);
     this.mesh.rotation.x +=
       (this.targetRotation.x - this.mesh.rotation.x) * 0.1;
     this.mesh.rotation.y +=

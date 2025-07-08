@@ -127,28 +127,29 @@
         <!-- Card Tooltip -->
         <div class="card-tooltip" id="cardTooltip"></div>
 
-        <!-- Card Zoom Modal -->
-        <div class="card-zoom-modal" id="cardZoomModal" style="display: none;" onclick="closeCardZoom()">
-            <div class="card-zoom-content" onclick="event.stopPropagation()">
-                <div class="card-zoom-header">
-                    <h3 id="cardZoomName">Card Name</h3>
-                    <button class="card-zoom-close" onclick="closeCardZoom()">×</button>
-                </div>
-                <div class="card-zoom-body">
-                    <img id="cardZoomImage" src="" alt="Card Image" class="card-zoom-img">
-                    <div class="card-zoom-info">
-                        <div class="card-stat">
-                            <span class="stat-label">Attack:</span>
-                            <span class="stat-value" id="cardZoomAttack">0</span>
-                        </div>
-                        <div class="card-description" id="cardZoomDescription">
-                            Click this card to deal damage to your opponent!
-                        </div>
+        <!-- Card Zoom Info Panel (Right Side) -->
+        <div class="card-zoom-panel" id="cardZoomPanel" style="display: none;">
+            <div class="zoom-card-info">
+                <h3 id="cardZoomName">Card Name</h3>
+                <div class="zoom-card-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">⚔️</span>
+                        <span class="stat-label">Attack:</span>
+                        <span class="stat-value" id="cardZoomAttack">0</span>
                     </div>
                 </div>
-                <div class="card-zoom-actions">
-                    <button class="play-card-btn" onclick="confirmPlayCard()">Play this Card</button>
-                    <button class="cancel-btn" onclick="closeCardZoom()">Cancel</button>
+                <div class="zoom-card-description" id="cardZoomDescription">
+                    Click this card to deal damage to your opponent!
+                </div>
+                <div class="zoom-card-actions">
+                    <button class="zoom-play-btn" onclick="confirmPlayCard()">
+                        <span class="btn-icon">⚔️</span>
+                        <span>Play Card</span>
+                    </button>
+                    <button class="zoom-cancel-btn" onclick="closeCardZoom()">
+                        <span class="btn-icon">✕</span>
+                        <span>Cancel</span>
+                    </button>
                 </div>
             </div>
         </div>

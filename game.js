@@ -196,8 +196,13 @@ function dealInitialCards() {
 export function updateBoard() {
   const centerSpacing = 2.5;
   
-  // Player 1 hand (bottom)
+  // Player 1 hand (bottom) - exclude zoomed card
   gameState.player1.hand.forEach((card, index) => {
+    if (card === gameState.zoomedCard || card.isZoomed) {
+      // Keep zoomed card in its zoom position, don't reposition or rescale
+      return;
+    }
+    
     const totalCards = gameState.player1.hand.length;
     card.targetPosition.set(
       (index - (totalCards - 1) / 2) * centerSpacing, 
@@ -205,7 +210,7 @@ export function updateBoard() {
       0.5
     );
     card.targetRotation.set(0, 0, 0);
-    card.mesh.scale.set(1, 1, 1);
+    card.targetScale.set(1, 1, 1);
   });
   
   // Player 2 hand (top)
@@ -217,7 +222,7 @@ export function updateBoard() {
       0.5
     );
     card.targetRotation.set(0, 0, 0);
-    card.mesh.scale.set(1, 1, 1);
+    card.targetScale.set(1, 1, 1);
   });
   
   // Played cards (smaller, on sides)
@@ -228,7 +233,7 @@ export function updateBoard() {
       -2, 
       0.3
     );
-    card.mesh.scale.set(0.4, 0.4, 0.4);
+    card.targetScale.set(0.4, 0.4, 0.4);
   });
   
   gameState.player2.playedCards.slice(-5).forEach((card, index) => {
@@ -237,7 +242,7 @@ export function updateBoard() {
       2, 
       0.3
     );
-    card.mesh.scale.set(0.4, 0.4, 0.4);
+    card.targetScale.set(0.4, 0.4, 0.4);
   });
 }
 
@@ -513,7 +518,7 @@ export function onMouseMove(event) {
   
   if (intersects.length > 0) {
     const card = intersects[0].object.userData;
-    if (card instanceof Card && gameState.player1.hand.includes(card)) {
+    if (card instanceof Card && gameState.player1.hand.includes(card) && !card.isZoomed) {
       hovered = true;
       card.mesh.scale.set(1.3, 1.3, 1.3);
       card.mesh.position.z = 2;
@@ -529,8 +534,10 @@ export function onMouseMove(event) {
   
   if (!hovered) {
     gameState.player1.hand.forEach(card => {
-      card.mesh.scale.set(1, 1, 1);
-      card.targetPosition.z = 0.5;
+      if (!card.isZoomed) { // Don't reset scale of zoomed card
+        card.mesh.scale.set(1, 1, 1);
+        card.targetPosition.z = 0.5;
+      }
     });
     if (tooltip) {
       tooltip.style.display = 'none';
@@ -541,6 +548,7 @@ export function onMouseMove(event) {
 export function onMouseClick(event) {
   if (gameState.isPaused || !gameState.isGameActive) return;
   if (gameState.currentPlayer !== 1) return;
+  if (gameState.animationInProgress) return; // Don't allow clicks during animations
   
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -549,43 +557,186 @@ export function onMouseClick(event) {
   const intersects = raycaster.intersectObjects(scene.children);
   if (intersects.length > 0) {
     const card = intersects[0].object.userData;
-    if (card instanceof Card && gameState.player1.hand.includes(card)) {
+    if (card instanceof Card && gameState.player1.hand.includes(card) && !gameState.zoomedCard) {
       showCardZoom(card);
     }
   }
 }
 
-// Show card zoom modal
+// Show card zoom by flying card to right side
 function showCardZoom(card) {
+  if (gameState.animationInProgress || gameState.zoomedCard) return;
+  
   gameState.zoomedCard = card;
-  const modal = document.getElementById('cardZoomModal');
+  gameState.animationInProgress = true;
+  
+  // Store original position and scale
+  card.originalPosition = card.mesh.position.clone();
+  card.originalScale = card.mesh.scale.clone();
+  card.originalRotation = card.mesh.rotation.clone();
+  
+  // Calculate target position (right side of screen where green X is marked)
+  const targetPosition = new THREE.Vector3(7, 1, 2);
+  const targetScale = new THREE.Vector3(3, 3, 3); // 3x larger
+  const targetRotation = new THREE.Vector3(0, 0, 0);
+  
+  // Animate card flying to right side and enlarging
+  animateCardToZoom(card, targetPosition, targetScale, targetRotation).then(() => {
+    // Set final zoom position and scale, mark as zoomed to prevent repositioning
+    card.mesh.position.copy(targetPosition);
+    card.mesh.scale.copy(targetScale);
+    card.mesh.rotation.copy(targetRotation);
+    card.isZoomed = true; // Prevent automatic repositioning
+    
+    // Show info panel after animation completes
+    showZoomInfoPanel(card);
+    gameState.animationInProgress = false;
+  });
+}
+
+// Animate card to zoom position
+function animateCardToZoom(card, targetPosition, targetScale, targetRotation) {
+  return new Promise((resolve) => {
+    const duration = 800; // 0.8 seconds
+    const startTime = Date.now();
+    const startPosition = card.mesh.position.clone();
+    const startScale = card.mesh.scale.clone();
+    const startRotation = card.mesh.rotation.clone();
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      // Interpolate position
+      card.mesh.position.lerpVectors(startPosition, targetPosition, eased);
+      
+      // Interpolate scale
+      card.mesh.scale.lerpVectors(startScale, targetScale, eased);
+      
+      // Interpolate rotation
+      card.mesh.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * eased;
+      card.mesh.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * eased;
+      card.mesh.rotation.z = startRotation.z + (targetRotation.z - startRotation.z) * eased;
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    }
+    
+    animate();
+  });
+}
+
+// Show info panel on right side
+function showZoomInfoPanel(card) {
+  const panel = document.getElementById('cardZoomPanel');
   const nameEl = document.getElementById('cardZoomName');
-  const imageEl = document.getElementById('cardZoomImage');
   const attackEl = document.getElementById('cardZoomAttack');
   const descriptionEl = document.getElementById('cardZoomDescription');
   
-  // Populate modal with card data
+  // Populate panel with card data
   nameEl.textContent = card.data.name;
-  imageEl.src = card.data.imagePath;
   attackEl.textContent = card.data.atk;
-  descriptionEl.textContent = `This card deals ${card.data.atk} damage to your opponent. Click "Play this Card" to use it in battle!`;
+  descriptionEl.textContent = `This powerful card deals ${card.data.atk} damage to your opponent. Use it wisely in battle!`;
   
-  // Show modal
-  modal.style.display = 'flex';
+  // Show panel
+  panel.style.display = 'block';
 }
 
-// Close card zoom modal
+// Close card zoom and return card to original position
 function closeCardZoom() {
-  const modal = document.getElementById('cardZoomModal');
-  modal.style.display = 'none';
-  gameState.zoomedCard = null;
+  if (!gameState.zoomedCard) return;
+  
+  const card = gameState.zoomedCard;
+  const panel = document.getElementById('cardZoomPanel');
+  
+  // Hide info panel
+  panel.style.display = 'none';
+  
+  // Animate card back to original position
+  if (card.originalPosition && card.originalScale && card.originalRotation) {
+    gameState.animationInProgress = true;
+    
+    animateCardFromZoom(card, card.originalPosition, card.originalScale, card.originalRotation).then(() => {
+      // Clean up and re-enable repositioning
+      card.isZoomed = false; // Allow repositioning again
+      delete card.originalPosition;
+      delete card.originalScale;
+      delete card.originalRotation;
+      gameState.zoomedCard = null;
+      gameState.animationInProgress = false;
+      updateBoard(); // Re-position cards properly
+    });
+  } else {
+    // If no original position stored, just clear zoom state
+    if (card) card.isZoomed = false;
+    gameState.zoomedCard = null;
+    gameState.animationInProgress = false;
+  }
+}
+
+// Animate card back from zoom position
+function animateCardFromZoom(card, targetPosition, targetScale, targetRotation) {
+  return new Promise((resolve) => {
+    const duration = 600; // Slightly faster return
+    const startTime = Date.now();
+    const startPosition = card.mesh.position.clone();
+    const startScale = card.mesh.scale.clone();
+    const startRotation = card.mesh.rotation.clone();
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      // Interpolate position
+      card.mesh.position.lerpVectors(startPosition, targetPosition, eased);
+      
+      // Interpolate scale
+      card.mesh.scale.lerpVectors(startScale, targetScale, eased);
+      
+      // Interpolate rotation
+      card.mesh.rotation.x = startRotation.x + (targetRotation.x - startRotation.x) * eased;
+      card.mesh.rotation.y = startRotation.y + (targetRotation.y - startRotation.y) * eased;
+      card.mesh.rotation.z = startRotation.z + (targetRotation.z - startRotation.z) * eased;
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    }
+    
+    animate();
+  });
 }
 
 // Confirm and play the zoomed card
 function confirmPlayCard() {
   if (gameState.zoomedCard) {
     const card = gameState.zoomedCard;
-    closeCardZoom();
+    const panel = document.getElementById('cardZoomPanel');
+    
+    // Hide info panel immediately
+    panel.style.display = 'none';
+    
+    // Clear zoom state and allow repositioning for play animation
+    card.isZoomed = false;
+    gameState.zoomedCard = null;
+    
+    // Clean up zoom positioning data
+    delete card.originalPosition;
+    delete card.originalScale;
+    delete card.originalRotation;
+    
+    // Play the card directly (it will animate across the battlefield)
     playCard(card);
   }
 }
