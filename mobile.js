@@ -1,8 +1,7 @@
 // mobile.js - Mobile-specific functionality and touch handling
 
-// Mobile state management
+// Mobile state management - touch only (responsive design handled by CSS)
 const mobileState = {
-  isMobile: false,
   touchStartTime: 0,
   touchStartPos: { x: 0, y: 0 },
   selectedCard: null,
@@ -16,31 +15,20 @@ const mobileState = {
   }
 };
 
-// Initialize mobile detection and setup
+// Initialize mobile touch functionality (detection now handled by CSS media queries)
 function initializeMobile() {
-  // More accurate mobile detection - prioritize user agent over screen size
-  const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  // Setup touch events for mobile devices (CSS handles responsive design)
   const isTouchDevice = ('ontouchstart' in window);
-  const isSmallScreen = window.innerWidth <= 768;
   
-  // Only enable mobile mode if it's actually a mobile device OR (touch device AND small screen)
-  mobileState.isMobile = isMobileDevice || (isTouchDevice && isSmallScreen);
-  
-  if (mobileState.isMobile) {
-    document.body.classList.add('mobile-device');
+  if (isTouchDevice) {
     setupMobileEventListeners();
-    setupMobileUI();
-    console.log('Mobile mode activated for', isMobileDevice ? 'mobile device' : 'touch device');
-    console.log('Body classes:', document.body.className);
-    console.log('Screen size:', window.innerWidth + 'x' + window.innerHeight);
+    console.log('Touch events enabled');
   } else {
-    console.log('Desktop mode - mobile UI disabled');
-    console.log('isMobileDevice:', isMobileDevice);
-    console.log('isTouchDevice:', isTouchDevice);
-    console.log('isSmallScreen:', isSmallScreen);
+    console.log('Touch events disabled - using mouse events only');
   }
   
-  return mobileState.isMobile;
+  // Always return true to maintain compatibility, CSS handles responsive design
+  return isTouchDevice;
 }
 
 // Setup mobile-specific event listeners
@@ -188,24 +176,11 @@ function handleSwipe(deltaX, deltaY, card) {
   }
 }
 
-// Mobile UI setup
+// Mobile UI setup (now handled by CSS media queries)
 function setupMobileUI() {
-  // Double-check we're actually on a mobile device or small screen
-  if (window.innerWidth > 768 && !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    console.log('Skipping mobile UI setup - detected desktop environment');
-    return;
-  }
-  
-  // Add mobile-specific UI elements
-  addMobileControlPanel();
-  addMobileBottomSheet();
-  addMobileGestureIndicators();
-  
-  // Adjust viewport
-  const viewport = document.querySelector('meta[name="viewport"]');
-  if (viewport) {
-    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
-  }
+  // UI visibility now controlled by CSS media queries
+  // This function kept for compatibility but functionality moved to CSS
+  console.log('Mobile UI setup handled by CSS media queries');
 }
 
 function addMobileControlPanel() {
