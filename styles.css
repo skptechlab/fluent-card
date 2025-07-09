@@ -35,6 +35,106 @@ body {
   animation: damageFloat 2s ease-out forwards;
 }
 
+/* Card Selection Styles */
+.card-selected {
+  box-shadow: 0 0 20px #FFD700, 0 0 40px #FFD700 !important;
+  border: 3px solid #FFD700 !important;
+  transform: scale(1.1) !important;
+}
+
+/* Battle Button Styles */
+.battle-button-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  animation: battleButtonAppear 0.5s ease-out;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+@keyframes battleButtonAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.battle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #FF0000, #FF4500, #FFD700);
+  border: 3px solid #FFD700;
+  border-radius: 15px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.battle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+
+.battle-btn:active {
+  transform: scale(0.95);
+}
+
+.battle-btn .btn-icon {
+  font-size: 28px;
+  animation: battlePulse 1s ease-in-out infinite;
+}
+
+@keyframes battlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+/* Return to Hand Button Styles */
+.return-hand-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #666666, #999999);
+  border: 2px solid #CCCCCC;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(204, 204, 204, 0.3);
+}
+
+.return-hand-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #999999, #CCCCCC);
+  box-shadow: 0 0 15px rgba(204, 204, 204, 0.5);
+}
+
+.return-hand-btn:active {
+  transform: scale(0.95);
+}
+
 /* Mobile-Specific Styles */
 @media (max-width: 768px) {
   body {
@@ -42,6 +142,21 @@ body {
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
+  }
+  
+  .battle-button-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .battle-btn {
+    font-size: 20px;
+    padding: 12px 25px;
+  }
+  
+  .return-hand-btn {
+    font-size: 16px;
+    padding: 10px 18px;
   }
 }
 
@@ -1428,8 +1543,8 @@ button {
 
 .game-log {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 80px;
+  right: 20px;
   width: 260px;
   max-height: 240px;
   overflow-y: auto;
@@ -2026,18 +2141,19 @@ p {
   to { transform: rotate(360deg); }
 }
 
-/* Card Zoom Panel Styles */
+/* Card Zoom Panel Styles - Mobile First */
 .card-zoom-panel {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 300px;
+  bottom: 5px;
+  right: 5px;
+  width: 200px;
+  height: 250px;
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
-  border: 3px solid #FF0000;
-  border-radius: 15px;
-  padding: 20px;
+  border: 2px solid #FF0000;
+  border-radius: 8px;
+  padding: 8px;
   z-index: 500;
-  box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
   animation: slideUpFromBottom 0.4s ease-out;
 }
 
@@ -2055,77 +2171,77 @@ p {
 .zoom-card-info h3 {
   color: #FFD700;
   font-family: 'Orbitron', sans-serif;
-  font-size: 24px;
-  text-shadow: 0 0 10px #FF0000;
-  margin: 0 0 15px 0;
+  font-size: 14px;
+  text-shadow: 0 0 8px #FF0000;
+  margin: 0 0 8px 0;
   text-align: center;
-  border-bottom: 2px solid #FF0000;
-  padding-bottom: 10px;
+  border-bottom: 1px solid #FF0000;
+  padding-bottom: 5px;
 }
 
 .zoom-card-stats {
-  margin-bottom: 15px;
+  margin-bottom: 8px;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
+  gap: 6px;
+  padding: 6px;
   background: rgba(0, 0, 0, 0.5);
   border: 1px solid #FF0000;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border-radius: 4px;
+  margin-bottom: 4px;
 }
 
 .stat-icon {
-  font-size: 20px;
+  font-size: 12px;
 }
 
 .stat-label {
   color: #FFD700;
   font-family: 'Roboto', sans-serif;
-  font-size: 16px;
+  font-size: 10px;
   flex: 1;
 }
 
 .stat-value {
   color: #FF0000;
   font-family: 'Orbitron', sans-serif;
-  font-size: 20px;
+  font-size: 12px;
   font-weight: bold;
-  text-shadow: 0 0 5px #FF0000;
+  text-shadow: 0 0 3px #FF0000;
 }
 
 .zoom-card-description {
   color: #FFD700;
   font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
-  padding: 12px;
+  font-size: 9px;
+  line-height: 1.3;
+  padding: 6px;
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 215, 0, 0.3);
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 
 .zoom-card-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .zoom-play-btn, .zoom-cancel-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 20px;
+  gap: 2px;
+  padding: 4px 6px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
+  font-size: 8px;
   font-weight: bold;
-  border: 2px solid;
-  border-radius: 10px;
+  border: 1px solid;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
@@ -2157,10 +2273,78 @@ p {
 }
 
 .btn-icon {
-  font-size: 18px;
+  font-size: 8px;
 }
 
-/* Mobile responsive adjustments for card zoom panel - REMOVED - handled in main mobile media query above */
+/* Desktop enhancement for card zoom panel */
+@media (min-width: 769px) {
+  .card-zoom-panel {
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    height: auto;
+    border: 3px solid #FF0000;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+  }
+  
+  .zoom-card-info h3 {
+    font-size: 24px;
+    text-shadow: 0 0 10px #FF0000;
+    margin: 0 0 15px 0;
+    border-bottom: 2px solid #FF0000;
+    padding-bottom: 10px;
+  }
+  
+  .zoom-card-stats {
+    margin-bottom: 15px;
+  }
+  
+  .stat-item {
+    gap: 10px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .stat-icon {
+    font-size: 20px;
+  }
+  
+  .stat-label {
+    font-size: 16px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+    text-shadow: 0 0 5px #FF0000;
+  }
+  
+  .zoom-card-description {
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .zoom-card-actions {
+    gap: 10px;
+  }
+  
+  .zoom-play-btn, .zoom-cancel-btn {
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid;
+    border-radius: 10px;
+  }
+  
+  .btn-icon {
+    font-size: 18px;
+  }
+}
 
 /* Compact Menu Styles */
 .main-content {
@@ -2972,6 +3156,8 @@ p {
 
   /* Game Log */
   .game-log {
+    top: 50px;
+    right: 10px;
     width: 100px; 
     max-height: 100px; 
     font-size: 5px; 
@@ -3257,6 +3443,195 @@ p {
     margin: 0 1.5px; 
     border-radius: 2px; 
     box-shadow: 0 0 2.5px rgba(255, 215, 0, 0.15);
+  }
+}
+
+/* Battle Action Panel - Left Side */
+.battle-action-panel {
+  position: fixed;
+  top: 50%;
+  left: 20px;
+  width: 300px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 120px);
+  transform: translateY(-50%);
+  z-index: 600;
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateY(-50%) translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+.battle-panel-info {
+  background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
+  border: 3px solid #FF0000;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+  color: #FFF;
+}
+
+.battle-panel-info h3 {
+  color: #FFD700;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  text-shadow: 0 0 10px #FF0000;
+  margin: 0 0 15px 0;
+  border-bottom: 2px solid #FF0000;
+  padding-bottom: 10px;
+}
+
+.battle-panel-stats {
+  margin-bottom: 15px;
+}
+
+.battle-panel-stats .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  margin-bottom: 10px;
+}
+
+.battle-panel-stats .stat-icon {
+  font-size: 18px;
+  color: #FFD700;
+  text-shadow: 0 0 5px #FF0000;
+}
+
+.battle-panel-stats .stat-label {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #CCC;
+  flex: 1;
+}
+
+.battle-panel-stats .stat-value {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 5px #FF0000;
+}
+
+.battle-panel-description {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #CCC;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.battle-panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.battle-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #FF0000, #FF4500, #FFD700);
+  border: 3px solid #FFD700;
+  border-radius: 10px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.battle-action-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+  background: linear-gradient(135deg, #FF4500, #FFD700, #FF0000);
+}
+
+.battle-action-btn:active {
+  transform: scale(0.95);
+}
+
+.battle-action-btn .btn-icon {
+  font-size: 20px;
+  animation: battlePulse 1s ease-in-out infinite;
+}
+
+.battle-cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, rgba(128, 128, 128, 0.8), rgba(64, 64, 64, 0.8));
+  border: 2px solid #888;
+  border-radius: 10px;
+  color: #CCC;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.battle-cancel-btn:hover {
+  background: linear-gradient(135deg, rgba(128, 128, 128, 1), rgba(64, 64, 64, 1));
+  color: #FFF;
+  border-color: #AAA;
+  transform: scale(1.02);
+}
+
+.battle-cancel-btn:active {
+  transform: scale(0.98);
+}
+
+.battle-cancel-btn .btn-icon {
+  font-size: 16px;
+}
+
+/* Mobile Battle Action Panel */
+@media (max-width: 768px) {
+  .battle-action-panel {
+    left: 10px;
+    width: 250px;
+    max-height: calc(100vh - 80px);
+  }
+  
+  .battle-panel-info {
+    padding: 15px;
+  }
+  
+  .battle-panel-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .battle-panel-stats .stat-item {
+    padding: 8px;
+  }
+  
+  .battle-action-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  
+  .battle-cancel-btn {
+    padding: 10px 16px;
+    font-size: 12px;
   }
 }
 

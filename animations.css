@@ -1,0 +1,547 @@
+/* animations.css - Extracted from styles.css */
+
+/* Damage Animation */
+@keyframes damageFloat {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100px) scale(0.8);
+  }
+}
+
+.damage-animation {
+  animation: damageFloat 2s ease-out forwards;
+}
+
+/* Touch Feedback Animation */
+@keyframes touchFeedback {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+.touch-feedback {
+  animation: touchFeedback 0.3s ease-out;
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.gesture-icon {
+  animation: bounce 1s infinite;
+}
+
+/* Slide In From Right Animation */
+@keyframes slideInFromRight {
+  from {
+    transform: translateY(-50%) translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+.zoom-card-info {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+/* Pulse Glow Animation */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 5px #FFD700, 0 0 10px #FF0000;
+  }
+  100% {
+    box-shadow: 0 0 15px #FFD700, 0 0 25px #FF0000;
+  }
+}
+
+/* Alternative Pulse Glow */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 5px #FF0000, 0 0 10px #FF4500; }
+  50% { box-shadow: 0 0 10px #FF0000, 0 0 20px #FF4500, 0 0 30px #FFD700; }
+  100% { box-shadow: 0 0 5px #FF0000, 0 0 10px #FF4500; }
+}
+
+/* Glow Flicker Animation */
+@keyframes glowFlicker {
+  0% {
+    opacity: 0.2;
+    transform: rotate(30deg) scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: rotate(30deg) scale(1.05);
+  }
+  100% {
+    opacity: 0.2;
+    transform: rotate(30deg) scale(1);
+  }
+}
+
+/* Marquee Scroll Animation */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Glow Text Animation */
+@keyframes glow-animation {
+  0% { text-shadow: 0 0 5px #FF0000; }
+  50% { text-shadow: 0 0 10px #FF0000, 0 0 15px #FF4500; }
+  100% { text-shadow: 0 0 5px #FF0000; }
+}
+
+.glow {
+  animation: glow-animation 1.5s ease-in-out infinite alternate;
+}
+
+/* Cursor Blink Animation */
+@keyframes cursor-blink {
+  0% { border-color: #FF0000; }
+  50% { border-color: transparent; }
+}
+
+.cursor {
+  animation: cursor-blink 0.5s infinite;
+}
+
+/* Vintage Pulse Animation */
+@keyframes vintagePulse {
+  0% { 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5), inset 0 0 5px rgba(255, 215, 0, 0.3);
+    text-shadow: 0 0 5px #FFD700;
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.7), inset 0 0 8px rgba(255, 215, 0, 0.4);
+    text-shadow: 0 0 15px #FFD700;
+  }
+  100% { 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5), inset 0 0 5px rgba(255, 215, 0, 0.3);
+    text-shadow: 0 0 5px #FFD700;
+  }
+}
+
+/* Subtle Animations */
+@keyframes fadePulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+@keyframes glowShift {
+  0% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.2); }
+  50% { box-shadow: 0 0 12px rgba(255, 0, 0, 0.4), 0 0 18px rgba(255, 69, 0, 0.2); }
+  100% { box-shadow: 0 0 6px rgba(255, 0, 0, 0.2); }
+}
+
+@keyframes timerPulse {
+  0% { text-shadow: 0 0 12px #FF0000, 0 0 20px #FF4500; }
+  50% { text-shadow: 0 0 18px #FF0000, 0 0 30px #FF4500; }
+  100% { text-shadow: 0 0 12px #FF0000, 0 0 20px #FF4500; }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.8; }
+}
+
+/* Alternative Pulse Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Stack Animation */
+@keyframes stack {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%);
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+  };
+  60% {
+    opacity: 0.5;
+    transform: translateX(50%);
+  }
+  80% {
+    transform: none;
+    opacity: 1;
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+  }
+  100% {
+    text-shadow: none;
+  }
+}
+
+/* Glitch Animation */
+@keyframes glitch {
+  0% {
+    text-shadow: -2px 3px 0 red, 2px -3px 0 blue;
+    transform: translate(var(--glitch-translate));
+  }
+  2% {
+    text-shadow: 2px -3px 0 red, -2px 3px 0 blue;
+  }
+  4%, 100% {  text-shadow: none; transform: none; }
+}
+
+/* Spin Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Slide Up From Bottom Animation */
+@keyframes slideUpFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animation Classes */
+.mobile-btn {
+  transition: all 0.3s ease;
+}
+
+.mobile-btn:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.mobile-control-panel {
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-control-panel.active {
+  transform: translateY(0);
+}
+
+.connect-btn {
+  transition: all 0.3s ease;
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+.connect-btn:hover {
+  transform: scale(1.1);
+}
+
+.connect-btn::after {
+  transform: rotate(30deg);
+  transition: all 0.5s;
+  animation: glowFlicker 2s infinite alternate;
+}
+
+.auth-panel input {
+  transition: all 0.3s ease;
+}
+
+.auth-panel input:focus {
+  transform: scale(1.05);
+}
+
+.post-login-btn {
+  transition: all 0.3s ease;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.post-login-btn:hover {
+  transform: scale(1.05);
+}
+
+.play-btn {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.progress-bar {
+  transition: width 0.3s ease-in-out;
+}
+
+.exp-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+.play-game-btn {
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.play-game-btn:hover {
+  transform: translateX(-50%) scale(1.08);
+}
+
+.timer-display {
+  animation: timerPulse 1.5s infinite ease-in-out;
+}
+
+.timer-display:hover {
+  transform: scale(1.05);
+}
+
+.game-info-section:hover {
+  transform: scale(1.08);
+}
+
+.card {
+  transition: transform 0.6s ease, opacity 0.4s;
+}
+
+.nav-link {
+  animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 20ms), glitch 2s ease infinite 2s alternate-reverse;
+}
+
+.angled-btn-group li a {
+  transform: rotate(0deg) skew(5deg);
+  transition: 0.5s;
+}
+
+.angled-btn-group li a:before {
+  transform: skewY(-45deg);
+}
+
+.angled-btn-group li a:after {
+  transform: skewX(-45deg);
+}
+
+.angled-btn-group li a i {
+  transition: 0.5s;
+}
+
+.angled-btn-group li a span {
+  transition: 0.5s;
+}
+
+.angled-btn-group li a:hover {
+  transform: rotate(0deg) skew(5deg) translate(20px, -15px);
+}
+
+.clickable-word span {
+  transition: color 0.3s;
+}
+
+.spinner-circle {
+  animation: spin 0.8s linear infinite;
+}
+
+.card-zoom-panel {
+  animation: slideUpFromBottom 0.4s ease-out;
+}
+
+.zoom-cancel-btn {
+  transition: all 0.3s ease;
+}
+
+.zoom-cancel-btn:hover {
+  transform: scale(1.05);
+}
+
+.zoom-play-btn {
+  transition: all 0.3s ease;
+}
+
+.zoom-play-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+}
+
+.pause-btn {
+  transition: all 0.3s ease;
+}
+
+.pause-btn:hover {
+  transform: scale(1.05);
+}
+
+.victory-screen {
+  animation: glow-animation 2s ease-in-out infinite alternate;
+}
+
+.end-turn-btn {
+  transition: all 0.3s ease;
+}
+
+.end-turn-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Notification Widget Animations */
+#notification-widget {
+  transition: transform 0.2s ease;
+  animation: pulse 1s infinite alternate;
+}
+
+#notification-title {
+  animation: pulse 1s infinite alternate;
+}
+
+#notification-countdown {
+  animation: pulse 1s infinite alternate;
+}
+
+#notification-message {
+  animation: pulse 1s infinite alternate;
+}
+
+#mana-label::after {
+  animation: pulse 1s infinite alternate;
+}
+
+#attack-label::after {
+  animation: pulse 1s infinite alternate;
+}
+
+#health-label::before {
+  animation: pulse 1s infinite alternate;
+}
+
+/* Global Animation Applications */
+button,
+.end-turn-btn,
+.pause-btn,
+.post-login-btn {
+  animation: glowShift 3s infinite ease-in-out;
+}
+
+/* Responsive Animations for Mobile */
+@media (max-width: 768px) {
+  /* Pulse Glow Animation for Mobile */
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 1.5px #FFD700, 0 0 3px #FF0000;
+    }
+    100% {
+      box-shadow: 0 0 5px #FFD700, 0 0 7.5px #FF0000; 
+    }
+  }
+
+  /* Glow Flicker Animation for Mobile */
+  @keyframes glowFlicker {
+    0% {
+      opacity: 0.05;
+      transform: rotate(30deg) scale(1);
+    }
+    50% {
+      opacity: 0.15;
+      transform: rotate(30deg) scale(1.015);
+    }
+    100% {
+      opacity: 0.05;
+      transform: rotate(30deg) scale(1);
+    }
+  }
+
+  /* Marquee Scroll Animation for Mobile */
+  @keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Glow Animation for Mobile */
+  @keyframes glow-animation {
+    0% { text-shadow: 0 0 1.5px #FF0000; }
+    50% { text-shadow: 0 0 4px #FF0000, 0 0 5px #FF4500; }
+    100% { text-shadow: 0 0 1.5px #FF0000; }
+  }
+
+  /* Cursor Blink Animation for Mobile */
+  @keyframes cursor-blink {
+    0% { border-color: #FF0000; }
+    50% { border-color: transparent; }
+  }
+
+  /* Vintage Pulse Animation for Mobile */
+  @keyframes vintagePulse {
+    0% {
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+      text-shadow: 0 0 1.5px #FFD700;
+    }
+    50% {
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); 
+      text-shadow: 0 0 5px #FFD700; 
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+      text-shadow: 0 0 1.5px #FFD700; 
+    }
+  }
+
+  /* Fade Pulse Animation for Mobile */
+  @keyframes fadePulse {
+    0% { opacity: 0.35; }
+    50% { opacity: 0.5; }
+    100% { opacity: 0.35; }
+  }
+
+  /* Glow Shift Animation for Mobile */
+  @keyframes glowShift {
+    0% { box-shadow: 0 0 2px rgba(255, 0, 0, 0.1); }
+    50% { box-shadow: 0 0 4px rgba(255, 0, 0, 0.15); }
+    100% { box-shadow: 0 0 2px rgba(255, 0, 0, 0.1); }
+  }
+
+  /* Timer Pulse Animation for Mobile */
+  @keyframes timerPulse {
+    0% { text-shadow: 0 0 4px #FF0000, 0 0 6px #FF4500; }
+    50% { text-shadow: 0 0 6px #FF0000, 0 0 9px #FF4500; }
+    100% { text-shadow: 0 0 4px #FF0000, 0 0 6px #FF4500; }
+  }
+
+  /* Mobile Hover Effects */
+  .connect-btn:hover {
+    transform: scale(1.025); 
+    box-shadow: 0 0 5px #FFD700, 0 0 7.5px #FF0000;
+  }
+
+  .angled-btn-group li a:hover {
+    transform: rotate(0deg) skew(1.5deg) translate(5px, -5px); 
+  }
+
+  .play-game-btn:hover {
+    transform: translate(-50%, -50%) scale(1.015);
+  }
+
+  .auth-buttons button:hover {
+    transform: scale(1.015); 
+  }
+
+  .post-login-btn:hover {
+    transform: scale(1.015); 
+  }
+
+  .game-over-screen button:hover {
+    transform: scale(1.015);
+  }
+}

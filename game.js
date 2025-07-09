@@ -9,11 +9,14 @@ import { mobileState } from './mobile.js';
 console.log('Card class imported:', Card);
 
 export const gameState = {
-  player1: { id: null, username: null, hp: 100, maxHp: 100, hand: [], playedCards: [] },
-  player2: { id: null, username: null, hp: 100, maxHp: 100, hand: [], playedCards: [] },
+  player1: { id: null, username: null, hp: 500, maxHp: 500, hand: [], playedCards: [] },
+  player2: { id: null, username: null, hp: 500, maxHp: 500, hand: [], playedCards: [] },
   currentPlayer: 1,
   gameSession: null,
   selectedCard: null,
+  selectedCards: [], // Array of selected cards for multi-card play
+  battlefieldCards: [], // Cards placed in battlefield center awaiting battle
+  turnPhase: 'selecting', // 'selecting', 'battlefield', 'battle'
   draggingCard: null,
   isPaused: false,
   isGameActive: false,
@@ -166,9 +169,12 @@ export async function initializeGame(username = null) {
   }
   
   // Initialize game state
-  gameState.player1.hp = 100;
-  gameState.player2.hp = 100;
+  gameState.player1.hp = 500;
+  gameState.player2.hp = 500;
   gameState.currentPlayer = 1;
+  gameState.turnPhase = 'selecting';
+  gameState.selectedCards = [];
+  gameState.battlefieldCards = [];
   gameState.isGameActive = true;
   
   // Deal cards
@@ -239,6 +245,21 @@ export function updateBoard() {
     );
     card.targetRotation.set(0, 0, 0);
     card.targetScale.set(1, 1, 1);
+  });
+  
+  // Battlefield cards (center, side by side)
+  gameState.battlefieldCards.forEach((card, index) => {
+    const totalCards = gameState.battlefieldCards.length;
+    const totalWidth = (totalCards - 1) * centerSpacing;
+    const startX = -totalWidth / 2;
+    
+    card.targetPosition.set(
+      startX + (index * centerSpacing), 
+      0, 
+      2
+    );
+    card.targetRotation.set(0, 0, 0);
+    card.targetScale.set(1.5, 1.5, 1.5);
   });
   
   // Played cards (left side, face down, stacked)
@@ -475,6 +496,7 @@ async function executeAICardPlay(card, damage = null) {
   // Switch back to player after animation completes
   setTimeout(() => {
     gameState.currentPlayer = 1;
+    gameState.turnPhase = 'selecting';
     updateBoard();
     updateUI();
   }, 2000); // Wait for damage animation to complete
@@ -667,14 +689,14 @@ function updateUI() {
   if (p1HPText) {
     p1HPText.textContent = `${gameState.player1.hp}`;
     if (p1HPFill) {
-      p1HPFill.style.width = `${(gameState.player1.hp / 100) * 100}%`;
+      p1HPFill.style.width = `${(gameState.player1.hp / 500) * 100}%`;
     }
   }
   
   if (p2HPText) {
     p2HPText.textContent = `${gameState.player2.hp}`;
     if (p2HPFill) {
-      p2HPFill.style.width = `${(gameState.player2.hp / 100) * 100}%`;
+      p2HPFill.style.width = `${(gameState.player2.hp / 500) * 100}%`;
     }
   }
   
@@ -769,6 +791,9 @@ function clearSceneAndState() {
   gameState.player2.hand = [];
   gameState.player2.playedCards = [];
   gameState.selectedCard = null;
+  gameState.selectedCards = [];
+  gameState.battlefieldCards = [];
+  gameState.turnPhase = 'selecting';
   gameState.draggingCard = null;
   gameState.isPaused = false;
   gameState.isGameActive = false;
@@ -795,21 +820,25 @@ export function onMouseMove(event) {
     const card = intersects[0].object.userData;
     if (card instanceof Card && gameState.player1.hand.includes(card) && !card.isZoomed) {
       hovered = true;
-      card.mesh.scale.set(1.3, 1.3, 1.3);
-      card.mesh.position.z = 2;
+      
+      // Only apply hover effects if card is not selected
+      if (!card.isSelected) {
+        card.mesh.scale.set(1.3, 1.3, 1.3);
+        card.mesh.position.z = 2;
+      }
       
       if (tooltip) {
         tooltip.style.display = 'block';
         tooltip.style.left = `${event.clientX + 10}px`;
         tooltip.style.top = `${event.clientY - 10}px`;
-        tooltip.innerHTML = `${card.data.name}<br>Attack: ${card.data.atk}`;
+        tooltip.innerHTML = `${card.data.name}<br>Attack: ${card.data.atk}${card.isSelected ? '<br>[SELECTED]' : ''}`;
       }
     }
   }
   
   if (!hovered) {
     gameState.player1.hand.forEach(card => {
-      if (!card.isZoomed) { // Don't reset scale of zoomed card
+      if (!card.isZoomed && !card.isSelected) { // Don't reset scale of zoomed or selected cards
         card.mesh.scale.set(1, 1, 1);
         card.targetPosition.z = 0.5;
       }
@@ -823,7 +852,8 @@ export function onMouseMove(event) {
 export function onMouseClick(event) {
   if (gameState.isPaused || !gameState.isGameActive) return;
   if (gameState.currentPlayer !== 1) return;
-  if (gameState.animationInProgress) return; // Don't allow clicks during animations
+  if (gameState.animationInProgress) return;
+  if (gameState.turnPhase !== 'selecting') return;
   
   // Get proper canvas coordinates
   const canvas = document.getElementById('gameCanvas');
@@ -834,51 +864,85 @@ export function onMouseClick(event) {
   raycaster.setFromCamera(mouse, camera);
   
   const intersects = raycaster.intersectObjects(scene.children);
-  console.log('Mouse click - intersects:', intersects.length, 'at', mouse.x, mouse.y);
   
   if (intersects.length > 0) {
     const card = intersects[0].object.userData;
-    console.log('Clicked object:', card);
     
-    if (card instanceof Card && gameState.player1.hand.includes(card) && !gameState.zoomedCard) {
-      console.log('Showing card zoom for:', card.data.name);
-      showCardZoom(card);
-    } else if (card instanceof Card && card === gameState.zoomedCard) {
-      console.log('Clicked on zoomed card, closing zoom');
-      closeCardZoom();
+    if (card instanceof Card && gameState.player1.hand.includes(card)) {
+      showCardSelection(card);
     }
   }
 }
 
-// Show card zoom by flying card to left side
-function showCardZoom(card) {
-  if (gameState.animationInProgress || gameState.zoomedCard) return;
+// Show card selection with zoom and info panel
+function showCardSelection(card) {
+  if (gameState.animationInProgress) return;
   
-  gameState.zoomedCard = card;
   gameState.animationInProgress = true;
   
   // Store original position and scale
   card.originalPosition = card.mesh.position.clone();
   card.originalScale = card.mesh.scale.clone();
-  card.originalRotation = card.mesh.rotation.clone();
   
-  // Calculate target position (left side of screen)
-  const targetPosition = new THREE.Vector3(-7, 1, 2);
-  const targetScale = new THREE.Vector3(3, 3, 3); // 3x larger
-  const targetRotation = new THREE.Vector3(0, 0, 0);
+  // Zoom card to 1.5x size in place
+  card.mesh.scale.set(1.5, 1.5, 1.5);
+  card.mesh.position.z = 2; // Bring forward
+  card.isZoomed = true;
   
-  // Animate card flying to left side and enlarging
-  animateCardToZoom(card, targetPosition, targetScale, targetRotation).then(() => {
-    // Set final zoom position and scale, mark as zoomed to prevent repositioning
-    card.mesh.position.copy(targetPosition);
-    card.mesh.scale.copy(targetScale);
-    card.mesh.rotation.copy(targetRotation);
-    card.isZoomed = true; // Prevent automatic repositioning
-    
-    // Show info panel after animation completes
-    showZoomInfoPanel(card);
-    gameState.animationInProgress = false;
-  });
+  // Show info panel
+  showSelectionInfoPanel(card);
+  
+  // Set current selected card
+  gameState.selectedCard = card;
+  
+  gameState.animationInProgress = false;
+  
+  log(`Card selected: ${card.data.name}`);
+}
+
+// Show info panel on left side for selected card
+function showSelectionInfoPanel(card) {
+  const panel = document.getElementById('cardZoomPanel');
+  const nameEl = document.getElementById('cardZoomName');
+  const attackEl = document.getElementById('cardZoomAttack');
+  const descriptionEl = document.getElementById('cardZoomDescription');
+  
+  if (!panel || !nameEl || !attackEl || !descriptionEl) {
+    console.error('Selection panel elements not found');
+    return;
+  }
+  
+  // Populate panel with card data
+  nameEl.textContent = card.data.name;
+  attackEl.textContent = card.data.atk;
+  descriptionEl.textContent = `This card deals ${card.data.atk} damage to your opponent.`;
+  
+  // Update button text
+  const playButton = document.querySelector('.zoom-play-btn');
+  if (playButton) {
+    playButton.innerHTML = '<span class="btn-icon">⚔️</span><span>Play Selected Card</span>';
+  }
+  
+  // Show panel
+  panel.style.display = 'block';
+  panel.style.pointerEvents = 'auto';
+  
+  // Record when panel was shown
+  window.lastPanelShowTime = Date.now();
+}
+
+// This function is no longer needed with single-card selection system
+// Keeping as placeholder for compatibility
+function updateSelectionUI() {
+  // Single-card selection system handles UI updates in showSelectionInfoPanel
+  console.log('updateSelectionUI called but not needed with single-card selection');
+}
+
+// OLD ZOOM SYSTEM DISABLED - Using new single-card selection system
+function showCardZoom(card) {
+  // This function is disabled - using new single-card selection system
+  console.log('showCardZoom called but disabled - using single-card selection');
+  return;
 }
 
 // Animate card to zoom position
@@ -919,34 +983,15 @@ function animateCardToZoom(card, targetPosition, targetScale, targetRotation) {
   });
 }
 
-// Show info panel on right side
+// OLD ZOOM INFO PANEL DISABLED - Using new single-card selection system
 function showZoomInfoPanel(card) {
-  const panel = document.getElementById('cardZoomPanel');
-  const nameEl = document.getElementById('cardZoomName');
-  const attackEl = document.getElementById('cardZoomAttack');
-  const descriptionEl = document.getElementById('cardZoomDescription');
-  
-  // Check if all elements exist
-  if (!panel || !nameEl || !attackEl || !descriptionEl) {
-    console.error('Card zoom panel elements not found:', { panel, nameEl, attackEl, descriptionEl });
-    return;
-  }
-  
-  // Populate panel with card data
-  nameEl.textContent = card.data.name;
-  attackEl.textContent = card.data.atk;
-  descriptionEl.textContent = `This powerful card deals ${card.data.atk} damage to your opponent. Use it wisely in battle!`;
-  
-  // Show panel
-  panel.style.display = 'block';
-  console.log('Card zoom panel shown for:', card.data.name);
+  // This function is disabled - using new single-card selection system
+  console.log('showZoomInfoPanel called but disabled - using single-card selection');
+  return;
 }
 
-// Close card zoom and return card to original position
+// Close card selection and return card to original state
 function closeCardZoom() {
-  if (!gameState.zoomedCard) return;
-  
-  const card = gameState.zoomedCard;
   const panel = document.getElementById('cardZoomPanel');
   
   // Hide info panel
@@ -954,27 +999,34 @@ function closeCardZoom() {
     panel.style.display = 'none';
   }
   
-  console.log('Closing card zoom for:', card.data.name);
-  
-  // Animate card back to original position
-  if (card.originalPosition && card.originalScale && card.originalRotation) {
-    gameState.animationInProgress = true;
+  // Reset selected card if any
+  if (gameState.selectedCard) {
+    const card = gameState.selectedCard;
     
-    animateCardFromZoom(card, card.originalPosition, card.originalScale, card.originalRotation).then(() => {
-      // Clean up and re-enable repositioning
-      card.isZoomed = false; // Allow repositioning again
-      delete card.originalPosition;
-      delete card.originalScale;
-      delete card.originalRotation;
-      gameState.zoomedCard = null;
-      gameState.animationInProgress = false;
-      updateBoard(); // Re-position cards properly
-    });
-  } else {
-    // If no original position stored, just clear zoom state
-    if (card) card.isZoomed = false;
-    gameState.zoomedCard = null;
-    gameState.animationInProgress = false;
+    // Reset card visual state to original position and scale
+    card.isZoomed = false;
+    
+    // Restore original position and scale if available
+    if (card.originalPosition) {
+      card.mesh.position.copy(card.originalPosition);
+    }
+    if (card.originalScale) {
+      card.mesh.scale.copy(card.originalScale);
+    } else {
+      card.mesh.scale.set(1, 1, 1);
+    }
+    
+    // Reset z position
+    card.mesh.position.z = 0.5;
+    
+    // Clear stored original values
+    delete card.originalPosition;
+    delete card.originalScale;
+    
+    // Clear selected card
+    gameState.selectedCard = null;
+    
+    log('Card selection cancelled');
   }
 }
 
@@ -1016,17 +1068,172 @@ function animateCardFromZoom(card, targetPosition, targetScale, targetRotation) 
   });
 }
 
-// Confirm and play the zoomed card
-function confirmPlayCard() {
-  if (gameState.zoomedCard) {
-    const card = gameState.zoomedCard;
+// Confirm and play the selected card
+function confirmPlayCard(event) {
+  // Check if this is an intentional button click vs automatic trigger
+  if (!event || !event.isTrusted) {
+    return;
+  }
+  
+  // Check if the event target is actually the button
+  if (!event.target || !event.target.closest('.zoom-play-btn')) {
+    return;
+  }
+  
+  // Add a small delay to prevent accidental clicks right after panel appears
+  const now = Date.now();
+  if (!window.lastPanelShowTime) window.lastPanelShowTime = 0;
+  if (now - window.lastPanelShowTime < 500) {
+    return;
+  }
+  
+  if (gameState.selectedCard) {
     const panel = document.getElementById('cardZoomPanel');
     
     // Hide info panel immediately
-    panel.style.display = 'none';
+    if (panel) {
+      panel.style.display = 'none';
+    }
     
-    // First return card to hand position, then play it
-    returnCardToHandThenPlay(card);
+    // Move selected card to battlefield
+    moveCardToBattlefield(gameState.selectedCard);
+  }
+}
+
+// Move single card to battlefield center
+function moveCardToBattlefield(card) {
+  if (!card) return;
+  
+  gameState.animationInProgress = true;
+  gameState.turnPhase = 'battlefield';
+  
+  // Remove card from hand
+  const cardIndex = gameState.player1.hand.indexOf(card);
+  if (cardIndex !== -1) {
+    gameState.player1.hand.splice(cardIndex, 1);
+  }
+  
+  // Add to battlefield
+  gameState.battlefieldCards.push(card);
+  
+  // Reset card visual state
+  card.isZoomed = false;
+  card.mesh.scale.set(1, 1, 1);
+  card.mesh.position.z = 0.5;
+  
+  // Clear selected card
+  gameState.selectedCard = null;
+  
+  // Animate card to battlefield position
+  animateCardToBattlefield(card).then(() => {
+    gameState.animationInProgress = false;
+    gameState.turnPhase = 'selecting'; // Allow more selections
+    showBattleButton();
+    updateBoard();
+    
+    log(`${card.data.name} moved to battlefield`);
+  });
+}
+
+// Animate single card to battlefield
+function animateCardToBattlefield(card) {
+  return new Promise((resolve) => {
+    const duration = 800;
+    const startTime = Date.now();
+    const startPosition = card.mesh.position.clone();
+    
+    // Calculate position in battlefield (side by side)
+    const battlefieldIndex = gameState.battlefieldCards.length - 1;
+    const centerSpacing = 2.5;
+    const totalCards = gameState.battlefieldCards.length;
+    const totalWidth = (totalCards - 1) * centerSpacing;
+    const startX = -totalWidth / 2;
+    const targetX = startX + (battlefieldIndex * centerSpacing);
+    const targetPosition = new THREE.Vector3(targetX, 0, 2);
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      card.mesh.position.lerpVectors(startPosition, targetPosition, eased);
+      card.mesh.scale.setScalar(1.5); // Slightly larger in battlefield
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    }
+    
+    animate();
+  });
+}
+
+// Animate multiple cards to battlefield center
+function animateCardsToBattlefield(cards) {
+  return new Promise((resolve) => {
+    const duration = 1000;
+    const startTime = Date.now();
+    
+    // Store starting positions
+    const startPositions = cards.map(card => card.mesh.position.clone());
+    
+    // Calculate target positions (side by side in center)
+    const centerSpacing = 2.5;
+    const totalWidth = (cards.length - 1) * centerSpacing;
+    const startX = -totalWidth / 2;
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      cards.forEach((card, index) => {
+        const targetX = startX + (index * centerSpacing);
+        const targetPosition = new THREE.Vector3(targetX, 0, 2);
+        
+        card.mesh.position.lerpVectors(startPositions[index], targetPosition, eased);
+        card.mesh.scale.setScalar(1.5); // Slightly larger in battlefield
+      });
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    }
+    
+    animate();
+  });
+}
+
+// Show battle action panel with battlefield stats
+function showBattleButton() {
+  const battlePanel = document.getElementById('battleActionPanel');
+  if (battlePanel) {
+    // Update battle panel stats
+    const fieldCount = document.getElementById('battleFieldCount');
+    const totalAttack = document.getElementById('battleTotalAttack');
+    
+    if (fieldCount) {
+      fieldCount.textContent = gameState.battlefieldCards.length;
+    }
+    
+    if (totalAttack) {
+      const totalATK = gameState.battlefieldCards.reduce((sum, card) => sum + card.data.atk, 0);
+      totalAttack.textContent = totalATK;
+    }
+    
+    battlePanel.style.display = 'block';
+  }
+}
+
+// Hide battle action panel
+function hideBattleButton() {
+  const battlePanel = document.getElementById('battleActionPanel');
+  if (battlePanel) {
+    battlePanel.style.display = 'none';
   }
 }
 
@@ -1076,9 +1283,113 @@ function returnCardToHandThenPlay(card) {
   animateReturn();
 }
 
+// Execute battle with battlefield cards
+async function executeBattle(event) {
+  if (gameState.battlefieldCards.length === 0) return;
+  
+  gameState.animationInProgress = true;
+  gameState.turnPhase = 'battle';
+  
+  // Hide battle button
+  hideBattleButton();
+  
+  // Calculate total damage
+  const totalDamage = gameState.battlefieldCards.reduce((sum, card) => sum + card.data.atk, 0);
+  
+  // Animate cards flying to opponent (using existing animation)
+  for (let i = 0; i < gameState.battlefieldCards.length; i++) {
+    const card = gameState.battlefieldCards[i];
+    await animateCardFlight(card, true);
+  }
+  
+  // Deal combined damage
+  gameState.player2.hp = Math.max(0, gameState.player2.hp - totalDamage);
+  
+  // Update via API if online
+  if (gameState.gameSession) {
+    // Use first card's ID for API call, but with total damage
+    await playCardAPI(gameState.battlefieldCards[0].data.id, totalDamage);
+  }
+  
+  // Move battlefield cards to played cards
+  gameState.battlefieldCards.forEach(card => {
+    gameState.player1.playedCards.push(card);
+  });
+  
+  // Draw new cards to replace played ones
+  for (let i = 0; i < gameState.battlefieldCards.length; i++) {
+    drawCard(gameState.player1);
+  }
+  
+  const cardNames = gameState.battlefieldCards.map(card => card.data.name).join(', ');
+  log(`You played ${cardNames} dealing ${totalDamage} damage! Enemy HP: ${gameState.player2.hp}`);
+  
+  // Clear battlefield
+  gameState.battlefieldCards = [];
+  
+  // Check win condition
+  if (gameState.player2.hp <= 0) {
+    endGame(true);
+    return;
+  }
+  
+  // Switch to AI turn after animation completes
+  setTimeout(() => {
+    gameState.currentPlayer = 2;
+    gameState.turnPhase = 'selecting';
+    updateBoard();
+    updateUI();
+    
+    // AI plays after short delay
+    setTimeout(async () => {
+      await aiPlayCard();
+      gameState.animationInProgress = false;
+    }, 1500);
+  }, 2000);
+}
+
+// Return battlefield cards to hand
+function returnCardsToHand(event) {
+  if (gameState.battlefieldCards.length === 0) return;
+  
+  gameState.animationInProgress = true;
+  
+  // Hide battle button
+  hideBattleButton();
+  
+  // Move cards from battlefield back to hand
+  gameState.battlefieldCards.forEach(card => {
+    gameState.player1.hand.push(card);
+    
+    // Make sure cards are properly reset
+    card.isSelected = false;
+    card.mesh.material.emissive = new THREE.Color(0x000000); // Remove any glow
+    card.mesh.scale.set(1, 1, 1); // Reset scale
+    card.mesh.position.z = 0.5; // Reset depth
+  });
+  
+  // Clear battlefield
+  gameState.battlefieldCards = [];
+  
+  // Reset turn phase to selecting
+  gameState.turnPhase = 'selecting';
+  
+  // Update board positions
+  updateBoard();
+  
+  log('Cards returned to hand');
+  
+  // Allow animations to complete
+  setTimeout(() => {
+    gameState.animationInProgress = false;
+  }, 1000);
+}
+
 // Make functions globally accessible
 window.closeCardZoom = closeCardZoom;
 window.confirmPlayCard = confirmPlayCard;
+window.executeBattle = executeBattle;
+window.returnCardsToHand = returnCardsToHand;
 
 // Animation loop
 export function animate() {
@@ -1086,7 +1397,7 @@ export function animate() {
     requestAnimationFrame(animate);
     
     // Update all cards
-    [...gameState.player1.hand, ...gameState.player1.playedCards].forEach(card => {
+    [...gameState.player1.hand, ...gameState.player1.playedCards, ...gameState.battlefieldCards].forEach(card => {
       if (card.update) card.update();
     });
     [...gameState.player2.hand, ...gameState.player2.playedCards].forEach(card => {

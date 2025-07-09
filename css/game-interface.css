@@ -1,0 +1,416 @@
+/* game-interface.css - Game-specific UI elements */
+
+/* HP Bar System */
+.compact-hp-bar {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #FFD700;
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-family: 'Orbitron', sans-serif;
+  color: #FFD700;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.compact-hp-bar.player-hp {
+  bottom: 10px;
+  left: 10px;
+}
+
+.compact-hp-bar.opponent-hp {
+  top: 10px;
+  right: 10px;
+}
+
+.hp-label {
+  font-size: 8px;
+  margin-bottom: 2px;
+}
+
+.hp-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.hp-bar-bg {
+  width: 50px;
+  height: 3px;
+  background: rgba(139, 69, 19, 0.5);
+  border: 1px solid #8B4513;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF0000, #FF4500);
+  transition: width 0.5s ease;
+  border-radius: 2px 0 0 2px;
+}
+
+.hp-text {
+  font-size: 8px;
+  color: #FFD700;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Mana Bar System */
+.mana-bar {
+  width: 50px;
+  height: 3px;
+  background: rgba(0, 0, 139, 0.5);
+  border: 1px solid #0000FF;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.mana-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0000FF, #4169E1);
+  transition: width 0.5s ease;
+  border-radius: 2px 0 0 2px;
+}
+
+/* Desktop HP Bar Enhancement */
+@media (min-width: 769px) {
+  .compact-hp-bar {
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #FFD700;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  }
+
+  .compact-hp-bar.player-hp {
+    bottom: 20px;
+    left: 20px;
+  }
+
+  .compact-hp-bar.opponent-hp {
+    top: 20px;
+    right: 20px;
+  }
+
+  .hp-bar-bg {
+    width: 120px;
+    height: 8px;
+  }
+
+  .hp-text {
+    font-size: 12px;
+    min-width: 30px;
+  }
+
+  .mana-bar {
+    width: 120px;
+    height: 8px;
+  }
+}
+
+/* Card System */
+.card-container {
+  position: relative;
+  display: inline-block;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.card-container:hover {
+  transform: translateY(-10px);
+}
+
+.card-mesh {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.card-mesh:hover {
+  box-shadow: 0 8px 16px rgba(255, 0, 0, 0.4);
+}
+
+/* Timer Display */
+.timer-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  font-weight: bold;
+  color: #FF0000;
+  text-shadow: 0 0 20px #FF0000;
+  animation: timerPulse 1s ease-in-out infinite;
+  z-index: 100;
+}
+
+/* Score Display */
+.score-display {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  color: #FFD700;
+  text-shadow: 0 0 10px #FF0000;
+}
+
+.score-label {
+  font-size: 14px;
+  color: #FFD700;
+  margin-bottom: 5px;
+}
+
+.score-value {
+  font-size: 32px;
+  color: #FF0000;
+  font-weight: bold;
+  text-shadow: 0 0 15px #FF0000;
+}
+
+/* Game Status */
+.game-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 36px;
+  color: #FFD700;
+  text-shadow: 0 0 20px #FF0000;
+  text-align: center;
+  z-index: 200;
+}
+
+.game-status.victory {
+  color: #00FF00;
+  text-shadow: 0 0 20px #00FF00;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.game-status.defeat {
+  color: #FF0000;
+  text-shadow: 0 0 20px #FF0000;
+  animation: glowFlicker 2s ease-in-out infinite;
+}
+
+/* Turn Indicator */
+.turn-indicator {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  color: #FFD700;
+  text-shadow: 0 0 10px #FF0000;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #FFD700;
+  transition: all 0.3s ease;
+}
+
+.turn-indicator.active {
+  color: #FF0000;
+  border-color: #FF0000;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* Energy/Mana Counter */
+.energy-counter {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 20px;
+  color: #0080FF;
+  text-shadow: 0 0 10px #0080FF;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.energy-icon {
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #0080FF, #0040FF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 128, 255, 0.5);
+}
+
+.energy-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Damage Display */
+.damage-display {
+  position: absolute;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #FF0000;
+  text-shadow: 0 0 10px #FF0000;
+  pointer-events: none;
+  z-index: 300;
+}
+
+.damage-display.healing {
+  color: #00FF00;
+  text-shadow: 0 0 10px #00FF00;
+}
+
+/* Card Hand */
+.card-hand {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 20px;
+  z-index: 50;
+}
+
+/* Battlefield */
+.battlefield {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 60%;
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px dashed rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.battlefield-placeholder {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  color: rgba(255, 215, 0, 0.5);
+  text-align: center;
+}
+
+/* Opponent Area */
+.opponent-area {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 50;
+}
+
+/* UI Overlay */
+.ui-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.ui-overlay > * {
+  pointer-events: auto;
+}
+
+/* Right Side Buttons */
+.right-buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+}
+
+/* Game Menu */
+.game-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
+  border: 3px solid #FF0000;
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+  z-index: 500;
+}
+
+.game-menu h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 28px;
+  color: #FFD700;
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px #FF0000;
+}
+
+.game-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+/* Notification System */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.8));
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  padding: 15px 20px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #FFD700;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.notification.error {
+  border-color: #FF0000;
+  color: #FF0000;
+}
+
+.notification.success {
+  border-color: #00FF00;
+  color: #00FF00;
+}
+
+.notification.warning {
+  border-color: #FF8C00;
+  color: #FF8C00;
+}

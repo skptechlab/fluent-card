@@ -70,9 +70,9 @@ export class Card {
   // Detect screen width
   const isMobile = window.innerWidth <= 768;
 
-  // Smaller size for mobile
-  const width = isMobile ? 1.2 : 2;
-  const height = isMobile ? 1.8 : 3;
+  // Enlarged size for mobile
+  const width = isMobile ? 1.8 : 2;
+  const height = isMobile ? 2.7 : 3;
 
   const geometry = new THREE.PlaneGeometry(width, height);
   const texture = new THREE.TextureLoader().load(this.data.imagePath);

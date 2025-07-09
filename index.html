@@ -9,6 +9,17 @@
     <link rel="icon" type="image/png" href="./assets/logomasq1-g11o.gif" />
     <meta name="theme-color" content="#0B0B0B" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
+    
+    <!-- CSS Files - Loaded in order of specificity -->
+    <link rel="stylesheet" href="css/base.css"/>
+    <link rel="stylesheet" href="css/animations.css"/>
+    <link rel="stylesheet" href="css/components.css"/>
+    <link rel="stylesheet" href="css/game-interface.css"/>
+    <link rel="stylesheet" href="css/mobile.css"/>
+    <link rel="stylesheet" href="css/responsive.css"/>
+    <link rel="stylesheet" href="css/utilities.css"/>
+    
+    <!-- Legacy styles.css - can be removed after testing -->
     <link rel="stylesheet" href="styles.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
@@ -60,7 +71,7 @@
                 <div class="how-to-play-compact">
                     <h3>⚔️ Battle Rules</h3>
                     <div class="rules-grid">
-                        <div class="rule-item">100 HP • 5 Cards • Click to Attack</div>
+                        <div class="rule-item">500 HP • 5 Cards • Click to Attack</div>
                         <div class="rule-item">Cards deal 10-50 damage • First to 0 HP loses</div>
                     </div>
                 </div>
@@ -99,7 +110,7 @@
                     <div class="hp-bar-bg">
                         <div class="hp-bar-fill" id="player1HPFill" style="width: 100%;"></div>
                     </div>
-                    <div class="hp-text" id="player1HPText">100</div>
+                    <div class="hp-text" id="player1HPText">500</div>
                 </div>
             </div>
             
@@ -110,7 +121,7 @@
                     <div class="hp-bar-bg">
                         <div class="hp-bar-fill" id="player2HPFill" style="width: 100%;"></div>
                     </div>
-                    <div class="hp-text" id="player2HPText">100</div>
+                    <div class="hp-text" id="player2HPText">500</div>
                 </div>
             </div>
         </div>
@@ -141,13 +152,45 @@
                     Click this card to deal damage to your opponent!
                 </div>
                 <div class="zoom-card-actions">
-                    <button class="zoom-play-btn" onclick="confirmPlayCard()">
+                    <button class="zoom-play-btn" onclick="confirmPlayCard(event)">
                         <span class="btn-icon">⚔️</span>
                         <span>Play Card</span>
                     </button>
                     <button class="zoom-cancel-btn" onclick="closeCardZoom()">
                         <span class="btn-icon">✕</span>
                         <span>Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Battle Action Panel (Left Side) -->
+        <div class="battle-action-panel" id="battleActionPanel" style="display: none;">
+            <div class="battle-panel-info">
+                <h3 id="battlePanelTitle">Ready to Battle</h3>
+                <div class="battle-panel-stats">
+                    <div class="stat-item">
+                        <span class="stat-icon">🎯</span>
+                        <span class="stat-label">Cards on Field:</span>
+                        <span class="stat-value" id="battleFieldCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-icon">⚔️</span>
+                        <span class="stat-label">Total Attack:</span>
+                        <span class="stat-value" id="battleTotalAttack">0</span>
+                    </div>
+                </div>
+                <div class="battle-panel-description">
+                    Execute your combined attack or return cards to hand.
+                </div>
+                <div class="battle-panel-actions">
+                    <button class="battle-action-btn" id="battleBtn" onclick="executeBattle(event)">
+                        <span class="btn-icon">⚔️</span>
+                        <span>BATTLE!</span>
+                    </button>
+                    <button class="battle-cancel-btn" id="returnHandBtn" onclick="returnCardsToHand(event)">
+                        <span class="btn-icon">↩️</span>
+                        <span>Return to Hand</span>
                     </button>
                 </div>
             </div>
