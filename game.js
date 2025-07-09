@@ -503,7 +503,7 @@ async function executeAICardPlay(card, damage = null) {
 }
 
 // Animate card flying to center and inflicting damage
-function animateCardFlight(card, playerToAI) {
+function animateCardFlight(card, playerToAI, skipDamage = false) {
   return new Promise((resolve) => {
     const startY = playerToAI ? -5 : 5;
     const centerY = 0; // Center of battlefield
@@ -544,8 +544,16 @@ function animateCardFlight(card, playerToAI) {
       } else {
         // Keep card in center at 2x size briefly
         setTimeout(() => {
-          // Show damage animation
-          showDamageAnimation(card, playerToAI);
+          // Show damage animation only if not skipping damage
+          if (!skipDamage) {
+            showDamageAnimation(card, playerToAI);
+          } else {
+            // If skipping damage, still move card to played area
+            setTimeout(() => {
+              card.isZoomed = false;
+              moveCardToPlayedArea(card, playerToAI);
+            }, 1000);
+          }
           resolve();
         }, 500);
       }
@@ -556,13 +564,14 @@ function animateCardFlight(card, playerToAI) {
 }
 
 // Show damage animation with floating damage number
-function showDamageAnimation(card, playerToAI) {
-  const damage = card.data.atk;
+function showDamageAnimation(damage, playerToAI = true) {
+  // Handle both card object and direct damage value
+  const damageAmount = typeof damage === 'number' ? damage : damage.data.atk;
   
   // Create floating damage text
   const damageElement = document.createElement('div');
   damageElement.className = 'damage-animation';
-  damageElement.textContent = `-${damage}`;
+  damageElement.textContent = `-${damageAmount}`;
   damageElement.style.cssText = `
     position: fixed;
     left: 50%;
@@ -585,12 +594,14 @@ function showDamageAnimation(card, playerToAI) {
     damageElement.remove();
   }, 2000);
   
-  // Move card to played cards area after damage shown
-  setTimeout(() => {
-    // Re-enable automatic updates for the move to played area
-    card.isZoomed = false;
-    moveCardToPlayedArea(card, playerToAI);
-  }, 1000);
+  // Move card to played cards area after damage shown (only if damage is a card object)
+  if (typeof damage === 'object' && damage.data) {
+    setTimeout(() => {
+      // Re-enable automatic updates for the move to played area
+      damage.isZoomed = false;
+      moveCardToPlayedArea(damage, playerToAI);
+    }, 1000);
+  }
 }
 
 // Move card to played cards area (left side, face down, stacked)
@@ -1296,20 +1307,24 @@ async function executeBattle(event) {
   // Calculate total damage
   const totalDamage = gameState.battlefieldCards.reduce((sum, card) => sum + card.data.atk, 0);
   
-  // Animate cards flying to opponent (using existing animation)
-  for (let i = 0; i < gameState.battlefieldCards.length; i++) {
-    const card = gameState.battlefieldCards[i];
-    await animateCardFlight(card, true);
-  }
-  
-  // Deal combined damage
+  // Deal combined damage immediately
   gameState.player2.hp = Math.max(0, gameState.player2.hp - totalDamage);
+  
+  // Update HP display immediately
+  updateUI();
+  
+  // Show total damage animation
+  showDamageAnimation(totalDamage);
   
   // Update via API if online
   if (gameState.gameSession) {
     // Use first card's ID for API call, but with total damage
     await playCardAPI(gameState.battlefieldCards[0].data.id, totalDamage);
   }
+  
+  // Animate ALL battlefield cards flying to the left together (skip individual damage)
+  const cardAnimations = gameState.battlefieldCards.map(card => animateCardFlight(card, true, true));
+  await Promise.all(cardAnimations);
   
   // Move battlefield cards to played cards
   gameState.battlefieldCards.forEach(card => {
@@ -1345,7 +1360,7 @@ async function executeBattle(event) {
       await aiPlayCard();
       gameState.animationInProgress = false;
     }, 1500);
-  }, 2000);
+  }, 1000); // Reduced delay since cards animate together
 }
 
 // Return battlefield cards to hand
