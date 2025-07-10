@@ -33,10 +33,7 @@
   pointer-events: none;
 }
 
-@keyframes float {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-100px) rotate(360deg); }
-}
+/* float keyframe moved to animations.css to avoid duplication */
 
 /* Glitch Text Effect */
 .glitch-text {
@@ -76,21 +73,7 @@
   animation: glitch-3 0.3s infinite;
 }
 
-@keyframes glitch-2 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-}
-
-@keyframes glitch-3 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(2px, -2px); }
-  40% { transform: translate(2px, 2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(-2px, 2px); }
-}
+/* glitch-2 and glitch-3 keyframes moved to animations.css to avoid duplication */
 
 /* Hero Subtitle */
 .hero-subtitle {
@@ -532,15 +515,7 @@
   animation: slideUp 0.3s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
+/* fadeIn and slideUp keyframes moved to animations.css to avoid duplication */
 
 .auth-header {
   display: flex;

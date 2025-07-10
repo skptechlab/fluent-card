@@ -1,6 +1,530 @@
-/* responsive.css - Media queries and responsive enhancements */
+/* responsive-merged.css - Consolidated responsive design and mobile-specific styles */
 
-/* Desktop enhancement for card zoom panel */
+/* ===== MOBILE STYLES (768px and below) ===== */
+@media (max-width: 768px) {
+  body {
+    touch-action: pan-y;
+    font-size: 7px;
+  }
+
+  /* Mobile Control Panel */
+  .mobile-control-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.8));
+    border-top: 2px solid #0080FF;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 300;
+    padding: 0 10px;
+  }
+
+  .mobile-control-panel button {
+    padding: 8px 12px;
+    font-size: 10px;
+    min-width: 60px;
+    height: 40px;
+  }
+
+  /* Mobile Bottom Sheet */
+  .mobile-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 70vh;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
+    border-top: 3px solid #0080FF;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    z-index: 400;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .mobile-bottom-sheet.open {
+    transform: translateY(0);
+  }
+
+  .mobile-bottom-sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+  }
+
+  .mobile-bottom-sheet-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 16px;
+    color: #00FFFF;
+    font-weight: bold;
+  }
+
+  .mobile-bottom-sheet-close {
+    background: none;
+    border: none;
+    color: #0080FF;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mobile Touch Feedback */
+  .touch-feedback {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, rgba(0, 191, 255, 0.6), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000;
+    animation: touchFeedback 0.3s ease-out;
+  }
+
+  /* Mobile Gesture Indicators */
+  .gesture-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 255, 255, 0.3);
+    z-index: 250;
+  }
+
+  .gesture-icon {
+    width: 20px;
+    height: 20px;
+    background: #00FFFF;
+    border-radius: 50%;
+    animation: bounce 2s infinite;
+  }
+
+  .gesture-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    color: #00FFFF;
+  }
+
+  /* Mobile Card Adjustments */
+  .card-hand {
+    bottom: 70px; /* Account for mobile control panel */
+    padding: 10px;
+    gap: 5px;
+  }
+
+  /* Mobile HP Bars */
+  .compact-hp-bar {
+    padding: 2px 4px;
+    font-size: 8px;
+  }
+
+  .compact-hp-bar.player-hp {
+    bottom: 8px;
+    left: 8px;
+  }
+
+  .compact-hp-bar.opponent-hp {
+    top: 8px;
+    right: 8px;
+  }
+
+  .hp-label {
+    font-size: 7px;
+  }
+
+  .hp-bar-bg {
+    width: 50px;
+    height: 3px;
+  }
+
+  .hp-text {
+    font-size: 8px;
+    min-width: 18px;
+  }
+
+  /* Mobile Game Log */
+  .game-log {
+    top: 50px;
+    right: 10px;
+    width: 100px;
+    max-height: 100px;
+    font-size: 5px;
+    padding: 4px;
+    border-width: 5px;
+    border-radius: 3px;
+    box-shadow: inset 0 0 4px rgba(0, 191, 255, 0.025);
+  }
+
+  /* Mobile Control Buttons */
+  .control-buttons {
+    top: 5px;
+    left: 5px;
+    gap: 3px;
+  }
+
+  .control-btn {
+    font-size: 7px;
+    padding: 2px 4px;
+    border-width: 3px;
+    border-radius: 3px;
+    letter-spacing: 0.2px;
+  }
+
+  /* Mobile General Buttons */
+  button {
+    font-size: 8px;
+    padding: 4px 8px;
+    border-width: 5px;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 191, 255, 0.075);
+  }
+
+  .end-turn-btn {
+    bottom: 5px;
+    font-size: 6px;
+    padding: 3px 6px;
+  }
+
+  .pause-btn {
+    top: 5px;
+    font-size: 6px;
+    padding: 3px 6px;
+  }
+
+  .buy-btn {
+    padding: 5px 10px;
+    font-size: 7px;
+    border-width: 1px;
+    text-shadow: 0 0 2.5px #0080FF;
+  }
+
+  /* Mobile Right Buttons */
+  .right-buttons {
+    right: 5px;
+    gap: 4px;
+  }
+
+  /* Mobile Game UI Elements */
+  .timer-display {
+    font-size: 24px;
+  }
+
+  .score-display {
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+  }
+
+  .score-value {
+    font-size: 20px;
+  }
+
+  .turn-indicator {
+    top: 50px;
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .energy-counter {
+    bottom: 40px;
+    left: 10px;
+    font-size: 14px;
+  }
+
+  .energy-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .energy-text {
+    font-size: 16px;
+  }
+
+  .damage-display {
+    font-size: 16px;
+  }
+
+  /* Mobile Tooltips */
+  .card-tooltip, .lore-tooltip {
+    font-size: 10px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    max-width: 200px;
+    white-space: normal;
+  }
+
+  /* Mobile Notifications */
+  .notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    font-size: 12px;
+    padding: 10px 15px;
+  }
+
+  /* Mobile Modal Adjustments */
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+    border-width: 2px;
+    border-radius: 10px;
+  }
+
+  .modal-header {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .modal-body {
+    font-size: 14px;
+    margin-bottom: 15px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-actions button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  /* Mobile Form Adjustments */
+  .form-input {
+    padding: 10px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Mobile Loading Spinner */
+  .loading-spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    margin-top: 15px;
+  }
+
+  /* Mobile Landscape Adjustments */
+  @media (orientation: landscape) {
+    .mobile-control-panel {
+      height: 50px;
+    }
+
+    .mobile-bottom-sheet {
+      max-height: 60vh;
+    }
+
+    .card-hand {
+      bottom: 60px;
+    }
+
+    .compact-hp-bar {
+      padding: 1px 3px;
+      font-size: 7px;
+    }
+
+    .compact-hp-bar.player-hp {
+      bottom: 5px;
+      left: 5px;
+    }
+
+    .compact-hp-bar.opponent-hp {
+      top: 5px;
+      right: 5px;
+    }
+
+    .hp-bar-bg {
+      width: 40px;
+      height: 2px;
+    }
+
+    .game-log {
+      top: 40px;
+      right: 8px;
+      width: 80px;
+      max-height: 80px;
+      font-size: 4px;
+      padding: 3px;
+    }
+
+    .timer-display {
+      font-size: 20px;
+    }
+
+    .turn-indicator {
+      top: 40px;
+      font-size: 10px;
+      padding: 4px 8px;
+    }
+  }
+
+  /* Mobile Portrait Adjustments */
+  @media (orientation: portrait) {
+    .battlefield {
+      width: 90%;
+      height: 50%;
+    }
+
+    .opponent-area {
+      top: 40px;
+      gap: 5px;
+    }
+
+    .card-hand {
+      padding: 15px 5px;
+    }
+  }
+}
+
+/* ===== TABLET PORTRAIT (481px - 768px) ===== */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+  .card-zoom-panel {
+    width: 260px;
+    height: 320px;
+    padding: 15px;
+  }
+  
+  .zoom-card-info h3 {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+  }
+  
+  .stat-item {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+  
+  .stat-icon {
+    font-size: 16px;
+  }
+  
+  .stat-label {
+    font-size: 13px;
+  }
+  
+  .stat-value {
+    font-size: 16px;
+  }
+  
+  .zoom-card-description {
+    font-size: 12px;
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .zoom-play-btn, .zoom-cancel-btn {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+  
+  .btn-icon {
+    font-size: 14px;
+  }
+  
+  .game-log {
+    width: 160px;
+    max-height: 140px;
+    font-size: 9px;
+    padding: 6px;
+  }
+  
+  .compact-hp-bar {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  .hp-bar-bg {
+    width: 70px;
+    height: 5px;
+  }
+  
+  .hp-text {
+    font-size: 9px;
+    min-width: 20px;
+  }
+}
+
+/* ===== SMALL TABLETS AND LARGE PHONES (481px - 768px) ===== */
+@media (min-width: 481px) and (max-width: 768px) {
+  body {
+    font-size: 12px;
+  }
+  
+  .timer-display {
+    font-size: 36px;
+  }
+  
+  .score-display {
+    font-size: 20px;
+  }
+  
+  .score-value {
+    font-size: 28px;
+  }
+  
+  .turn-indicator {
+    font-size: 16px;
+    padding: 8px 16px;
+  }
+  
+  .energy-counter {
+    font-size: 18px;
+  }
+  
+  .energy-icon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .energy-text {
+    font-size: 20px;
+  }
+  
+  .damage-display {
+    font-size: 20px;
+  }
+  
+  .end-turn-btn {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+  
+  .pause-btn {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+  
+  button {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
+/* ===== DESKTOP (769px and above) ===== */
 @media (min-width: 769px) {
   .card-zoom-panel {
     bottom: 20px;
@@ -70,7 +594,74 @@
   }
 }
 
-/* Large Desktop Screens */
+/* ===== TABLET LANDSCAPE (769px - 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .card-zoom-panel {
+    width: 280px;
+    padding: 18px;
+  }
+  
+  .zoom-card-info h3 {
+    font-size: 22px;
+    margin: 0 0 12px 0;
+  }
+  
+  .stat-item {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .stat-icon {
+    font-size: 18px;
+  }
+  
+  .stat-label {
+    font-size: 15px;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+  }
+  
+  .zoom-card-description {
+    font-size: 13px;
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .zoom-play-btn, .zoom-cancel-btn {
+    padding: 10px 18px;
+    font-size: 14px;
+  }
+  
+  .btn-icon {
+    font-size: 16px;
+  }
+  
+  .game-log {
+    width: 220px;
+    max-height: 180px;
+    font-size: 11px;
+    padding: 8px;
+  }
+  
+  .compact-hp-bar {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  
+  .hp-bar-bg {
+    width: 100px;
+    height: 7px;
+  }
+  
+  .hp-text {
+    font-size: 11px;
+    min-width: 25px;
+  }
+}
+
+/* ===== LARGE DESKTOP (1200px and above) ===== */
 @media (min-width: 1200px) {
   .game-container {
     max-width: 1200px;
@@ -172,7 +763,7 @@
   }
 }
 
-/* Ultra-wide Screens */
+/* ===== ULTRA-WIDE SCREENS (1600px and above) ===== */
 @media (min-width: 1600px) {
   .game-container {
     max-width: 1400px;
@@ -221,196 +812,119 @@
   }
 }
 
-/* Tablet Landscape */
-@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-  .card-zoom-panel {
-    width: 280px;
-    padding: 18px;
-  }
-  
-  .zoom-card-info h3 {
-    font-size: 22px;
-    margin: 0 0 12px 0;
-  }
-  
-  .stat-item {
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-  
-  .stat-icon {
-    font-size: 18px;
-  }
-  
-  .stat-label {
-    font-size: 15px;
-  }
-  
-  .stat-value {
-    font-size: 18px;
-  }
-  
-  .zoom-card-description {
-    font-size: 13px;
-    padding: 10px;
-    margin-bottom: 15px;
-  }
-  
-  .zoom-play-btn, .zoom-cancel-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-  }
-  
-  .btn-icon {
-    font-size: 16px;
-  }
-  
-  .game-log {
-    width: 220px;
-    max-height: 180px;
-    font-size: 11px;
-    padding: 8px;
-  }
-  
-  .compact-hp-bar {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-  
-  .hp-bar-bg {
-    width: 100px;
-    height: 7px;
-  }
-  
-  .hp-text {
-    font-size: 11px;
-    min-width: 25px;
-  }
-}
-
-/* Tablet Portrait */
-@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
-  .card-zoom-panel {
-    width: 260px;
-    height: 320px;
-    padding: 15px;
-  }
-  
-  .zoom-card-info h3 {
-    font-size: 20px;
-    margin: 0 0 10px 0;
-  }
-  
-  .stat-item {
-    padding: 8px;
-    margin-bottom: 6px;
-  }
-  
-  .stat-icon {
-    font-size: 16px;
-  }
-  
-  .stat-label {
-    font-size: 13px;
-  }
-  
-  .stat-value {
-    font-size: 16px;
-  }
-  
-  .zoom-card-description {
-    font-size: 12px;
-    padding: 8px;
-    margin-bottom: 12px;
-  }
-  
-  .zoom-play-btn, .zoom-cancel-btn {
-    padding: 8px 15px;
-    font-size: 12px;
-  }
-  
-  .btn-icon {
-    font-size: 14px;
-  }
-  
-  .game-log {
-    width: 160px;
-    max-height: 140px;
-    font-size: 9px;
-    padding: 6px;
-  }
-  
-  .compact-hp-bar {
-    padding: 8px 12px;
-    font-size: 11px;
-  }
-  
-  .hp-bar-bg {
-    width: 70px;
-    height: 5px;
-  }
-  
-  .hp-text {
-    font-size: 9px;
-    min-width: 20px;
-  }
-}
-
-/* Small Tablets and Large Phones */
-@media (min-width: 481px) and (max-width: 768px) {
-  body {
-    font-size: 12px;
-  }
-  
-  .timer-display {
-    font-size: 36px;
-  }
-  
-  .score-display {
-    font-size: 20px;
-  }
-  
-  .score-value {
-    font-size: 28px;
-  }
-  
-  .turn-indicator {
-    font-size: 16px;
-    padding: 8px 16px;
-  }
-  
-  .energy-counter {
-    font-size: 18px;
-  }
-  
-  .energy-icon {
-    width: 25px;
-    height: 25px;
-  }
-  
-  .energy-text {
-    font-size: 20px;
-  }
-  
-  .damage-display {
-    font-size: 20px;
-  }
-  
-  .end-turn-btn {
-    font-size: 14px;
-    padding: 10px 20px;
-  }
-  
-  .pause-btn {
-    font-size: 12px;
-    padding: 8px 16px;
-  }
-  
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch-optimized buttons */
   button {
-    font-size: 12px;
-    padding: 8px 16px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 16px;
+  }
+
+  /* Touch-optimized interactive elements */
+  .card-container {
+    margin: 8px;
+  }
+
+  .nav-link {
+    padding: 12px 20px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .card-container:hover {
+    transform: none;
+  }
+
+  .nav-link:hover {
+    transform: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
+  /* Add active states for touch */
+  .card-container:active {
+    transform: scale(0.95);
+  }
+
+  button:active {
+    transform: scale(0.95);
+  }
+
+  .nav-link:active {
+    color: #0080FF;
+    text-shadow: 0 0 10px #0080FF;
   }
 }
+
+/* ===== EXTENDED MOBILE COMPONENTS ===== */
+.mobile-control-panel-extended {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 26, 0.95));
+  border-top: 2px solid #0080FF;
+  padding: 15px;
+  z-index: 1000;
+  display: none; /* Hidden by default */
+}
+
+@media (max-width: 768px) {
+  .mobile-control-panel-extended {
+    display: block;
+  }
+}
+
+.mobile-actions-extended {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mobile-btn-extended {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #0080FF, #00BFFF);
+  border: 2px solid #00FFFF;
+  border-radius: 12px;
+  color: white;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.mobile-btn-extended:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mobile-btn-extended:not(:disabled):active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #00BFFF, #00FFFF);
+}
+
+.mobile-btn-extended .btn-icon {
+  font-size: 20px;
+}
+
+.mobile-gesture-hints-extended {
+  text-align: center;
+  color: #00FFFF;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* ===== ACCESSIBILITY & PERFORMANCE ===== */
 
 /* Print Styles */
 @media print {

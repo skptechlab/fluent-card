@@ -33,36 +33,7 @@
 .nav-link span:nth-child(odd) { --glitch-translate: 10px; }
 .nav-link span:nth-child(even) { --glitch-translate: -10px; }
 
-@keyframes stack {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%);
-    text-shadow: -2px 3px 0 #0080FF, 2px -3px 0 #00BFFF;
-  };
-  60% {
-    opacity: 0.5;
-    transform: translateX(50%);
-  }
-  80% {
-    transform: none;
-    opacity: 1;
-    text-shadow: 2px -3px 0 #0080FF, -2px 3px 0 #00BFFF;
-  }
-  100% {
-    text-shadow: none;
-  }
-}
-
-@keyframes glitch {
-  0% {
-    text-shadow: -2px 3px 0 #0080FF, 2px -3px 0 #00BFFF;
-    transform: translate(var(--glitch-translate));
-  }
-  2% {
-    text-shadow: 2px -3px 0 #0080FF, -2px 3px 0 #00BFFF;
-  }
-  4%, 100% {  text-shadow: none; transform: none; }
-}
+/* Keyframes moved to animations.css to avoid duplication */
 
 .nav-link:hover {
   color: white;
@@ -209,6 +180,4 @@
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+/* Spin keyframe moved to animations.css to avoid duplication */

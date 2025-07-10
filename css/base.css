@@ -9,8 +9,8 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #0a0e1a, #1a2b4a, #0f1a2e);
-  color: #FFF;
-  font-family: 'Roboto', sans-serif;
+  color: var(--text-white);
+  font-family: var(--font-secondary);
   overflow-x: hidden;
   display: flex;
   justify-content: center;
@@ -22,24 +22,91 @@ body {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Orbitron', sans-serif;
-  color: #00BFFF;
-  text-shadow: 0 0 10px #0080FF;
+  font-family: var(--font-primary);
+  color: var(--text-secondary);
+  text-shadow: var(--shadow-text-primary);
 }
 
 p, span, div {
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--font-secondary);
 }
 
-/* Global Color Variables */
+/* Global Design System Variables */
 :root {
+  /* Primary Brand Colors */
   --primary-blue: #00BFFF;
   --primary-cyan: #00FFFF;
   --primary-electric: #0080FF;
-  --bg-dark: rgba(26, 43, 74, 0.9);
-  --bg-darker: rgba(10, 14, 26, 0.8);
+  
+  /* Secondary Colors */
+  --success-green: #00FF00;
+  --success-green-dark: #00AA00;
+  --danger-red: #FF0000;
+  --danger-red-dark: #AA0000;
+  --warning-orange: #FFAA00;
+  --warning-orange-dark: #FF8800;
+  
+  /* Background Colors */
+  --bg-black: #000000;
+  --bg-dark-primary: #1a1a1a;
+  --bg-dark-secondary: #2a2a2a;
+  --bg-dark-tertiary: #3a3a3a;
+  --bg-gradient-dark: rgba(26, 26, 26, 0.9);
+  --bg-gradient-darker: rgba(43, 43, 43, 0.8);
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+  --bg-modal: rgba(0, 0, 0, 0.9);
+  
+  /* Border Colors */
+  --border-primary: #00FFFF;
+  --border-secondary: #0080FF;
+  --border-neutral: #666;
   --border-glow: rgba(0, 191, 255, 0.4);
-  --text-shadow: 0 0 5px rgba(0, 191, 255, 0.2);
+  
+  /* Text Colors */
+  --text-primary: #00FFFF;
+  --text-secondary: #00BFFF;
+  --text-tertiary: #0080FF;
+  --text-muted: #ccc;
+  --text-light: #aaa;
+  --text-white: #ffffff;
+  
+  /* Shadow Effects */
+  --shadow-text-primary: 0 0 10px #0080FF;
+  --shadow-text-secondary: 0 0 5px #0080FF;
+  --shadow-box-glow: 0 0 20px rgba(0, 191, 255, 0.6);
+  --shadow-box-subtle: 0 0 10px rgba(0, 191, 255, 0.15);
+  
+  /* Font Families */
+  --font-primary: 'Orbitron', sans-serif;
+  --font-secondary: 'Roboto', sans-serif;
+  --font-legacy: 'Cinzel', serif;
+  
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+  --radius-full: 50%;
+  
+  /* Transitions */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Z-index Scale */
+  --z-background: 1;
+  --z-game: 10;
+  --z-ui: 100;
+  --z-modal: 500;
+  --z-tooltip: 1000;
 }
 
 /* Base Layout */
@@ -76,21 +143,21 @@ canvas {
 
 /* Z-index Layers */
 .layer-background {
-  z-index: 1;
+  z-index: var(--z-background);
 }
 
 .layer-game {
-  z-index: 10;
+  z-index: var(--z-game);
 }
 
 .layer-ui {
-  z-index: 100;
+  z-index: var(--z-ui);
 }
 
 .layer-modal {
-  z-index: 500;
+  z-index: var(--z-modal);
 }
 
 .layer-tooltip {
-  z-index: 1000;
+  z-index: var(--z-tooltip);
 }

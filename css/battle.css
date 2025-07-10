@@ -20,16 +20,7 @@
   align-items: center;
 }
 
-@keyframes battleButtonAppear {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
+/* battleButtonAppear keyframe moved to animations.css to avoid duplication */
 
 .battle-btn {
   display: flex;
@@ -63,14 +54,7 @@
   animation: battlePulse 1s ease-in-out infinite;
 }
 
-@keyframes battlePulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-}
+/* battlePulse keyframe moved to animations.css to avoid duplication */
 
 /* Return to Hand Button Styles */
 .return-hand-btn {
@@ -113,16 +97,7 @@
   animation: slideInFromLeft 0.3s ease-out;
 }
 
-@keyframes slideInFromLeft {
-  from {
-    transform: translateY(-50%) translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(-50%) translateX(0);
-    opacity: 1;
-  }
-}
+/* slideInFromLeft keyframe moved to animations.css to avoid duplication */
 
 .battle-panel-info {
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
