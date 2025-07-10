@@ -25,7 +25,7 @@
   clip-path: inset(var(--clip-top) 0 var(--clip-bottom) 0);
   animation: stack 340ms cubic-bezier(.46,.29,0,1.24) 1 backwards calc(var(--index) * 20ms), glitch 2s ease infinite 2s alternate-reverse;
   color: #00FFFF;
-  background-image: url('./assets/button_f.png');
+  background-image: url('../assets/button_f.png');
   background-size: cover;
   background-position: center;
 }
@@ -102,7 +102,7 @@
   border: 2px solid #0080FF;
   border-radius: 12px;
   position: relative;
-  background: url('./assets/button.gif') no-repeat center center / cover;
+  background: url('../assets/button.gif') no-repeat center center / cover;
 }
 
 .angled-btn-group li a:before {
@@ -116,7 +116,7 @@
   border: 2px solid #0080FF;
   border-radius: 12px;
   transform: skewY(-45deg);
-  background: url('./assets/button.gif') no-repeat center center / cover;
+  background: url('../assets/button.gif') no-repeat center center / cover;
 }
 
 .angled-btn-group li a:after {
@@ -130,7 +130,7 @@
   border: 2px solid #0080FF;
   border-radius: 12px;
   transform: skewX(-45deg);
-  background: url('./assets/button.gif') no-repeat center center / cover;
+  background: url('../assets/button.gif') no-repeat center center / cover;
 }
 
 .angled-btn-group li a i {
@@ -159,7 +159,7 @@
 .angled-btn-group li a:hover {
   transform: rotate(0deg) skew(5deg) translate(20px, -15px);
   box-shadow: -50px 50px 50px rgba(0, 0, 0, 0.5);
-  background: url('./assets/button.gif') no-repeat center center / cover;
+  background: url('../assets/button.gif') no-repeat center center / cover;
 }
 
 .angled-btn-group li a:hover i,

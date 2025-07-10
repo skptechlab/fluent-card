@@ -45,7 +45,7 @@
 }
 
 .header {
-  background: url('./assets/banner_skelF22.gif') no-repeat center center;
+  background: url('../assets/banner_skelF22.gif') no-repeat center center;
   background-size: cover;
   height: 7vh;
   width: 100%;
