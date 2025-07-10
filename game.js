@@ -207,18 +207,8 @@ function dealInitialCards() {
   
   // Deal 5 cards to each player
   for (let i = 0; i < 5; i++) {
-    // Player 1 card - mix of special effects and battle cards for testing
-    let p1CardData;
-    if (i === 0) {
-      // First card is always a strong battle card for testing special effects
-      p1CardData = cardData.find(card => card.atk >= 40) || cardData[0];
-    } else if (i <= specialEffectCards.length) {
-      // Next cards are special effect cards for testing (g1, g2, g3, g4, g5)
-      p1CardData = specialEffectCards[i - 1];
-    } else {
-      // Rest are regular cards
-      p1CardData = cardData[i % cardData.length];
-    }
+    // Player 1 card - random mix of all available cards
+    const p1CardData = cardData[Math.floor(Math.random() * cardData.length)];
     const p1Card = new Card(p1CardData, true);
     gameState.player1.hand.push(p1Card);
     
@@ -878,24 +868,10 @@ function moveCardToPlayedArea(card, playerToAI) {
 function drawCard(player) {
   if (gameState.availableCards.length === 0) return;
   
-  let selectedCard;
-  
-  // For testing: Force special effect cards every 2 turns for player 1
-  if (player === gameState.player1) {
-    const totalTurns = gameState.player1.playedCards.length + gameState.fieldEffects.length;
-    if (totalTurns % 2 === 0 && specialEffectCards.length > 0) {
-      // Give a special effect card every 2 turns
-      selectedCard = specialEffectCards[Math.floor(Math.random() * specialEffectCards.length)];
-    } else {
-      // Give a regular card
-      selectedCard = cardData[Math.floor(Math.random() * cardData.length)];
-    }
-  } else {
-    // AI gets random cards normally
-    selectedCard = gameState.availableCards[
-      Math.floor(Math.random() * gameState.availableCards.length)
-    ];
-  }
+  // Select random card from available cards for both players
+  const selectedCard = gameState.availableCards[
+    Math.floor(Math.random() * gameState.availableCards.length)
+  ];
   
   const newCard = new Card(selectedCard, player === gameState.player1);
   player.hand.push(newCard);
