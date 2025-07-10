@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
     <title>Card Battle Arena - Simple PvP Card Game</title>
     <meta name="description" content="Simple turn-based PvP card battle game with beautiful 3D animations" />
-    <link rel="icon" type="image/png" href="./assets/logomasq1-g11o.gif" />
+    <link rel="icon" type="image/png" href="./assets/logo.gif" />
     <meta name="theme-color" content="#0B0B0B" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet" />
     
@@ -14,83 +14,56 @@
     <link rel="stylesheet" href="css/base.css"/>
     <link rel="stylesheet" href="css/animations.css"/>
     <link rel="stylesheet" href="css/components.css"/>
+    <link rel="stylesheet" href="css/homepage-minimal.css"/>
+    <link rel="stylesheet" href="css/battle.css"/>
+    <link rel="stylesheet" href="css/menu.css"/>
+    <link rel="stylesheet" href="css/layout.css"/>
     <link rel="stylesheet" href="css/game-interface.css"/>
     <link rel="stylesheet" href="css/mobile.css"/>
     <link rel="stylesheet" href="css/responsive.css"/>
     <link rel="stylesheet" href="css/utilities.css"/>
     
     <!-- Legacy styles.css - can be removed after testing -->
-    <link rel="stylesheet" href="styles.css"/>
+    <!-- <link rel="stylesheet" href="styles.css"/> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen" style="display: none;">
         <div class="loading-content">
-            <img src="./assets/logomasq1-g11o.gif" alt="Loading" class="loading-logo">
+            <img src="./assets/logo.gif" alt="Loading" class="loading-logo">
             <div id="loadingText" class="loading-text">Loading Card Battle Arena...</div>
         </div>
     </div>
 
     <!-- Background video removed for better gameplay focus -->
 
-    <!-- Header -->
-    <div class="header" id="header">
-        <img src="./assets/logomasq1-g11o.gif" alt="Logo" class="logo">
-        <div class="title-container">
-            <div class="title glow">Card Battle Arena</div>
-            <div class="subtitle">Simple PvP Battle</div>
-        </div>
-    </div>
-
     <!-- Homepage -->
     <div id="homepage" class="homepage">
-        <div class="main-content">
-            <!-- Compact Game Title -->
-            <div class="game-title-compact">
-                <h1>Card Battle Arena</h1>
-                <p>Simple PvP Card Battle</p>
+        <div class="container">
+            <!-- Logo -->
+            <img src="./assets/logo.gif" alt="Logo" class="logo">
+            
+            <!-- Title -->
+            <h1 class="title">Card Battle Arena</h1>
+            
+            <!-- Play Buttons -->
+            <div class="buttons">
+                <button class="btn play" onclick="handleGuestPlay()">Play</button>
+                <button class="btn login" onclick="showAuth()">Login</button>
             </div>
-
-            <!-- Main Menu Actions -->
-            <div class="main-menu-actions">
-                <div class="quick-actions">
-                    <button class="quick-play-btn" onclick="handleGuestPlay()">
-                        <span class="btn-icon">⚡</span>
-                        <span class="btn-text">Quick Battle</span>
-                        <span class="btn-desc">Jump right in!</span>
-                    </button>
-                    <button class="login-play-btn" onclick="showAuth()">
-                        <span class="btn-icon">👤</span>
-                        <span class="btn-text">Login & Play</span>
-                        <span class="btn-desc">Save your progress</span>
-                    </button>
-                </div>
-
-                <!-- How to Play - Compact -->
-                <div class="how-to-play-compact">
-                    <h3>⚔️ Battle Rules</h3>
-                    <div class="rules-grid">
-                        <div class="rule-item">500 HP • 5 Cards • Click to Attack</div>
-                        <div class="rule-item">Cards deal 10-50 damage • First to 0 HP loses</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Login Panel (Hidden by default) -->
-            <div class="auth-section" style="display: none;">
-                <div class="auth-panel" id="authPanel">
-                    <h3>Enter Battle Arena</h3>
-                    <input type="text" id="username" placeholder="Your warrior name" maxlength="20" />
-                    <input type="email" id="email" placeholder="Email (optional)" />
-                    <div class="auth-buttons">
-                        <button onclick="handleLogin()">⚔️ Enter Battle</button>
-                        <button onclick="handleGuestPlay()">👻 Guest Mode</button>
-                    </div>
-                    <p class="auth-note">
-                        Save your battle history or play anonymously!
-                    </p>
-                    <button class="back-btn" onclick="hideAuth()">← Back to Menu</button>
+        </div>
+        
+        <!-- Auth Modal -->
+        <div class="auth-overlay" style="display: none;">
+            <div class="auth-modal">
+                <button class="close" onclick="hideAuth()">×</button>
+                <h3>Enter Name</h3>
+                <input type="text" id="username" placeholder="Your name" maxlength="20" />
+                <input type="email" id="email" placeholder="Email (optional)" />
+                <div class="auth-buttons">
+                    <button class="btn" onclick="handleLogin()">Start</button>
+                    <button class="btn guest" onclick="handleGuestPlay()">Guest</button>
                 </div>
             </div>
         </div>
@@ -235,12 +208,12 @@
 
         // Show auth panel
         window.showAuth = function() {
-            document.querySelector(".auth-section").style.display = "flex";
+            document.querySelector(".auth-overlay").style.display = "flex";
         };
 
         // Hide auth panel
         window.hideAuth = function() {
-            document.querySelector(".auth-section").style.display = "none";
+            document.querySelector(".auth-overlay").style.display = "none";
         };
 
         // Handle login
@@ -277,11 +250,10 @@
             document.getElementById("gameOverScreen").style.display = "none";
             
             // Show homepage
-            document.getElementById("homepage").style.display = "block";
-            document.getElementById("header").style.display = "flex";
+            document.getElementById("homepage").style.display = "flex";
             
             // Reset auth panel
-            document.querySelector(".auth-section").style.display = "none";
+            document.querySelector(".auth-overlay").style.display = "none";
             document.getElementById("username").value = "";
             document.getElementById("email").value = "";
             
@@ -322,6 +294,7 @@
             if (loadingScreen) {
                 loadingScreen.style.display = "none";
             }
+            console.log("Loading screen hidden");
         }
 
         // Start game session
@@ -330,7 +303,6 @@
             
             // Hide homepage
             document.getElementById("homepage").style.display = "none";
-            document.getElementById("header").style.display = "none";
             
             // Show game
             document.getElementById("gameCanvas").style.display = "block";
@@ -365,9 +337,15 @@
             console.log("Audio autoplay blocked:", err);
         });
 
+        // Simplified initialization - no complex animations needed
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            hideLoadingScreen();
+            // Make sure loading screen is hidden on homepage
+            const loadingScreen = document.getElementById("loadingScreen");
+            if (loadingScreen) {
+                loadingScreen.style.display = "none";
+            }
             
             // Initialize mobile support
             const isMobile = initializeMobile();

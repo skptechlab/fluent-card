@@ -60,10 +60,10 @@
 /* Pulse Glow Animation */
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+    box-shadow: 0 0 40px rgba(0, 191, 255, 0.8);
   }
 }
 
@@ -71,23 +71,23 @@
 @keyframes glowFlicker {
   0%, 100% {
     transform: rotate(0deg) scale(1);
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-    text-shadow: 0 0 20px #FF0000;
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.6);
+    text-shadow: 0 0 20px #0080FF;
   }
   25% {
     transform: rotate(1deg) scale(1.05);
-    box-shadow: 0 0 40px rgba(255, 69, 0, 0.8);
-    text-shadow: 0 0 25px #FF4500;
+    box-shadow: 0 0 40px rgba(0, 191, 255, 0.8);
+    text-shadow: 0 0 25px #00BFFF;
   }
   50% {
     transform: rotate(-1deg) scale(0.95);
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
-    text-shadow: 0 0 30px #FFD700;
+    box-shadow: 0 0 50px rgba(0, 255, 255, 0.7);
+    text-shadow: 0 0 30px #00FFFF;
   }
   75% {
     transform: rotate(0.5deg) scale(1.02);
-    box-shadow: 0 0 35px rgba(255, 140, 0, 0.9);
-    text-shadow: 0 0 22px #FF8C00;
+    box-shadow: 0 0 35px rgba(0, 128, 255, 0.9);
+    text-shadow: 0 0 22px #0080FF;
   }
 }
 
@@ -104,10 +104,10 @@
 /* Glow Animation */
 @keyframes glow-animation {
   0%, 100% {
-    text-shadow: 0 0 20px #FF0000, 0 0 40px #FF4500;
+    text-shadow: 0 0 20px #0080FF, 0 0 40px #00BFFF;
   }
   50% {
-    text-shadow: 0 0 30px #FFD700, 0 0 60px #FF0000;
+    text-shadow: 0 0 30px #00FFFF, 0 0 60px #0080FF;
   }
 }
 
@@ -124,12 +124,12 @@
 /* Vintage Pulse */
 @keyframes vintagePulse {
   0%, 100% {
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    text-shadow: 0 0 8px rgba(0, 191, 255, 0.4);
   }
   50% {
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    text-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    text-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
   }
 }
 
@@ -146,20 +146,20 @@
 /* Glow Shift */
 @keyframes glowShift {
   0%, 100% {
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
   }
   50% {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
   }
 }
 
 /* Timer Pulse */
 @keyframes timerPulse {
   0%, 100% {
-    text-shadow: 0 0 10px #FF0000;
+    text-shadow: 0 0 10px #0080FF;
   }
   50% {
-    text-shadow: 0 0 20px #FF4500, 0 0 30px #FFD700;
+    text-shadow: 0 0 20px #00BFFF, 0 0 30px #00FFFF;
   }
 }
 
@@ -191,19 +191,19 @@
 /* Glitch Animation */
 @keyframes glitch {
   0%, 100% {
-    text-shadow: 0 0 5px #FF0000;
+    text-shadow: 0 0 5px #0080FF;
     transform: translateX(0);
   }
   25% {
-    text-shadow: 2px 0 #FF0000, -2px 0 #00FFFF;
+    text-shadow: 2px 0 #0080FF, -2px 0 #00FFFF;
     transform: translateX(-2px);
   }
   50% {
-    text-shadow: -2px 0 #FF0000, 2px 0 #00FFFF;
+    text-shadow: -2px 0 #0080FF, 2px 0 #00FFFF;
     transform: translateX(2px);
   }
   75% {
-    text-shadow: 0 0 10px #FFD700;
+    text-shadow: 0 0 10px #00FFFF;
     transform: translateX(-1px);
   }
 }
@@ -277,15 +277,52 @@
   transition: opacity 0.3s ease;
 }
 
+/* Additional Battle Animations */
+@keyframes battleButtonAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes battlePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateY(-50%) translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
 /* Hover Effects */
 .hover-scale:hover {
   transform: scale(1.05);
 }
 
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
 }
 
 .hover-pulse:hover {
   animation: pulse 1s ease-in-out infinite;
+}
+
+/* Damage Animation Class */
+.damage-animation {
+  animation: damageFloat 2s ease-out forwards;
 }

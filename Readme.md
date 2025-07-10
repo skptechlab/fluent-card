@@ -109,7 +109,7 @@ MASQ-main/
 ### 🔧 index.html – Landing Page
 
 - **Fonts**: Orbitron (UI titles), Roboto (UI text), Cinzel (card flavor)  
-- **Favicon**: `/assets/logomasq1-g11o.gif`  
+- **Favicon**: `/assets/logo.gif`  
 - **Navigation**: Home → About, Cards, Buy, Play  
 - **Design**: Full-page canvas layout, future shader-ready  
 

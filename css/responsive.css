@@ -7,17 +7,17 @@
     right: 20px;
     width: 300px;
     height: auto;
-    border: 3px solid #FF0000;
+    border: 3px solid #0080FF;
     border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 30px rgba(0, 191, 255, 0.4);
   }
   
   .zoom-card-info h3 {
     font-size: 24px;
-    text-shadow: 0 0 10px #FF0000;
+    text-shadow: 0 0 10px #0080FF;
     margin: 0 0 15px 0;
-    border-bottom: 2px solid #FF0000;
+    border-bottom: 2px solid #0080FF;
     padding-bottom: 10px;
   }
   
@@ -42,7 +42,7 @@
   
   .stat-value {
     font-size: 20px;
-    text-shadow: 0 0 5px #FF0000;
+    text-shadow: 0 0 5px #0080FF;
   }
   
   .zoom-card-description {
@@ -465,9 +465,9 @@
 /* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
-    --primary-red: #ff0000;
-    --primary-gold: #ffff00;
-    --primary-orange: #ff8000;
+    --primary-red: #0080FF;
+    --primary-gold: #00FFFF;
+    --primary-orange: #00BFFF;
     --bg-dark: #000000;
     --bg-darker: #000000;
     --border-glow: #ffffff;

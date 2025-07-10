@@ -8,7 +8,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #0f0f0f);
+  background: linear-gradient(135deg, #0a0e1a, #1a2b4a, #0f1a2e);
   color: #FFF;
   font-family: 'Roboto', sans-serif;
   overflow-x: hidden;
@@ -16,15 +16,15 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="red"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 22c-5.514 0-10-4.486-10-10s4.486-10 10-10 10 4.486 10 10-4.486 10-10 10z"/></svg>'), auto;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%2300BFFF"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 22c-5.514 0-10-4.486-10-10s4.486-10 10-10 10 4.486 10 10-4.486 10-10 10z"/></svg>'), auto;
   position: relative;
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Orbitron', sans-serif;
-  color: #FFD700;
-  text-shadow: 0 0 10px #FF0000;
+  color: #00BFFF;
+  text-shadow: 0 0 10px #0080FF;
 }
 
 p, span, div {
@@ -33,13 +33,13 @@ p, span, div {
 
 /* Global Color Variables */
 :root {
-  --primary-red: #FF0000;
-  --primary-gold: #FFD700;
-  --primary-orange: #FF4500;
-  --bg-dark: rgba(26, 26, 26, 0.9);
-  --bg-darker: rgba(0, 0, 0, 0.8);
-  --border-glow: rgba(255, 0, 0, 0.4);
-  --text-shadow: 0 0 5px rgba(255, 0, 0, 0.2);
+  --primary-blue: #00BFFF;
+  --primary-cyan: #00FFFF;
+  --primary-electric: #0080FF;
+  --bg-dark: rgba(26, 43, 74, 0.9);
+  --bg-darker: rgba(10, 14, 26, 0.8);
+  --border-glow: rgba(0, 191, 255, 0.4);
+  --text-shadow: 0 0 5px rgba(0, 191, 255, 0.2);
 }
 
 /* Base Layout */

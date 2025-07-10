@@ -9,11 +9,11 @@
   gap: 2px;
   pointer-events: none;
   background: rgba(0, 0, 0, 0.7);
-  border: 1px solid #FFD700;
+  border: 1px solid #00FFFF;
   border-radius: 4px;
   padding: 3px 6px;
   font-family: 'Orbitron', sans-serif;
-  color: #FFD700;
+  color: #00FFFF;
   font-size: 10px;
   font-weight: bold;
 }
@@ -50,14 +50,14 @@
 
 .hp-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #FF0000, #FF4500);
+  background: linear-gradient(90deg, #0080FF, #00BFFF);
   transition: width 0.5s ease;
   border-radius: 2px 0 0 2px;
 }
 
 .hp-text {
   font-size: 8px;
-  color: #FFD700;
+  color: #00FFFF;
   min-width: 18px;
   text-align: center;
 }
@@ -75,7 +75,7 @@
 
 .mana-fill {
   height: 100%;
-  background: linear-gradient(90deg, #0000FF, #4169E1);
+  background: linear-gradient(90deg, #0080FF, #00BFFF);
   transition: width 0.5s ease;
   border-radius: 2px 0 0 2px;
 }
@@ -85,7 +85,7 @@
   .compact-hp-bar {
     gap: 6px;
     background: rgba(0, 0, 0, 0.85);
-    border: 2px solid #FFD700;
+    border: 2px solid #00FFFF;
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 14px;
@@ -150,8 +150,8 @@
   font-family: 'Orbitron', sans-serif;
   font-size: 48px;
   font-weight: bold;
-  color: #FF0000;
-  text-shadow: 0 0 20px #FF0000;
+  color: #0080FF;
+  text-shadow: 0 0 20px #0080FF;
   animation: timerPulse 1s ease-in-out infinite;
   z-index: 100;
 }
@@ -163,21 +163,21 @@
   left: 20px;
   font-family: 'Orbitron', sans-serif;
   font-size: 24px;
-  color: #FFD700;
-  text-shadow: 0 0 10px #FF0000;
+  color: #00FFFF;
+  text-shadow: 0 0 10px #0080FF;
 }
 
 .score-label {
   font-size: 14px;
-  color: #FFD700;
+  color: #00FFFF;
   margin-bottom: 5px;
 }
 
 .score-value {
   font-size: 32px;
-  color: #FF0000;
+  color: #0080FF;
   font-weight: bold;
-  text-shadow: 0 0 15px #FF0000;
+  text-shadow: 0 0 15px #0080FF;
 }
 
 /* Game Status */
@@ -188,8 +188,8 @@
   transform: translate(-50%, -50%);
   font-family: 'Orbitron', sans-serif;
   font-size: 36px;
-  color: #FFD700;
-  text-shadow: 0 0 20px #FF0000;
+  color: #00FFFF;
+  text-shadow: 0 0 20px #0080FF;
   text-align: center;
   z-index: 200;
 }
@@ -201,8 +201,8 @@
 }
 
 .game-status.defeat {
-  color: #FF0000;
-  text-shadow: 0 0 20px #FF0000;
+  color: #0080FF;
+  text-shadow: 0 0 20px #0080FF;
   animation: glowFlicker 2s ease-in-out infinite;
 }
 
@@ -214,18 +214,18 @@
   transform: translateX(-50%);
   font-family: 'Orbitron', sans-serif;
   font-size: 18px;
-  color: #FFD700;
-  text-shadow: 0 0 10px #FF0000;
+  color: #00FFFF;
+  text-shadow: 0 0 10px #0080FF;
   background: rgba(0, 0, 0, 0.7);
   padding: 10px 20px;
   border-radius: 8px;
-  border: 2px solid #FFD700;
+  border: 2px solid #00FFFF;
   transition: all 0.3s ease;
 }
 
 .turn-indicator.active {
-  color: #FF0000;
-  border-color: #FF0000;
+  color: #0080FF;
+  border-color: #0080FF;
   animation: pulse 1s ease-in-out infinite;
 }
 
@@ -236,8 +236,8 @@
   left: 20px;
   font-family: 'Orbitron', sans-serif;
   font-size: 20px;
-  color: #0080FF;
-  text-shadow: 0 0 10px #0080FF;
+  color: #00BFFF;
+  text-shadow: 0 0 10px #00BFFF;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -246,14 +246,14 @@
 .energy-icon {
   width: 30px;
   height: 30px;
-  background: radial-gradient(circle, #0080FF, #0040FF);
+  background: radial-gradient(circle, #00BFFF, #0080FF);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  box-shadow: 0 0 15px rgba(0, 128, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
 }
 
 .energy-text {
@@ -267,8 +267,8 @@
   font-family: 'Orbitron', sans-serif;
   font-size: 24px;
   font-weight: bold;
-  color: #FF0000;
-  text-shadow: 0 0 10px #FF0000;
+  color: #00BFFF;
+  text-shadow: 0 0 10px #00BFFF;
   pointer-events: none;
   z-index: 300;
 }
@@ -360,7 +360,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: linear-gradient(145deg, rgba(26, 26, 26, 0.95), rgba(43, 43, 43, 0.9));
-  border: 3px solid #FF0000;
+  border: 3px solid #0080FF;
   border-radius: 15px;
   padding: 30px;
   text-align: center;
@@ -371,9 +371,9 @@
 .game-menu h2 {
   font-family: 'Orbitron', sans-serif;
   font-size: 28px;
-  color: #FFD700;
+  color: #00FFFF;
   margin-bottom: 20px;
-  text-shadow: 0 0 15px #FF0000;
+  text-shadow: 0 0 15px #0080FF;
 }
 
 .game-menu-actions {
@@ -389,20 +389,20 @@
   top: 20px;
   right: 20px;
   background: linear-gradient(135deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.8));
-  border: 2px solid #FFD700;
+  border: 2px solid #00FFFF;
   border-radius: 8px;
   padding: 15px 20px;
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
-  color: #FFD700;
+  color: #00FFFF;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   animation: slideInFromRight 0.5s ease-out;
 }
 
 .notification.error {
-  border-color: #FF0000;
-  color: #FF0000;
+  border-color: #0080FF;
+  color: #0080FF;
 }
 
 .notification.success {

@@ -1,0 +1,196 @@
+/* Menu System Styles */
+
+/* Compact Menu Styles */
+.main-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  text-align: center;
+  z-index: 100;
+}
+
+.game-title-compact {
+  margin-bottom: 30px;
+}
+
+.game-title-compact h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 48px;
+  color: #0080FF;
+  text-shadow: 0 0 20px #0080FF, 0 0 40px #00BFFF;
+  margin: 0;
+  margin-bottom: 10px;
+  animation: glow-animation 2s ease-in-out infinite alternate;
+}
+
+.game-title-compact p {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  color: #00FFFF;
+  margin: 0;
+  text-shadow: 0 0 10px #0080FF;
+}
+
+.main-menu-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: center;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.quick-play-btn, .login-play-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 30px;
+  background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(43, 43, 43, 0.7));
+  border: 3px solid;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-play-btn {
+  border-color: #00FFFF;
+}
+
+.login-play-btn {
+  border-color: #0080FF;
+}
+
+.quick-play-btn:hover, .login-play-btn:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 191, 255, 0.4);
+}
+
+.quick-play-btn:hover {
+  background: linear-gradient(145deg, #00FFFF, #0080FF);
+  color: #000;
+}
+
+.login-play-btn:hover {
+  background: linear-gradient(145deg, #0080FF, #00BFFF);
+  color: #FFF;
+}
+
+.btn-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.btn-text {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  color: #00FFFF;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.btn-desc {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+  color: #CCC;
+  display: block;
+}
+
+.how-to-play-compact {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #0080FF;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+}
+
+.how-to-play-compact h3 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00FFFF;
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  text-shadow: 0 0 10px #0080FF;
+}
+
+.rules-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rule-item {
+  font-family: 'Roboto', sans-serif;
+  color: #00FFFF;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(0, 191, 255, 0.1);
+  border-radius: 5px;
+  border: 1px solid rgba(0, 191, 255, 0.3);
+}
+
+.auth-section {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.back-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: transparent;
+  border: 2px solid #666;
+  color: #00FFFF;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: #0080FF;
+  background: rgba(0, 191, 255, 0.1);
+  transform: scale(1.05);
+}
+
+/* Mobile responsive for menu */
+@media (max-width: 768px) {
+  .game-title-compact h1 {
+    font-size: 36px;
+  }
+  
+  .quick-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quick-play-btn, .login-play-btn {
+    min-width: 250px;
+  }
+  
+  .main-content {
+    width: 95%;
+  }
+  
+  .how-to-play-compact {
+    max-width: 100%;
+  }
+}
