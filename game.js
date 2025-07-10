@@ -4,6 +4,7 @@ import { cardData, Card, specialEffectCards, isSpecialEffectCard } from './cards
 import { shuffle } from './utils.js';
 import { scene, camera, renderer } from './threeSetup.js';
 import { mobileState } from './mobile.js';
+import { specialEffectProcessor, SPECIAL_EFFECTS } from './specialEffects.js';
 
 // Debug: Check if Card class is properly imported
 console.log('Card class imported:', Card);
@@ -138,6 +139,18 @@ async function playCardAPI(cardId, damage) {
     log(`Failed to play card: ${error.message}`);
     return null;
   }
+}
+
+// Make functions globally accessible for special effects module
+if (typeof window !== 'undefined') {
+  window.log = log;
+  window.updateBoard = updateBoard;
+  window.updateHPBars = updateHPBars;
+  window.updateUI = updateUI;
+  window.scene = scene;
+  window.gameState = gameState;
+  window.showPoisonDamageAnimation = showPoisonDamageAnimation;
+  window.Card = Card;
 }
 
 // Initialize game
@@ -2107,7 +2120,7 @@ async function playSpecialEffectCardFromSelection(card) {
 // Play a special effect card
 async function playSpecialEffectCard(card) {
   // Check if player already has a special effect active (can't combine)
-  if (gameState.fieldEffects.some(effectCard => effectCard.data.effect === card.data.effect)) {
+  if (specialEffectProcessor.hasActiveEffect(card.data.effect)) {
     log(`Cannot play ${card.data.name} - similar effect already active!`);
     // Return card to hand
     gameState.player1.hand.push(card);
@@ -2119,18 +2132,24 @@ async function playSpecialEffectCard(card) {
   // Animate card moving to field effects area (right side)
   await animateCardToFieldEffects(card);
   
-  // Apply the special effect
-  await applySpecialEffect(card);
+  // Apply the special effect using the new processor
+  const success = await specialEffectProcessor.applyEffect(card, {
+    currentPlayer: gameState.currentPlayer,
+    gameState: gameState
+  });
+  
+  if (!success) {
+    log(`❌ Failed to apply special effect: ${card.data.name}`);
+    gameState.player1.hand.push(card);
+    gameState.animationInProgress = false;
+    updateBoard();
+    return;
+  }
   
   // Add to field effects if it has duration
-  if (card.data.duration > 0) {
+  const effectInfo = SPECIAL_EFFECTS[card.data.effect];
+  if (effectInfo && effectInfo.duration > 0) {
     gameState.fieldEffects.push(card);
-    gameState.activeEffects.push({
-      card: card,
-      effect: card.data.effect,
-      duration: card.data.duration,
-      turnsLeft: card.data.duration
-    });
   } else {
     // Instant effect - move to played cards
     gameState.player1.playedCards.push(card);
@@ -2181,124 +2200,38 @@ async function animateCardToFieldEffects(card) {
   });
 }
 
-// Apply special effect
+// Legacy function - now handled by specialEffectProcessor
+// Kept for backwards compatibility but deprecated
 async function applySpecialEffect(card) {
-  const effect = card.data.effect;
-  
-  log(`🔮 Applying special effect: ${card.data.name} (${effect})`);
-  
-  switch(effect) {
-    case 'shuffle':
-      // g1: Shuffle all cards in both players' hands; redraw 5 cards
-      log(`🔄 Shuffling all hands...`);
-      await shuffleAllHands();
-      break;
-      
-    case 'boost_atk':
-      // g2: Increase all your cards' ATK by 50% this turn
-      log(`⚡ All your cards get +50% ATK this turn!`);
-      break;
-      
-    case 'double_first':
-      // g3: First card on the field ATK x2
-      log(`🎯 First card played gets double ATK!`);
-      break;
-      
-    case 'discard_opponent':
-      // g4: Opponent discards 2 random cards
-      log(`💨 Making opponent discard cards...`);
-      discardOpponentCards(2);
-      break;
-      
-    case 'poison':
-      // g5: Inflicts ongoing 2 HP damage per turn for 3 turns
-      log(`☠️ Poison effect activated - opponent will take 2 damage per turn for 3 turns!`);
-      break;
-      
-    default:
-      log(`❌ Unknown special effect: ${effect}`);
-      break;
-  }
+  console.warn('applySpecialEffect is deprecated - use specialEffectProcessor.applyEffect instead');
+  return await specialEffectProcessor.applyEffect(card, {
+    currentPlayer: gameState.currentPlayer,
+    gameState: gameState
+  });
 }
 
-// Shuffle all hands effect
+// Legacy function - moved to specialEffects.js
+// Kept for backwards compatibility
 async function shuffleAllHands() {
-  // Collect all cards from both hands
-  const allCards = [];
-  
-  // Remove cards from hands and collect them
-  gameState.player1.hand.forEach(card => {
-    scene.remove(card.mesh);
-    allCards.push(card.data);
-  });
-  gameState.player2.hand.forEach(card => {
-    scene.remove(card.mesh);
-    allCards.push(card.data);
-  });
-  
-  // Clear hands
-  gameState.player1.hand = [];
-  gameState.player2.hand = [];
-  
-  // Shuffle the collected cards
-  const shuffledCards = shuffle(allCards);
-  
-  // Deal 5 cards to each player
-  for (let i = 0; i < 5; i++) {
-    if (shuffledCards[i * 2]) {
-      const p1Card = new Card(shuffledCards[i * 2], true);
-      gameState.player1.hand.push(p1Card);
-    }
-    if (shuffledCards[i * 2 + 1]) {
-      const p2Card = new Card(shuffledCards[i * 2 + 1], false);
-      gameState.player2.hand.push(p2Card);
-    }
-  }
-  
-  updateBoard();
-  log(`All hands shuffled and redrawn!`);
+  console.warn('shuffleAllHands is deprecated - use specialEffectProcessor instead');
+  // This will be handled by the special effects module
 }
 
-// Discard opponent cards
+// Legacy function - moved to specialEffects.js
+// Kept for backwards compatibility
 function discardOpponentCards(count) {
-  const opponent = gameState.player2;
-  const cardsToDiscard = Math.min(count, opponent.hand.length);
-  
-  for (let i = 0; i < cardsToDiscard; i++) {
-    const randomIndex = Math.floor(Math.random() * opponent.hand.length);
-    const discardedCard = opponent.hand.splice(randomIndex, 1)[0];
-    scene.remove(discardedCard.mesh);
-  }
-  
-  log(`Opponent discarded ${cardsToDiscard} cards!`);
-  updateBoard();
+  console.warn('discardOpponentCards is deprecated - use specialEffectProcessor instead');
+  // This will be handled by the special effects module
 }
 
 // Apply active effects to damage calculation
 function applyActiveEffects(damage, card) {
-  let modifiedDamage = damage;
-  let effectsApplied = [];
+  const isFirstCard = gameState.battlefieldCards.length === 1;
+  const modifiedDamage = specialEffectProcessor.applyDamageModifiers(damage, isFirstCard);
   
-  gameState.activeEffects.forEach(effect => {
-    switch(effect.effect) {
-      case 'boost_atk':
-        // g2: +50% ATK boost
-        modifiedDamage = Math.floor(modifiedDamage * 1.5);
-        effectsApplied.push(`+50% ATK boost`);
-        break;
-        
-      case 'double_first':
-        // g3: Double first card's ATK (applies to first card in battle)
-        if (gameState.battlefieldCards.length === 1) {
-          modifiedDamage = modifiedDamage * 2;
-          effectsApplied.push(`Double first card ATK`);
-        }
-        break;
-    }
-  });
-  
-  if (effectsApplied.length > 0) {
-    log(`Effects applied: ${effectsApplied.join(', ')}`);
+  if (modifiedDamage !== damage) {
+    const activeEffects = specialEffectProcessor.getActiveEffectNames();
+    log(`Effects applied: ${activeEffects.join(', ')} (${damage} → ${modifiedDamage})`);
   }
   
   return modifiedDamage;
@@ -2306,44 +2239,19 @@ function applyActiveEffects(damage, card) {
 
 // Process turn-based effects (called at start of each turn)
 function processActiveEffects() {
-  if (gameState.activeEffects.length > 0) {
-    log(`🔄 Processing ${gameState.activeEffects.length} active effects...`);
-  }
+  // Use the new special effect processor
+  specialEffectProcessor.processTurnEffects(gameState.currentPlayer);
   
-  // Process effects in reverse order to handle removal safely
-  for (let i = gameState.activeEffects.length - 1; i >= 0; i--) {
-    const effect = gameState.activeEffects[i];
-    log(`⏰ Processing effect: ${effect.card.data.name} (${effect.turnsLeft} turns left)`);
-    
-    switch(effect.effect) {
-      case 'poison':
-        // g5: Deal 2 damage per turn - applies on EVERY turn (both player and AI)
-        gameState.player2.hp = Math.max(0, gameState.player2.hp - 2);
-        log(`☠️ Poison deals 2 damage to opponent! HP: ${gameState.player2.hp}`);
-        
-        // Show poison damage animation
-        showPoisonDamageAnimation();
-        
-        updateUI(); // Update HP display immediately
-        break;
-    }
-    
-    // Reduce duration
-    effect.turnsLeft--;
-    log(`⏳ ${effect.card.data.name} turns left: ${effect.turnsLeft}`);
-    
-    // Remove effect if expired
-    if (effect.turnsLeft <= 0) {
-      // Remove from field effects
-      const fieldIndex = gameState.fieldEffects.indexOf(effect.card);
-      if (fieldIndex !== -1) {
-        const expiredCard = gameState.fieldEffects.splice(fieldIndex, 1)[0];
-        gameState.player1.playedCards.push(expiredCard);
-        log(`✅ ${effect.card.data.name} effect expired and moved to played cards`);
-      }
-      
-      // Remove from active effects
-      gameState.activeEffects.splice(i, 1);
+  // Handle field effect cleanup for expired effects
+  // Remove field effects that are no longer active
+  const activeEffectIds = gameState.activeEffects.map(effect => effect.effectId);
+  for (let i = gameState.fieldEffects.length - 1; i >= 0; i--) {
+    const fieldCard = gameState.fieldEffects[i];
+    if (!activeEffectIds.includes(fieldCard.data.effect)) {
+      // Effect expired - move to played cards
+      const expiredCard = gameState.fieldEffects.splice(i, 1)[0];
+      gameState.player1.playedCards.push(expiredCard);
+      log(`✅ ${expiredCard.data.name} effect expired and moved to played cards`);
     }
   }
   

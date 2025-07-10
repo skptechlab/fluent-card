@@ -27,7 +27,8 @@ export const cardData = [
     { id: 20, name: "Meteor", atk: 50, imagePath: "./cards/a20.webp" }
 ];
 
-// Special effect cards
+// Special effect cards - Core effects available in game
+// These are the primary special effects currently implemented
 export const specialEffectCards = [
     { 
         id: 'g1', 
@@ -81,9 +82,55 @@ export const specialEffectCards = [
     }
 ];
 
+// Additional special effect cards can be generated from specialEffects.js registry
+// Use SPECIAL_EFFECTS registry to add new effects programmatically
+export function createSpecialEffectCard(effectId, cardId, imagePath) {
+    // Dynamic import to avoid circular dependency
+    const { SPECIAL_EFFECTS } = require('./specialEffects.js');
+    const effect = SPECIAL_EFFECTS[effectId];
+    
+    if (!effect) {
+        console.error(`Unknown special effect: ${effectId}`);
+        return null;
+    }
+    
+    return {
+        id: cardId,
+        name: effect.name,
+        atk: 0,
+        imagePath: imagePath,
+        type: "special",
+        effect: effect.id,
+        description: effect.description,
+        duration: effect.duration
+    };
+}
+
+// Helper function to get all available special effects
+export function getAllSpecialEffects() {
+    try {
+        const { SPECIAL_EFFECTS } = require('./specialEffects.js');
+        return Object.keys(SPECIAL_EFFECTS);
+    } catch (error) {
+        console.warn('Could not load SPECIAL_EFFECTS registry:', error);
+        return specialEffectCards.map(card => card.effect);
+    }
+}
+
 // Check if a card is a special effect card
 export function isSpecialEffectCard(card) {
     return card.type === 'special' || card.id.toString().startsWith('g');
+}
+
+// Check if a special effect is available in the registry
+export function isValidSpecialEffect(effectId) {
+    try {
+        const { SPECIAL_EFFECTS } = require('./specialEffects.js');
+        return effectId in SPECIAL_EFFECTS;
+    } catch (error) {
+        // Fallback to checking against existing cards
+        return specialEffectCards.some(card => card.effect === effectId);
+    }
 }
 
 // --- Shader Code (inline for browser compatibility) ---
