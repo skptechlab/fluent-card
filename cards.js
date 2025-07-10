@@ -27,6 +27,65 @@ export const cardData = [
     { id: 20, name: "Meteor", atk: 50, imagePath: "./cards/a20.webp" }
 ];
 
+// Special effect cards
+export const specialEffectCards = [
+    { 
+        id: 'g1', 
+        name: "Chaos Shuffle", 
+        atk: 0, 
+        imagePath: "./cards/g1.webp",
+        type: "special",
+        effect: "shuffle",
+        description: "Shuffle all cards in both players' hands; redraw 5 cards.",
+        duration: 0 // Instant effect
+    },
+    { 
+        id: 'g2', 
+        name: "Power Boost", 
+        atk: 0, 
+        imagePath: "./cards/g2.webp",
+        type: "special",
+        effect: "boost_atk",
+        description: "Increase all your cards' ATK by 50% this turn",
+        duration: 1 // Lasts for 1 turn
+    },
+    { 
+        id: 'g3', 
+        name: "Champion's Might", 
+        atk: 0, 
+        imagePath: "./cards/g3.webp",
+        type: "special",
+        effect: "double_first",
+        description: "First card on the field ATK x2",
+        duration: 1 // Lasts for 1 turn
+    },
+    { 
+        id: 'g4', 
+        name: "Mind Fracture", 
+        atk: 0, 
+        imagePath: "./cards/g4.webp",
+        type: "special",
+        effect: "discard_opponent",
+        description: "Opponent discards 2 random cards",
+        duration: 0 // Instant effect
+    },
+    { 
+        id: 'g5', 
+        name: "Poison Cloud", 
+        atk: 0, 
+        imagePath: "./cards/g5.webp",
+        type: "special",
+        effect: "poison",
+        description: "Inflicts ongoing 2 HP damage per turn for 3 turns.",
+        duration: 3 // Lasts for 3 turns
+    }
+];
+
+// Check if a card is a special effect card
+export function isSpecialEffectCard(card) {
+    return card.type === 'special' || card.id.toString().startsWith('g');
+}
+
 // --- Shader Code (inline for browser compatibility) ---
 const vertexShader = `
     varying vec2 vUv;

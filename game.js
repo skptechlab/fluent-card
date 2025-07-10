@@ -1,6 +1,6 @@
 // game.js - Simplified PvP Card Battle Game
 
-import { cardData, Card } from './cards.js';
+import { cardData, Card, specialEffectCards, isSpecialEffectCard } from './cards.js';
 import { shuffle } from './utils.js';
 import { scene, camera, renderer } from './threeSetup.js';
 import { mobileState } from './mobile.js';
@@ -16,6 +16,8 @@ export const gameState = {
   selectedCard: null,
   selectedCards: [], // Array of selected cards for multi-card play
   battlefieldCards: [], // Cards placed in battlefield center awaiting battle
+  fieldEffects: [], // Special effect cards placed on field (right side)
+  activeEffects: [], // Currently active special effects with duration
   turnPhase: 'selecting', // 'selecting', 'battlefield', 'battle'
   draggingCard: null,
   isPaused: false,
@@ -75,11 +77,11 @@ async function loadCards() {
       log(`Loaded ${result.data.count} cards`);
     } else {
       // Fallback to local cards if API fails
-      gameState.availableCards = cardData;
+      gameState.availableCards = [...cardData, ...specialEffectCards];
       log('Using local card data');
     }
   } catch (error) {
-    gameState.availableCards = cardData;
+    gameState.availableCards = [...cardData, ...specialEffectCards];
     log('Using local card data due to API error');
   }
 }
@@ -142,6 +144,9 @@ async function playCardAPI(cardId, damage) {
 export async function initializeGame(username = null) {
   clearSceneAndState();
   
+  // Add CSS animations for damage effects
+  addDamageAnimations();
+  
   // Load cards first
   await loadCards();
   
@@ -202,13 +207,23 @@ function dealInitialCards() {
   
   // Deal 5 cards to each player
   for (let i = 0; i < 5; i++) {
-    // Player 1 card
-    const p1CardData = shuffledCards[i * 2];
+    // Player 1 card - mix of special effects and battle cards for testing
+    let p1CardData;
+    if (i === 0) {
+      // First card is always a strong battle card for testing special effects
+      p1CardData = cardData.find(card => card.atk >= 40) || cardData[0];
+    } else if (i <= specialEffectCards.length) {
+      // Next cards are special effect cards for testing (g1, g2, g3, g4, g5)
+      p1CardData = specialEffectCards[i - 1];
+    } else {
+      // Rest are regular cards
+      p1CardData = cardData[i % cardData.length];
+    }
     const p1Card = new Card(p1CardData, true);
     gameState.player1.hand.push(p1Card);
     
-    // Player 2 card (AI)
-    const p2CardData = shuffledCards[i * 2 + 1];
+    // Player 2 card (AI) - regular cards
+    const p2CardData = cardData[i % cardData.length];
     const p2Card = new Card(p2CardData, false);
     gameState.player2.hand.push(p2Card);
   }
@@ -262,6 +277,19 @@ export function updateBoard() {
     card.targetScale.set(1.5, 1.5, 1.5);
   });
   
+  // Special effect cards (right side, face up, stacked)
+  gameState.fieldEffects.forEach((card, index) => {
+    const stackOffset = index * 0.1;
+    card.targetPosition.set(
+      7, 
+      0 + stackOffset, 
+      0.1 + stackOffset
+    );
+    card.targetRotation.set(0, 0, 0); // Keep flat
+    card.targetScale.set(1, 1, 1);
+    // Keep face up to show special effect
+  });
+  
   // Played cards (left side, face down, stacked)
   gameState.player1.playedCards.slice(-10).forEach((card, index) => {
     const stackOffset = index * 0.1;
@@ -308,14 +336,23 @@ export async function playCard(card) {
   const cardIndex = gameState.player1.hand.indexOf(card);
   gameState.player1.hand.splice(cardIndex, 1);
   
+  // Check if this is a special effect card
+  if (isSpecialEffectCard(card.data)) {
+    await playSpecialEffectCard(card);
+    return;
+  }
+  
   // Ensure card starts at normal scale (1x) before flying
   card.mesh.scale.set(1, 1, 1);
   
   // Animate card flying across screen
   await animateCardFlight(card, true);
   
+  // Calculate damage with active effects
+  let damage = card.data.atk;
+  damage = applyActiveEffects(damage, card);
+  
   // Deal damage
-  const damage = card.data.atk;
   gameState.player2.hp = Math.max(0, gameState.player2.hp - damage);
   
   // Update via API if online
@@ -340,6 +377,7 @@ export async function playCard(card) {
   // Switch to AI turn after animation completes
   setTimeout(() => {
     gameState.currentPlayer = 2;
+    processActiveEffects(); // Process turn-based effects
     updateBoard();
     updateUI();
     
@@ -497,6 +535,7 @@ async function executeAICardPlay(card, damage = null) {
   setTimeout(() => {
     gameState.currentPlayer = 1;
     gameState.turnPhase = 'selecting';
+    processActiveEffects(); // Process turn-based effects
     updateBoard();
     updateUI();
   }, 2000); // Wait for damage animation to complete
@@ -604,6 +643,35 @@ function showDamageAnimation(damage, playerToAI = true) {
   }
 }
 
+// Show poison damage animation
+function showPoisonDamageAnimation() {
+  // Create floating poison damage text
+  const damageElement = document.createElement('div');
+  damageElement.className = 'poison-damage-animation';
+  damageElement.textContent = '☠️ -2';
+  damageElement.style.cssText = `
+    position: fixed;
+    left: 50%;
+    top: 20%;
+    transform: translateX(-50%);
+    font-size: 42px;
+    font-weight: bold;
+    color: #00FF00;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 15px #00FF00, 0 0 30px #00FF00;
+    z-index: 1000;
+    pointer-events: none;
+    animation: poisonFloat 2.5s ease-out forwards;
+  `;
+  
+  document.body.appendChild(damageElement);
+  
+  // Remove after animation
+  setTimeout(() => {
+    damageElement.remove();
+  }, 2500);
+}
+
 // Move card to played cards area (left side, face down, stacked)
 function moveCardToPlayedArea(card, playerToAI) {
   const player = playerToAI ? gameState.player1 : gameState.player2;
@@ -655,11 +723,26 @@ function moveCardToPlayedArea(card, playerToAI) {
 function drawCard(player) {
   if (gameState.availableCards.length === 0) return;
   
-  const randomCard = gameState.availableCards[
-    Math.floor(Math.random() * gameState.availableCards.length)
-  ];
+  let selectedCard;
   
-  const newCard = new Card(randomCard, player === gameState.player1);
+  // For testing: Force special effect cards every 2 turns for player 1
+  if (player === gameState.player1) {
+    const totalTurns = gameState.player1.playedCards.length + gameState.fieldEffects.length;
+    if (totalTurns % 2 === 0 && specialEffectCards.length > 0) {
+      // Give a special effect card every 2 turns
+      selectedCard = specialEffectCards[Math.floor(Math.random() * specialEffectCards.length)];
+    } else {
+      // Give a regular card
+      selectedCard = cardData[Math.floor(Math.random() * cardData.length)];
+    }
+  } else {
+    // AI gets random cards normally
+    selectedCard = gameState.availableCards[
+      Math.floor(Math.random() * gameState.availableCards.length)
+    ];
+  }
+  
+  const newCard = new Card(selectedCard, player === gameState.player1);
   player.hand.push(newCard);
   
   // Immediately position the new card in the correct hand position (not center)
@@ -716,6 +799,59 @@ function updateUI() {
   if (turnElement) {
     turnElement.textContent = gameState.currentPlayer === 1 ? 'Your Turn' : 'AI Turn';
     turnElement.className = gameState.currentPlayer === 1 ? 'your-turn' : 'ai-turn';
+  }
+  
+  // Update skip turn button visibility
+  updateSkipTurnButton();
+}
+
+// Update skip turn button
+function updateSkipTurnButton() {
+  let skipButton = document.getElementById('skipTurnButton');
+  
+  if (!skipButton) {
+    // Create skip turn button
+    skipButton = document.createElement('button');
+    skipButton.id = 'skipTurnButton';
+    skipButton.innerHTML = '⏭️ Skip Turn';
+    skipButton.onclick = skipPlayerTurn;
+    skipButton.style.cssText = `
+      position: fixed;
+      left: 20px;
+      top: 60px;
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.3);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    `;
+    
+    // Add hover effect
+    skipButton.addEventListener('mouseenter', () => {
+      skipButton.style.transform = 'scale(1.05)';
+      skipButton.style.boxShadow = '0 5px 15px rgba(255, 107, 107, 0.4)';
+    });
+    
+    skipButton.addEventListener('mouseleave', () => {
+      skipButton.style.transform = 'scale(1)';
+      skipButton.style.boxShadow = '0 3px 10px rgba(255, 107, 107, 0.3)';
+    });
+    
+    document.body.appendChild(skipButton);
+  }
+  
+  // Show/hide based on current player and game state
+  if (gameState.currentPlayer === 1 && gameState.isGameActive && !gameState.animationInProgress) {
+    skipButton.style.display = 'block';
+  } else {
+    skipButton.style.display = 'none';
   }
 }
 
@@ -804,6 +940,8 @@ function clearSceneAndState() {
   gameState.selectedCard = null;
   gameState.selectedCards = [];
   gameState.battlefieldCards = [];
+  gameState.fieldEffects = [];
+  gameState.activeEffects = [];
   gameState.turnPhase = 'selecting';
   gameState.draggingCard = null;
   gameState.isPaused = false;
@@ -889,6 +1027,12 @@ export function onMouseClick(event) {
 function showCardSelection(card) {
   if (gameState.animationInProgress) return;
   
+  // Check if trying to select a special effect card when one is already active
+  if (isSpecialEffectCard(card.data) && gameState.fieldEffects.length > 0) {
+    log(`❌ Cannot select ${card.data.name} - special effect already active! Play battle cards instead.`);
+    return;
+  }
+  
   gameState.animationInProgress = true;
   
   // Store original position and scale
@@ -926,12 +1070,32 @@ function showSelectionInfoPanel(card) {
   // Populate panel with card data
   nameEl.textContent = card.data.name;
   attackEl.textContent = card.data.atk;
-  descriptionEl.textContent = `This card deals ${card.data.atk} damage to your opponent.`;
   
-  // Update button text
+  // Show different description for special effects
+  if (isSpecialEffectCard(card.data)) {
+    if (gameState.fieldEffects.length > 0) {
+      descriptionEl.textContent = `⚠️ Cannot play - special effect already active! ${card.data.description}`;
+    } else {
+      descriptionEl.textContent = card.data.description;
+    }
+  } else {
+    descriptionEl.textContent = `This card deals ${card.data.atk} damage to your opponent.`;
+  }
+  
+  // Update button text and state
   const playButton = document.querySelector('.zoom-play-btn');
   if (playButton) {
-    playButton.innerHTML = '<span class="btn-icon">⚔️</span><span>Play Selected Card</span>';
+    if (isSpecialEffectCard(card.data) && gameState.fieldEffects.length > 0) {
+      playButton.innerHTML = '<span class="btn-icon">🚫</span><span>Special Effect Blocked</span>';
+      playButton.disabled = true;
+      playButton.style.opacity = '0.5';
+      playButton.style.cursor = 'not-allowed';
+    } else {
+      playButton.innerHTML = '<span class="btn-icon">⚔️</span><span>Play Selected Card</span>';
+      playButton.disabled = false;
+      playButton.style.opacity = '1';
+      playButton.style.cursor = 'pointer';
+    }
   }
   
   // Show panel
@@ -1091,6 +1255,13 @@ function confirmPlayCard(event) {
     return;
   }
   
+  // Check if button is disabled
+  const playButton = document.querySelector('.zoom-play-btn');
+  if (playButton && playButton.disabled) {
+    log('❌ Cannot play card - button is disabled');
+    return;
+  }
+  
   // Add a small delay to prevent accidental clicks right after panel appears
   const now = Date.now();
   if (!window.lastPanelShowTime) window.lastPanelShowTime = 0;
@@ -1122,6 +1293,13 @@ function moveCardToBattlefield(card) {
   const cardIndex = gameState.player1.hand.indexOf(card);
   if (cardIndex !== -1) {
     gameState.player1.hand.splice(cardIndex, 1);
+  }
+  
+  // Check if this is a special effect card
+  if (isSpecialEffectCard(card.data)) {
+    // Special effect cards go directly to field effects area
+    playSpecialEffectCardFromSelection(card);
+    return;
   }
   
   // Add to battlefield
@@ -1304,8 +1482,31 @@ async function executeBattle(event) {
   // Hide battle button
   hideBattleButton();
   
-  // Calculate total damage
-  const totalDamage = gameState.battlefieldCards.reduce((sum, card) => sum + card.data.atk, 0);
+  // Calculate total damage with special effects applied
+  let totalDamage = 0;
+  gameState.battlefieldCards.forEach((card, index) => {
+    let cardDamage = card.data.atk;
+    
+    // Apply special effects to each card
+    gameState.activeEffects.forEach(effect => {
+      switch(effect.effect) {
+        case 'boost_atk':
+          // g2: +50% ATK boost to all cards
+          cardDamage = Math.floor(cardDamage * 1.5);
+          break;
+          
+        case 'double_first':
+          // g3: Double first card's ATK only
+          if (index === 0) {
+            cardDamage = cardDamage * 2;
+          }
+          break;
+      }
+    });
+    
+    totalDamage += cardDamage;
+    log(`${card.data.name}: ${card.data.atk} → ${cardDamage} damage`);
+  });
   
   // Deal combined damage immediately
   gameState.player2.hp = Math.max(0, gameState.player2.hp - totalDamage);
@@ -1337,7 +1538,7 @@ async function executeBattle(event) {
   }
   
   const cardNames = gameState.battlefieldCards.map(card => card.data.name).join(', ');
-  log(`You played ${cardNames} dealing ${totalDamage} damage! Enemy HP: ${gameState.player2.hp}`);
+  log(`You played ${cardNames} dealing ${totalDamage} total damage! Enemy HP: ${gameState.player2.hp}`);
   
   // Clear battlefield
   gameState.battlefieldCards = [];
@@ -1412,7 +1613,7 @@ export function animate() {
     requestAnimationFrame(animate);
     
     // Update all cards
-    [...gameState.player1.hand, ...gameState.player1.playedCards, ...gameState.battlefieldCards].forEach(card => {
+    [...gameState.player1.hand, ...gameState.player1.playedCards, ...gameState.battlefieldCards, ...gameState.fieldEffects].forEach(card => {
       if (card.update) card.update();
     });
     [...gameState.player2.hand, ...gameState.player2.playedCards].forEach(card => {
@@ -1597,6 +1798,7 @@ async function executeCardPlay(card, damage) {
   // Switch to AI turn after animation completes
   setTimeout(() => {
     gameState.currentPlayer = 2;
+    processActiveEffects(); // Process turn-based effects
     updateBoard();
     updateUI();
     
@@ -1690,7 +1892,384 @@ function initializeRefereeIntegration() {
   }, 2000);
 }
 
+// Special Effect Functions
+
+// Play a special effect card from selection (card already removed from hand)
+async function playSpecialEffectCardFromSelection(card) {
+  // Check if player already has a special effect active (can't combine)
+  if (gameState.fieldEffects.some(effectCard => effectCard.data.effect === card.data.effect)) {
+    log(`Cannot play ${card.data.name} - similar effect already active!`);
+    // Return card to hand
+    gameState.player1.hand.push(card);
+    gameState.animationInProgress = false;
+    updateBoard();
+    return;
+  }
+  
+  // Reset card visual state
+  card.isZoomed = false;
+  card.mesh.scale.set(1, 1, 1);
+  card.mesh.position.z = 0.5;
+  
+  // Clear selected card
+  gameState.selectedCard = null;
+  
+  // Animate card moving to field effects area (right side)
+  await animateCardToFieldEffects(card);
+  
+  // Apply instant effects immediately, but keep duration-based effects for battle
+  if (card.data.duration === 0) {
+    // Instant effects (g1, g4) - apply immediately
+    await applySpecialEffect(card);
+    gameState.player1.playedCards.push(card);
+    
+    // Draw new card
+    drawCard(gameState.player1);
+    
+    log(`You played special effect: ${card.data.name} - ${card.data.description}`);
+    
+    // Switch to AI turn
+    setTimeout(() => {
+      gameState.currentPlayer = 2;
+      processActiveEffects(); // Process turn-based effects
+      updateBoard();
+      updateUI();
+      
+      // AI plays after short delay
+      setTimeout(async () => {
+        await aiPlayCard();
+        gameState.animationInProgress = false;
+      }, 1500);
+    }, 2000);
+  } else {
+    // Duration-based effects (g2, g3, g5) - add to field and let player continue
+    gameState.fieldEffects.push(card);
+    gameState.activeEffects.push({
+      card: card,
+      effect: card.data.effect,
+      duration: card.data.duration,
+      turnsLeft: card.data.duration
+    });
+    
+    // Draw new card
+    drawCard(gameState.player1);
+    
+    log(`You played special effect: ${card.data.name} - ${card.data.description}`);
+    log(`Special effect is active! You can now play battle cards.`);
+    
+    // Return control to player to continue selecting battle cards
+    gameState.animationInProgress = false;
+    gameState.turnPhase = 'selecting';
+    updateBoard();
+    updateUI();
+  }
+}
+
+// Play a special effect card
+async function playSpecialEffectCard(card) {
+  // Check if player already has a special effect active (can't combine)
+  if (gameState.fieldEffects.some(effectCard => effectCard.data.effect === card.data.effect)) {
+    log(`Cannot play ${card.data.name} - similar effect already active!`);
+    // Return card to hand
+    gameState.player1.hand.push(card);
+    gameState.animationInProgress = false;
+    updateBoard();
+    return;
+  }
+  
+  // Animate card moving to field effects area (right side)
+  await animateCardToFieldEffects(card);
+  
+  // Apply the special effect
+  await applySpecialEffect(card);
+  
+  // Add to field effects if it has duration
+  if (card.data.duration > 0) {
+    gameState.fieldEffects.push(card);
+    gameState.activeEffects.push({
+      card: card,
+      effect: card.data.effect,
+      duration: card.data.duration,
+      turnsLeft: card.data.duration
+    });
+  } else {
+    // Instant effect - move to played cards
+    gameState.player1.playedCards.push(card);
+  }
+  
+  // Draw new card
+  drawCard(gameState.player1);
+  
+  log(`You played special effect: ${card.data.name} - ${card.data.description}`);
+  
+  // Switch to AI turn
+  setTimeout(() => {
+    gameState.currentPlayer = 2;
+    updateBoard();
+    updateUI();
+    
+    // AI plays after short delay
+    setTimeout(async () => {
+      await aiPlayCard();
+      gameState.animationInProgress = false;
+    }, 1500);
+  }, 2000);
+}
+
+// Animate card to field effects area
+async function animateCardToFieldEffects(card) {
+  return new Promise((resolve) => {
+    const duration = 1000;
+    const startTime = Date.now();
+    const startPosition = card.mesh.position.clone();
+    const targetPosition = new THREE.Vector3(7, 0, 0.5);
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      card.mesh.position.lerpVectors(startPosition, targetPosition, eased);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        resolve();
+      }
+    }
+    
+    animate();
+  });
+}
+
+// Apply special effect
+async function applySpecialEffect(card) {
+  const effect = card.data.effect;
+  
+  log(`🔮 Applying special effect: ${card.data.name} (${effect})`);
+  
+  switch(effect) {
+    case 'shuffle':
+      // g1: Shuffle all cards in both players' hands; redraw 5 cards
+      log(`🔄 Shuffling all hands...`);
+      await shuffleAllHands();
+      break;
+      
+    case 'boost_atk':
+      // g2: Increase all your cards' ATK by 50% this turn
+      log(`⚡ All your cards get +50% ATK this turn!`);
+      break;
+      
+    case 'double_first':
+      // g3: First card on the field ATK x2
+      log(`🎯 First card played gets double ATK!`);
+      break;
+      
+    case 'discard_opponent':
+      // g4: Opponent discards 2 random cards
+      log(`💨 Making opponent discard cards...`);
+      discardOpponentCards(2);
+      break;
+      
+    case 'poison':
+      // g5: Inflicts ongoing 2 HP damage per turn for 3 turns
+      log(`☠️ Poison effect activated - opponent will take 2 damage per turn for 3 turns!`);
+      break;
+      
+    default:
+      log(`❌ Unknown special effect: ${effect}`);
+      break;
+  }
+}
+
+// Shuffle all hands effect
+async function shuffleAllHands() {
+  // Collect all cards from both hands
+  const allCards = [];
+  
+  // Remove cards from hands and collect them
+  gameState.player1.hand.forEach(card => {
+    scene.remove(card.mesh);
+    allCards.push(card.data);
+  });
+  gameState.player2.hand.forEach(card => {
+    scene.remove(card.mesh);
+    allCards.push(card.data);
+  });
+  
+  // Clear hands
+  gameState.player1.hand = [];
+  gameState.player2.hand = [];
+  
+  // Shuffle the collected cards
+  const shuffledCards = shuffle(allCards);
+  
+  // Deal 5 cards to each player
+  for (let i = 0; i < 5; i++) {
+    if (shuffledCards[i * 2]) {
+      const p1Card = new Card(shuffledCards[i * 2], true);
+      gameState.player1.hand.push(p1Card);
+    }
+    if (shuffledCards[i * 2 + 1]) {
+      const p2Card = new Card(shuffledCards[i * 2 + 1], false);
+      gameState.player2.hand.push(p2Card);
+    }
+  }
+  
+  updateBoard();
+  log(`All hands shuffled and redrawn!`);
+}
+
+// Discard opponent cards
+function discardOpponentCards(count) {
+  const opponent = gameState.player2;
+  const cardsToDiscard = Math.min(count, opponent.hand.length);
+  
+  for (let i = 0; i < cardsToDiscard; i++) {
+    const randomIndex = Math.floor(Math.random() * opponent.hand.length);
+    const discardedCard = opponent.hand.splice(randomIndex, 1)[0];
+    scene.remove(discardedCard.mesh);
+  }
+  
+  log(`Opponent discarded ${cardsToDiscard} cards!`);
+  updateBoard();
+}
+
+// Apply active effects to damage calculation
+function applyActiveEffects(damage, card) {
+  let modifiedDamage = damage;
+  let effectsApplied = [];
+  
+  gameState.activeEffects.forEach(effect => {
+    switch(effect.effect) {
+      case 'boost_atk':
+        // g2: +50% ATK boost
+        modifiedDamage = Math.floor(modifiedDamage * 1.5);
+        effectsApplied.push(`+50% ATK boost`);
+        break;
+        
+      case 'double_first':
+        // g3: Double first card's ATK (applies to first card in battle)
+        if (gameState.battlefieldCards.length === 1) {
+          modifiedDamage = modifiedDamage * 2;
+          effectsApplied.push(`Double first card ATK`);
+        }
+        break;
+    }
+  });
+  
+  if (effectsApplied.length > 0) {
+    log(`Effects applied: ${effectsApplied.join(', ')}`);
+  }
+  
+  return modifiedDamage;
+}
+
+// Process turn-based effects (called at start of each turn)
+function processActiveEffects() {
+  if (gameState.activeEffects.length > 0) {
+    log(`🔄 Processing ${gameState.activeEffects.length} active effects...`);
+  }
+  
+  // Process effects in reverse order to handle removal safely
+  for (let i = gameState.activeEffects.length - 1; i >= 0; i--) {
+    const effect = gameState.activeEffects[i];
+    log(`⏰ Processing effect: ${effect.card.data.name} (${effect.turnsLeft} turns left)`);
+    
+    switch(effect.effect) {
+      case 'poison':
+        // g5: Deal 2 damage per turn - applies on EVERY turn (both player and AI)
+        gameState.player2.hp = Math.max(0, gameState.player2.hp - 2);
+        log(`☠️ Poison deals 2 damage to opponent! HP: ${gameState.player2.hp}`);
+        
+        // Show poison damage animation
+        showPoisonDamageAnimation();
+        
+        updateUI(); // Update HP display immediately
+        break;
+    }
+    
+    // Reduce duration
+    effect.turnsLeft--;
+    log(`⏳ ${effect.card.data.name} turns left: ${effect.turnsLeft}`);
+    
+    // Remove effect if expired
+    if (effect.turnsLeft <= 0) {
+      // Remove from field effects
+      const fieldIndex = gameState.fieldEffects.indexOf(effect.card);
+      if (fieldIndex !== -1) {
+        const expiredCard = gameState.fieldEffects.splice(fieldIndex, 1)[0];
+        gameState.player1.playedCards.push(expiredCard);
+        log(`✅ ${effect.card.data.name} effect expired and moved to played cards`);
+      }
+      
+      // Remove from active effects
+      gameState.activeEffects.splice(i, 1);
+    }
+  }
+  
+  updateBoard();
+  updateUI();
+}
+
+// Add CSS animations for damage effects
+function addDamageAnimations() {
+  if (document.getElementById('damageAnimationsCSS')) return; // Already added
+  
+  const style = document.createElement('style');
+  style.id = 'damageAnimationsCSS';
+  style.textContent = `
+    @keyframes damageFloat {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-100px);
+      }
+    }
+    
+    @keyframes poisonFloat {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      50% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-30px) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-80px) scale(0.8);
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Skip player turn
+function skipPlayerTurn() {
+  if (gameState.currentPlayer !== 1 || !gameState.isGameActive || gameState.animationInProgress) {
+    return;
+  }
+  
+  log('⏭️ Player skipped turn');
+  
+  // Switch to AI turn
+  gameState.currentPlayer = 2;
+  processActiveEffects(); // Process turn-based effects
+  updateBoard();
+  updateUI();
+  
+  // AI plays after short delay
+  setTimeout(async () => {
+    await aiPlayCard();
+  }, 1000);
+}
+
 // Export for global access
 window.initializeGame = initializeGame;
 window.loginPlayer = loginPlayer;
 window.toggleRefereeMode = toggleRefereeMode;
+window.skipPlayerTurn = skipPlayerTurn;
