@@ -342,11 +342,8 @@ export async function playCard(card) {
     return;
   }
   
-  // Ensure card starts at normal scale (1x) before flying
-  card.mesh.scale.set(1, 1, 1);
-  
-  // Animate card flying across screen
-  await animateCardFlight(card, true);
+  // Show sword animation above player card
+  await showSwordAnimation(card);
   
   // Calculate damage with active effects
   let damage = card.data.atk;
@@ -355,13 +352,19 @@ export async function playCard(card) {
   // Deal damage
   gameState.player2.hp = Math.max(0, gameState.player2.hp - damage);
   
+  // Show damage animation
+  showDamageAnimation(damage, true); // true = player to AI
+  
   // Update via API if online
   if (gameState.gameSession) {
     await playCardAPI(card.data.id, damage);
   }
   
-  // Move to played cards (will be handled by animation)
+  // Move to played cards array first
   gameState.player1.playedCards.push(card);
+  
+  // Animate card flying to played area
+  await animateCardToPlayedArea(card);
   
   // Draw new card
   drawCard(gameState.player1);
@@ -501,24 +504,33 @@ async function handleAIRefereeDecision(evaluation) {
 
 // Execute AI card play with specified damage
 async function executeAICardPlay(card, damage = null) {
+  console.log(`AI playing card: ${card.data.name}`);
+  
   // Remove from AI hand
   const cardIndex = gameState.player2.hand.indexOf(card);
   if (cardIndex !== -1) {
     gameState.player2.hand.splice(cardIndex, 1);
   }
   
-  // Reveal and animate
+  // Reveal card
   card.reveal();
-  // Ensure card starts at normal scale (1x) before flying
-  card.mesh.scale.set(1, 1, 1);
-  await animateCardFlight(card, false);
+  
+  // Show sword animation above AI card (same as player)
+  console.log('Showing AI sword animation...');
+  await showSwordAnimation(card);
   
   // Deal specified damage (potentially modified by referee)
   const finalDamage = damage || card.data.atk;
   gameState.player1.hp = Math.max(0, gameState.player1.hp - finalDamage);
   
-  // Move to played cards
+  // Show damage animation
+  showDamageAnimation(finalDamage, false); // false = AI to player
+  
+  // Move to played cards array first
   gameState.player2.playedCards.push(card);
+  
+  // Animate card flying to AI's played area (left side, top)
+  await animateAICardToPlayedArea(card);
   
   // Draw new card
   drawCard(gameState.player2);
@@ -633,14 +645,157 @@ function showDamageAnimation(damage, playerToAI = true) {
     damageElement.remove();
   }, 2000);
   
-  // Move card to played cards area after damage shown (only if damage is a card object)
-  if (typeof damage === 'object' && damage.data) {
+  // Note: Card movement to played area is now handled in the new battle flow
+  // No need to move cards here anymore since animateCardToPlayedArea() handles it
+}
+
+// Show sword emoji animation above a battlefield card
+function showSwordAnimation(card) {
+  return new Promise((resolve) => {
+    console.log(`Showing sword animation for card: ${card.data.name}`);
+    
+    // Get card's screen position
+    const cardPosition = card.mesh.position.clone();
+    const vector = cardPosition.clone();
+    vector.project(camera);
+    
+    // Convert to screen coordinates
+    const canvas = document.getElementById('gameCanvas');
+    const canvasRect = canvas.getBoundingClientRect();
+    const screenX = (vector.x * 0.5 + 0.5) * canvasRect.width + canvasRect.left;
+    const screenY = (-vector.y * 0.5 + 0.5) * canvasRect.height + canvasRect.top;
+    
+    // Create sword emoji element
+    const swordElement = document.createElement('div');
+    swordElement.className = 'sword-animation';
+    swordElement.textContent = '⚔️';
+    swordElement.style.cssText = `
+      position: fixed;
+      left: ${screenX}px;
+      top: ${screenY - 60}px;
+      transform: translateX(-50%);
+      font-size: 36px;
+      z-index: 1000;
+      pointer-events: none;
+      animation: swordAttack 1.5s ease-out forwards;
+    `;
+    
+    document.body.appendChild(swordElement);
+    
+    // Remove sword element after animation
     setTimeout(() => {
-      // Re-enable automatic updates for the move to played area
-      damage.isZoomed = false;
-      moveCardToPlayedArea(damage, playerToAI);
-    }, 1000);
-  }
+      swordElement.remove();
+      console.log(`Sword animation complete for: ${card.data.name}`);
+      resolve();
+    }, 1500);
+    
+    // Keep card in battlefield position (don't move to played area yet)
+    // The cards will be moved to played area after all sword animations complete
+  });
+}
+
+// Animate card flying to the played area (left side) - for player cards
+function animateCardToPlayedArea(card) {
+  return new Promise((resolve) => {
+    const duration = (mobileState && mobileState.isMobile) ? 600 : 800; // Faster on mobile
+    const startTime = Date.now();
+    
+    // Store starting position and scale
+    const startX = card.mesh.position.x;
+    const startY = card.mesh.position.y;
+    const startZ = card.mesh.position.z;
+    const startScale = card.mesh.scale.x;
+    
+    // Target position (left side played area - bottom for player)
+    const targetX = -8; // Far left
+    const targetY = -2; // Bottom side for player
+    const targetZ = 0; // Back to normal Z
+    const targetScale = 0.8; // Smaller size in played area
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      // Calculate position - arc motion to the left
+      const currentX = startX + (targetX - startX) * eased;
+      const currentY = startY + (targetY - startY) * eased + Math.sin(progress * Math.PI) * 0.5; // Small arc
+      const currentZ = startZ + (targetZ - startZ) * eased;
+      const currentScale = startScale + (targetScale - startScale) * eased;
+      
+      // Apply position and scale
+      card.mesh.position.set(currentX, currentY, currentZ);
+      card.mesh.scale.set(currentScale, currentScale, currentScale);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        // Set final target position to prevent updateBoard from repositioning
+        card.targetPosition.set(targetX, targetY, targetZ);
+        card.targetScale.set(targetScale, targetScale, targetScale);
+        card.showBack(); // Show card back in played area
+        
+        // Animation complete
+        resolve();
+      }
+    }
+    
+    animate();
+  });
+}
+
+// Animate AI card flying to the played area (left side, top) - for AI cards
+function animateAICardToPlayedArea(card) {
+  return new Promise((resolve) => {
+    const duration = (mobileState && mobileState.isMobile) ? 600 : 800; // Faster on mobile
+    const startTime = Date.now();
+    
+    // Store starting position and scale
+    const startX = card.mesh.position.x;
+    const startY = card.mesh.position.y;
+    const startZ = card.mesh.position.z;
+    const startScale = card.mesh.scale.x;
+    
+    // Target position (left side played area - top for AI)
+    const targetX = -8; // Far left
+    const targetY = 2; // Top side for AI
+    const targetZ = 0; // Back to normal Z
+    const targetScale = 0.8; // Smaller size in played area
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Smooth easing
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      // Calculate position - arc motion to the left
+      const currentX = startX + (targetX - startX) * eased;
+      const currentY = startY + (targetY - startY) * eased + Math.sin(progress * Math.PI) * 0.5; // Small arc
+      const currentZ = startZ + (targetZ - startZ) * eased;
+      const currentScale = startScale + (targetScale - startScale) * eased;
+      
+      // Apply position and scale
+      card.mesh.position.set(currentX, currentY, currentZ);
+      card.mesh.scale.set(currentScale, currentScale, currentScale);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        // Set final target position to prevent updateBoard from repositioning
+        card.targetPosition.set(targetX, targetY, targetZ);
+        card.targetScale.set(targetScale, targetScale, targetScale);
+        card.showBack(); // Show card back in played area
+        
+        // Animation complete
+        resolve();
+      }
+    }
+    
+    animate();
+  });
 }
 
 // Show poison damage animation
@@ -1523,25 +1678,30 @@ async function executeBattle(event) {
     await playCardAPI(gameState.battlefieldCards[0].data.id, totalDamage);
   }
   
-  // Animate ALL battlefield cards flying to the left together (skip individual damage)
-  const cardAnimations = gameState.battlefieldCards.map(card => animateCardFlight(card, true, true));
-  await Promise.all(cardAnimations);
+  // Show sword emoji animation above each battlefield card instead of flying them
+  const swordAnimations = gameState.battlefieldCards.map(card => showSwordAnimation(card));
+  await Promise.all(swordAnimations);
   
-  // Move battlefield cards to played cards
+  // Move battlefield cards to played cards array BEFORE animating (to prevent repositioning conflicts)
   gameState.battlefieldCards.forEach(card => {
     gameState.player1.playedCards.push(card);
   });
   
+  // Clear battlefield immediately to prevent updateBoard from repositioning them
+  const cardsToAnimate = [...gameState.battlefieldCards]; // Copy the array
+  gameState.battlefieldCards = [];
+  
+  // After sword animations, animate cards flying to the left (played area)
+  const cardFlyAnimations = cardsToAnimate.map(card => animateCardToPlayedArea(card));
+  await Promise.all(cardFlyAnimations);
+  
   // Draw new cards to replace played ones
-  for (let i = 0; i < gameState.battlefieldCards.length; i++) {
+  for (let i = 0; i < cardsToAnimate.length; i++) {
     drawCard(gameState.player1);
   }
   
-  const cardNames = gameState.battlefieldCards.map(card => card.data.name).join(', ');
+  const cardNames = cardsToAnimate.map(card => card.data.name).join(', ');
   log(`You played ${cardNames} dealing ${totalDamage} total damage! Enemy HP: ${gameState.player2.hp}`);
-  
-  // Clear battlefield
-  gameState.battlefieldCards = [];
   
   // Check win condition
   if (gameState.player2.hp <= 0) {
@@ -1767,22 +1927,25 @@ async function executeCardPlay(card, damage) {
   const cardIndex = gameState.player1.hand.indexOf(card);
   gameState.player1.hand.splice(cardIndex, 1);
   
-  // Ensure card starts at normal scale (1x) before flying
-  card.mesh.scale.set(1, 1, 1);
-  
-  // Animate card flying across screen
-  await animateCardFlight(card, true);
+  // Show sword animation above player card
+  await showSwordAnimation(card);
   
   // Deal specified damage (potentially modified by referee)
   gameState.player2.hp = Math.max(0, gameState.player2.hp - damage);
+  
+  // Show damage animation
+  showDamageAnimation(damage, true); // true = player to AI
   
   // Update via API if online
   if (gameState.gameSession) {
     await playCardAPI(card.data.id, damage);
   }
   
-  // Move to played cards
+  // Move to played cards array first
   gameState.player1.playedCards.push(card);
+  
+  // Animate card flying to played area
+  await animateCardToPlayedArea(card);
   
   // Draw new card
   drawCard(gameState.player1);

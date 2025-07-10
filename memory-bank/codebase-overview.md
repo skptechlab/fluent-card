@@ -1,6 +1,6 @@
 # Codebase Overview
 
-**Generated:** 2025-07-10 10:36  
+**Generated:** 2025-07-10 23:21  
 **Project Root:** `fluent-card`  
 
 This document provides an overview of the PHP and JavaScript codebase structure with key information about each module and file.
@@ -18,7 +18,7 @@ This document provides an overview of the PHP and JavaScript codebase structure 
 |------|---------|--------------|------|------------|
 | `cards.js` |  |  | 8KB | 🟢 Simple |
 | `db_conn.php` |  |  | 8KB | 🟢 Simple |
-| `game.js` |  |  | 52KB | 🔴 Complex |
+| `game.js` |  |  | 76KB | 🔴 Complex |
 | `mobile.js` |  |  | 16KB | 🟢 Simple |
 | `referee.js` |  |  | 12KB | 🟢 Simple |
 | `test_api.php` |  |  | 4KB | 🟢 Simple |

@@ -327,6 +327,33 @@
   animation: damageFloat 2s ease-out forwards;
 }
 
+/* Sword Attack Animation */
+@keyframes swordAttack {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px) scale(0.5) rotate(-45deg);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px) scale(1.2) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px) scale(1.5) rotate(15deg);
+  }
+  80% {
+    transform: translateX(-50%) translateY(-5px) scale(1.2) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-30px) scale(0.8) rotate(45deg);
+  }
+}
+
+.sword-animation {
+  animation: swordAttack 1.5s ease-out forwards;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+}
+
 /* Homepage Specific Animations */
 @keyframes float {
   0% { transform: translateY(0) rotate(0deg); }
