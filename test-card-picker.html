@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Card Picker Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a1a; color: white; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .pass { background: #2d5a2d; border: 1px solid #4CAF50; }
+        .fail { background: #5a2d2d; border: 1px solid #f44336; }
+        .info { background: #2d3a5a; border: 1px solid #2196F3; }
+        pre { background: #333; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .test-btn { background: #4CAF50; color: white; }
+        .debug-btn { background: #2196F3; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Card Picker Test</h1>
+    <p>This page tests if special effect cards appear in the card picker.</p>
+    
+    <div id="results"></div>
+    
+    <div>
+        <button class="test-btn" onclick="runTests()">🧪 Run Tests</button>
+        <button class="debug-btn" onclick="showDebugInfo()">🔍 Debug Info</button>
+    </div>
+    
+    <script type="module">
+        import { specialEffectCards, isSpecialEffectCard } from './cards.js';
+        
+        window.specialEffectCards = specialEffectCards;
+        window.isSpecialEffectCard = isSpecialEffectCard;
+        
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            document.getElementById('results').appendChild(div);
+        }
+        
+        window.runTests = function() {
+            document.getElementById('results').innerHTML = '';
+            
+            addResult('🧪 <strong>Testing Card Picker Special Effects</strong>', 'info');
+            
+            // Test 1: Check if specialEffectCards are defined
+            if (specialEffectCards && specialEffectCards.length > 0) {
+                addResult(`✅ <strong>Test 1 PASSED:</strong> specialEffectCards loaded (${specialEffectCards.length} cards)`, 'pass');
+                
+                // List all special effects
+                const effectsList = specialEffectCards.map(card => 
+                    `${card.name} (${card.id}) - ${card.effect}`
+                ).join('<br>');
+                addResult(`📋 <strong>Available Special Effects:</strong><br>${effectsList}`, 'info');
+                
+            } else {
+                addResult('❌ <strong>Test 1 FAILED:</strong> specialEffectCards not loaded', 'fail');
+            }
+            
+            // Test 2: Check isSpecialEffectCard function
+            if (specialEffectCards.length > 0) {
+                const testCard = specialEffectCards[0];
+                const isSpecial = isSpecialEffectCard(testCard);
+                
+                if (isSpecial) {
+                    addResult(`✅ <strong>Test 2 PASSED:</strong> isSpecialEffectCard() works correctly`, 'pass');
+                } else {
+                    addResult(`❌ <strong>Test 2 FAILED:</strong> isSpecialEffectCard() not working`, 'fail');
+                }
+            }
+            
+            // Test 3: Check card structure
+            if (specialEffectCards.length > 0) {
+                const card = specialEffectCards[0];
+                const hasRequiredFields = card.name && card.id && card.effect && card.type === 'special';
+                
+                if (hasRequiredFields) {
+                    addResult(`✅ <strong>Test 3 PASSED:</strong> Special effect cards have correct structure`, 'pass');
+                } else {
+                    addResult(`❌ <strong>Test 3 FAILED:</strong> Special effect cards missing required fields`, 'fail');
+                    addResult(`<pre>${JSON.stringify(card, null, 2)}</pre>`, 'info');
+                }
+            }
+            
+            addResult('✨ <strong>Tests completed!</strong> If all tests pass, special effects should appear in the card picker.', 'info');
+        };
+        
+        window.showDebugInfo = function() {
+            document.getElementById('results').innerHTML = '';
+            addResult('🔍 <strong>Debug Information</strong>', 'info');
+            
+            addResult(`<pre>specialEffectCards.length: ${specialEffectCards?.length || 0}</pre>`, 'info');
+            
+            if (specialEffectCards && specialEffectCards.length > 0) {
+                addResult('<pre>' + JSON.stringify(specialEffectCards, null, 2) + '</pre>', 'info');
+            }
+        };
+        
+        // Auto-run tests on load
+        setTimeout(() => {
+            runTests();
+        }, 500);
+    </script>
+</body>
+</html>

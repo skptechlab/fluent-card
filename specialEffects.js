@@ -110,8 +110,18 @@ export const SPECIAL_EFFECTS = {
 // Special Effect Processing Engine
 export class SpecialEffectProcessor {
   constructor() {
-    this.activeEffects = gameState.activeEffects || [];
-    this.fieldEffects = gameState.fieldEffects || [];
+    // Initialize empty arrays - will sync with gameState when needed
+    this.activeEffects = [];
+    this.fieldEffects = [];
+  }
+  
+  // Sync with gameState when it becomes available
+  syncWithGameState() {
+    const gameState = getGameState();
+    if (gameState && gameState.activeEffects) {
+      this.activeEffects = gameState.activeEffects;
+      this.fieldEffects = gameState.fieldEffects || [];
+    }
   }
 
   // Apply a special effect card
@@ -256,46 +266,65 @@ export class SpecialEffectProcessor {
 async function shuffleAllHands(gameData) {
   log("🌪️ Chaos Shuffle: All hands shuffled!");
   
-  const { gameState, scene } = gameData;
-  
-  // Collect all cards from both hands
-  const allCards = [];
-  
-  // Remove cards from hands and collect them
-  gameState.player1.hand.forEach(card => {
-    if (scene && card.mesh) {
-      scene.remove(card.mesh);
+  try {
+    const { gameState, scene } = gameData;
+    
+    // Collect all cards from both hands
+    const allCards = [];
+    
+    // Remove cards from hands and collect them
+    if (gameState.player1 && gameState.player1.hand) {
+      gameState.player1.hand.forEach(card => {
+        if (scene && card.mesh) {
+          scene.remove(card.mesh);
+        }
+        allCards.push(card.data);
+      });
     }
-    allCards.push(card.data);
-  });
-  gameState.player2.hand.forEach(card => {
-    if (scene && card.mesh) {
-      scene.remove(card.mesh);
+    
+    if (gameState.player2 && gameState.player2.hand) {
+      gameState.player2.hand.forEach(card => {
+        if (scene && card.mesh) {
+          scene.remove(card.mesh);
+        }
+        allCards.push(card.data);
+      });
     }
-    allCards.push(card.data);
-  });
-  
-  // Clear hands
-  gameState.player1.hand = [];
-  gameState.player2.hand = [];
-  
-  // Shuffle the collected cards
-  const shuffledCards = shuffle(allCards);
-  
-  // Deal 5 cards to each player
-  for (let i = 0; i < 5; i++) {
-    if (shuffledCards[i * 2]) {
-      const p1Card = new Card(shuffledCards[i * 2], true);
-      gameState.player1.hand.push(p1Card);
+    
+    // Clear hands
+    gameState.player1.hand = [];
+    gameState.player2.hand = [];
+    
+    // Shuffle the collected cards
+    const shuffledCards = shuffle(allCards);
+    
+    // Deal 5 cards to each player using the global Card class
+    const CardClass = window.Card || Card;
+    
+    for (let i = 0; i < 5; i++) {
+      if (shuffledCards[i * 2]) {
+        const p1Card = new CardClass(shuffledCards[i * 2], true);
+        gameState.player1.hand.push(p1Card);
+      }
+      if (shuffledCards[i * 2 + 1]) {
+        const p2Card = new CardClass(shuffledCards[i * 2 + 1], false);
+        gameState.player2.hand.push(p2Card);
+      }
     }
-    if (shuffledCards[i * 2 + 1]) {
-      const p2Card = new Card(shuffledCards[i * 2 + 1], false);
-      gameState.player2.hand.push(p2Card);
+    
+    // Call updateBoard through global window object
+    if (window.updateBoard) {
+      window.updateBoard();
+    } else {
+      updateBoard();
     }
+    
+    log(`All hands shuffled and redrawn!`);
+    
+  } catch (error) {
+    console.error('Error in shuffleAllHands:', error);
+    log('❌ Chaos Shuffle failed: ' + error.message);
   }
-  
-  updateBoard();
-  log(`All hands shuffled and redrawn!`);
 }
 
 function discardOpponentCards(count, gameData) {
@@ -411,19 +440,43 @@ function updateBoard() {
   }
 }
 
-function updateHPBars() {
-  if (window.updateHPBars) {
-    window.updateHPBars();
-  }
-}
+// updateHPBars is now defined in game.js and available globally
 
 // Access gameState from global window object
 function getGameState() {
-  return window.gameState || {};
+  if (typeof window !== 'undefined' && window.gameState) {
+    return window.gameState;
+  }
+  // Return empty object if gameState not available yet
+  return {
+    activeEffects: [],
+    fieldEffects: [],
+    player1: { hp: 500, maxHp: 500, hand: [] },
+    player2: { hp: 500, maxHp: 500, hand: [] },
+    currentPlayer: 1
+  };
 }
 
-// Export the processor instance
-export const specialEffectProcessor = new SpecialEffectProcessor();
+// Export the processor instance - will be initialized when gameState is available
+export let specialEffectProcessor = null;
+
+// Initialize processor when gameState is available
+export function initializeSpecialEffectProcessor() {
+  if (!specialEffectProcessor) {
+    specialEffectProcessor = new SpecialEffectProcessor();
+    specialEffectProcessor.syncWithGameState();
+  }
+  return specialEffectProcessor;
+}
+
+// Get processor instance (creates if needed)
+export function getSpecialEffectProcessor() {
+  if (!specialEffectProcessor) {
+    return initializeSpecialEffectProcessor();
+  }
+  specialEffectProcessor.syncWithGameState(); // Always sync to get latest state
+  return specialEffectProcessor;
+}
 
 // Export utility functions for external use
 export {

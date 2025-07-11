@@ -4,7 +4,7 @@ import { cardData, Card, specialEffectCards, isSpecialEffectCard } from './cards
 import { shuffle } from './utils.js';
 import { scene, camera, renderer } from './threeSetup.js';
 import { mobileState } from './mobile.js';
-import { specialEffectProcessor, SPECIAL_EFFECTS } from './specialEffects.js';
+import { getSpecialEffectProcessor, initializeSpecialEffectProcessor, SPECIAL_EFFECTS } from './specialEffects.js';
 
 // Debug: Check if Card class is properly imported
 console.log('Card class imported:', Card);
@@ -28,7 +28,11 @@ export const gameState = {
   currentPlayerObj: null, // For authentication
   zoomedCard: null, // Card currently being viewed in zoom modal
   refereeMode: false, // Whether referee evaluation is enabled
-  pendingEvaluation: null // Card waiting for referee approval
+  pendingEvaluation: null, // Card waiting for referee approval
+  isMultiplayer: false, // Whether this is a multiplayer game
+  gameMode: 'single', // 'single', 'multiplayer', 'spectator'
+  roomState: null, // Current room state from sync
+  currentTurnPlayerId: null // Player ID whose turn it is (for multiplayer)
 };
 
 // API helper functions
@@ -74,8 +78,9 @@ async function loadCards() {
   try {
     const result = await apiCall('get_cards.php');
     if (result.success) {
-      gameState.availableCards = result.data.cards;
-      log(`Loaded ${result.data.count} cards`);
+      // Always include special effects even if API provides cards
+      gameState.availableCards = [...result.data.cards, ...specialEffectCards];
+      log(`Loaded ${result.data.count} cards + ${specialEffectCards.length} special effects`);
     } else {
       // Fallback to local cards if API fails
       gameState.availableCards = [...cardData, ...specialEffectCards];
@@ -85,6 +90,10 @@ async function loadCards() {
     gameState.availableCards = [...cardData, ...specialEffectCards];
     log('Using local card data due to API error');
   }
+  
+  // Debug: Log special effects count
+  const specialCount = gameState.availableCards.filter(card => isSpecialEffectCard(card)).length;
+  log(`📋 Available cards: ${gameState.availableCards.length} total, ${specialCount} special effects`);
 }
 
 // Create new game session
@@ -141,20 +150,10 @@ async function playCardAPI(cardId, damage) {
   }
 }
 
-// Make functions globally accessible for special effects module
-if (typeof window !== 'undefined') {
-  window.log = log;
-  window.updateBoard = updateBoard;
-  window.updateHPBars = updateHPBars;
-  window.updateUI = updateUI;
-  window.scene = scene;
-  window.gameState = gameState;
-  window.showPoisonDamageAnimation = showPoisonDamageAnimation;
-  window.Card = Card;
-}
+// Functions will be exported globally at the end of the file
 
 // Initialize game
-export async function initializeGame(username = null) {
+export async function initializeGame(username = null, gameMode = 'single') {
   clearSceneAndState();
   
   // Add CSS animations for damage effects
@@ -163,44 +162,88 @@ export async function initializeGame(username = null) {
   // Load cards first
   await loadCards();
   
-  // Set up players
-  if (username && gameState.currentPlayerObj) {
-    gameState.player1.id = gameState.currentPlayerObj.id;
-    gameState.player1.username = gameState.currentPlayerObj.username;
-  } else {
-    // Guest mode
-    gameState.player1.id = Date.now(); // Temporary ID for guest
-    gameState.player1.username = username || 'Guest';
-  }
-  
-  // Player 2 is AI for now
-  gameState.player2.id = null;
-  gameState.player2.username = 'AI';
-  
-  // Create game session if user is logged in
-  if (gameState.currentPlayerObj) {
-    try {
-      await createGameSession(gameState.player1.id);
-    } catch (error) {
-      log('Playing offline mode');
+  // Set up players based on game mode
+  if (gameMode === 'multiplayer' || gameMode === 'spectator') {
+    // Multiplayer mode setup
+    gameState.isMultiplayer = true;
+    gameState.gameMode = gameMode;
+    
+    if (gameState.currentPlayerObj) {
+      gameState.player1.id = gameState.currentPlayerObj.id;
+      gameState.player1.username = gameState.currentPlayerObj.username;
+      console.log('Multiplayer: Using logged player ID:', gameState.player1.id);
+    } else {
+      // Guest mode for multiplayer - but try to get saved student info
+      const savedStudent = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('currentStudent') : null;
+      if (savedStudent) {
+        try {
+          const studentInfo = JSON.parse(savedStudent);
+          gameState.player1.id = studentInfo.id;
+          gameState.player1.username = studentInfo.username;
+          console.log('Multiplayer: Using saved student ID:', gameState.player1.id);
+        } catch (e) {
+          console.error('Failed to parse saved student info');
+          gameState.player1.id = Date.now();
+          gameState.player1.username = username || 'Guest';
+        }
+      } else {
+        gameState.player1.id = Date.now();
+        gameState.player1.username = username || 'Guest';
+        console.log('Multiplayer: Using generated guest ID:', gameState.player1.id);
+      }
     }
+    
+    // In multiplayer, player 2 will be set dynamically from room state
+    gameState.player2.id = null;
+    gameState.player2.username = 'Player 2';
+    
+    // Don't start game immediately in multiplayer - wait for room sync
+    gameState.isGameActive = false;
+    
+    log(`Multiplayer mode initialized as ${gameMode}. Waiting for room sync...`);
+  } else {
+    // Single player mode (vs AI)
+    gameState.isMultiplayer = false;
+    gameState.gameMode = 'single';
+    
+    if (username && gameState.currentPlayerObj) {
+      gameState.player1.id = gameState.currentPlayerObj.id;
+      gameState.player1.username = gameState.currentPlayerObj.username;
+    } else {
+      // Guest mode
+      gameState.player1.id = Date.now(); // Temporary ID for guest
+      gameState.player1.username = username || 'Guest';
+    }
+    
+    // Player 2 is AI for single player
+    gameState.player2.id = null;
+    gameState.player2.username = 'AI';
+    
+    // Create game session if user is logged in
+    if (gameState.currentPlayerObj) {
+      try {
+        await createGameSession(gameState.player1.id);
+      } catch (error) {
+        log('Playing offline mode');
+      }
+    }
+    
+    // Initialize game state for single player
+    gameState.player1.hp = 500;
+    gameState.player2.hp = 500;
+    gameState.currentPlayer = 1;
+    gameState.turnPhase = 'selecting';
+    gameState.selectedCards = [];
+    gameState.battlefieldCards = [];
+    gameState.isGameActive = true;
+    
+    // Deal cards for single player
+    dealInitialCards();
+    updateBoard();
+    updateUI();
+    
+    log('Single player game initialized! Click cards to attack.');
   }
-  
-  // Initialize game state
-  gameState.player1.hp = 500;
-  gameState.player2.hp = 500;
-  gameState.currentPlayer = 1;
-  gameState.turnPhase = 'selecting';
-  gameState.selectedCards = [];
-  gameState.battlefieldCards = [];
-  gameState.isGameActive = true;
-  
-  // Deal cards
-  dealInitialCards();
-  updateBoard();
-  updateUI();
-  
-  log('Game initialized! Click cards to attack.');
   
   // Initialize referee integration
   initializeRefereeIntegration();
@@ -211,6 +254,11 @@ export async function initializeGame(username = null) {
     window.mobileState = { isMobile: false };
   }
   
+  // Setup card zoom event listeners
+  setTimeout(() => {
+    setupCardZoomEventListeners();
+  }, 100); // Small delay to ensure DOM is ready
+  
   animate();
 }
 
@@ -218,10 +266,10 @@ export async function initializeGame(username = null) {
 function dealInitialCards() {
   const shuffledCards = shuffle([...gameState.availableCards]);
   
-  // Deal 5 cards to each player
+  // Deal 5 cards to each player - normal random selection
   for (let i = 0; i < 5; i++) {
-    // Player 1 card - random mix of all available cards
-    const p1CardData = cardData[Math.floor(Math.random() * cardData.length)];
+    // Player 1 card - random from all available cards
+    const p1CardData = gameState.availableCards[Math.floor(Math.random() * gameState.availableCards.length)];
     const p1Card = new Card(p1CardData, true);
     gameState.player1.hand.push(p1Card);
     
@@ -322,7 +370,19 @@ export function updateBoard() {
 // Play a card
 export async function playCard(card) {
   if (!gameState.isGameActive || gameState.animationInProgress) return;
-  if (gameState.currentPlayer !== 1) return; // Only player 1 can click
+  
+  // Check turn permissions based on game mode
+  if (gameState.isMultiplayer) {
+    // In multiplayer, check if it's this player's turn based on room state
+    if (!isPlayerTurn()) {
+      log("It's not your turn!");
+      return;
+    }
+  } else {
+    // In single player, only player 1 can play
+    if (gameState.currentPlayer !== 1) return;
+  }
+  
   if (!gameState.player1.hand.includes(card)) return;
   
   // Check if referee mode is enabled
@@ -380,19 +440,28 @@ export async function playCard(card) {
     return;
   }
   
-  // Switch to AI turn after animation completes
-  setTimeout(() => {
-    gameState.currentPlayer = 2;
-    processActiveEffects(); // Process turn-based effects
-    updateBoard();
-    updateUI();
-    
-    // AI plays after short delay
+  // Handle turn switching based on game mode
+  if (gameState.isMultiplayer) {
+    // In multiplayer, update room state and let sync handle turn switching
     setTimeout(async () => {
-      await aiPlayCard();
+      await updateMultiplayerGameState(card, damage);
       gameState.animationInProgress = false;
-    }, 1500);
-  }, 2000); // Wait for damage animation to complete
+    }, 2000);
+  } else {
+    // Single player: Switch to AI turn after animation completes
+    setTimeout(() => {
+      gameState.currentPlayer = 2;
+      processActiveEffects(); // Process turn-based effects
+      updateBoard();
+      updateUI();
+      
+      // AI plays after short delay
+      setTimeout(async () => {
+        await aiPlayCard();
+        gameState.animationInProgress = false;
+      }, 1500);
+    }, 2000); // Wait for damage animation to complete
+  }
 }
 
 // AI plays a card
@@ -881,7 +950,14 @@ function moveCardToPlayedArea(card, playerToAI) {
 function drawCard(player) {
   if (gameState.availableCards.length === 0) return;
   
-  // Select random card from available cards for both players
+  // For player 1 in card picker mode, show card picker instead of drawing automatically
+  if (player === gameState.player1 && window.CARD_PICKER_MODE) {
+    log('📋 Choose your next card from the list');
+    showCardPicker();
+    return;
+  }
+  
+  // Normal random card draw
   const selectedCard = gameState.availableCards[
     Math.floor(Math.random() * gameState.availableCards.length)
   ];
@@ -916,9 +992,8 @@ function drawCard(player) {
   newCard.targetScale.set(1, 1, 1);
 }
 
-// Update UI
-function updateUI() {
-  // Update new compact HP displays
+// Update HP bars specifically
+function updateHPBars() {
   const p1HPText = document.getElementById('player1HPText');
   const p2HPText = document.getElementById('player2HPText');
   const p1HPFill = document.getElementById('player1HPFill');
@@ -927,26 +1002,79 @@ function updateUI() {
   if (p1HPText) {
     p1HPText.textContent = `${gameState.player1.hp}`;
     if (p1HPFill) {
-      p1HPFill.style.width = `${(gameState.player1.hp / 500) * 100}%`;
+      p1HPFill.style.width = `${(gameState.player1.hp / gameState.player1.maxHp) * 100}%`;
     }
   }
   
   if (p2HPText) {
     p2HPText.textContent = `${gameState.player2.hp}`;
     if (p2HPFill) {
-      p2HPFill.style.width = `${(gameState.player2.hp / 500) * 100}%`;
+      p2HPFill.style.width = `${(gameState.player2.hp / gameState.player2.maxHp) * 100}%`;
     }
   }
+}
+
+// Check if it's the current player's turn (for multiplayer)
+function isPlayerTurn() {
+  if (!gameState.isMultiplayer) return gameState.currentPlayer === 1;
+  
+  // In multiplayer, check against room state
+  if (gameState.roomState && gameState.roomState.game_state && gameState.roomState.game_state.gameState) {
+    const currentTurn = gameState.roomState.game_state.gameState.currentTurn;
+    console.log('Turn check - Current turn ID:', currentTurn, 'My player ID:', gameState.player1.id, 'Is my turn:', currentTurn == gameState.player1.id);
+    return currentTurn == gameState.player1.id; // Use == for type flexibility
+  }
+  
+  console.log('Turn check - No valid room state for turn detection');
+  return false;
+}
+
+// Update UI (includes HP bars and other UI elements)
+function updateUI() {
+  // Update HP bars
+  updateHPBars();
   
   // Update turn indicator
   const turnElement = document.getElementById('currentTurn');
   if (turnElement) {
-    turnElement.textContent = gameState.currentPlayer === 1 ? 'Your Turn' : 'AI Turn';
-    turnElement.className = gameState.currentPlayer === 1 ? 'your-turn' : 'ai-turn';
+    if (gameState.isMultiplayer) {
+      // Multiplayer turn display
+      console.log('Updating turn UI - Multiplayer mode');
+      console.log('Room state:', gameState.roomState);
+      
+      if (isPlayerTurn()) {
+        console.log('Setting turn UI: Your Turn');
+        turnElement.textContent = 'Your Turn';
+        turnElement.className = 'your-turn';
+      } else {
+        // Find whose turn it is
+        const currentTurnId = gameState.roomState?.game_state?.gameState?.currentTurn;
+        const otherPlayer = gameState.roomState?.game_state?.gameState?.players?.find(p => p.id == currentTurnId);
+        const turnText = otherPlayer ? `${otherPlayer.username}'s Turn` : 'Waiting for Turn...';
+        console.log('Setting turn UI:', turnText, 'Current turn ID:', currentTurnId);
+        turnElement.textContent = turnText;
+        turnElement.className = 'other-turn';
+      }
+    } else {
+      // Single player turn display
+      turnElement.textContent = gameState.currentPlayer === 1 ? 'Your Turn' : 'AI Turn';
+      turnElement.className = gameState.currentPlayer === 1 ? 'your-turn' : 'ai-turn';
+    }
   }
   
   // Update skip turn button visibility
   updateSkipTurnButton();
+  
+  // Show card picker if it's player's turn and card picker mode is enabled
+  if (gameState.currentPlayer === 1 && window.CARD_PICKER_MODE && gameState.isGameActive && !gameState.animationInProgress) {
+    // Small delay to ensure UI is ready
+    setTimeout(() => {
+      showCardPicker();
+    }, 100);
+  } else if (gameState.currentPlayer !== 1) {
+    // Hide card picker on AI turn
+    hideCardPicker();
+  }
 }
 
 // Update skip turn button
@@ -1240,6 +1368,38 @@ function showSelectionInfoPanel(card) {
       playButton.style.opacity = '1';
       playButton.style.cursor = 'pointer';
     }
+    
+    // Re-setup event listeners after innerHTML change
+    console.log('Re-setting up event listeners for play button...');
+    playButton.removeAttribute('onclick');
+    // Remove any existing listeners
+    playButton.replaceWith(playButton.cloneNode(true));
+    // Get fresh reference after clone
+    const freshPlayButton = document.querySelector('.zoom-play-btn');
+    if (freshPlayButton) {
+      freshPlayButton.addEventListener('click', function(event) {
+        console.log('Play button clicked via fresh event listener!');
+        event.preventDefault();
+        event.stopPropagation();
+        confirmPlayCard(event);
+      });
+    }
+  }
+  
+  // Also setup cancel button if needed
+  const cancelButton = document.querySelector('.zoom-cancel-btn');
+  if (cancelButton) {
+    cancelButton.removeAttribute('onclick');
+    cancelButton.replaceWith(cancelButton.cloneNode(true));
+    const freshCancelButton = document.querySelector('.zoom-cancel-btn');
+    if (freshCancelButton) {
+      freshCancelButton.addEventListener('click', function(event) {
+        console.log('Cancel button clicked via fresh event listener!');
+        event.preventDefault();
+        event.stopPropagation();
+        closeCardZoom();
+      });
+    }
   }
   
   // Show panel
@@ -1389,19 +1549,25 @@ function animateCardFromZoom(card, targetPosition, targetScale, targetRotation) 
 
 // Confirm and play the selected card
 function confirmPlayCard(event) {
+  console.log('>>> confirmPlayCard function called! <<<');
+  console.log('confirmPlayCard called with event:', event);
+  
   // Check if this is an intentional button click vs automatic trigger
   if (!event || !event.isTrusted) {
+    console.log('confirmPlayCard: Event not trusted or missing');
     return;
   }
   
   // Check if the event target is actually the button
   if (!event.target || !event.target.closest('.zoom-play-btn')) {
+    console.log('confirmPlayCard: Event target is not play button');
     return;
   }
   
   // Check if button is disabled
   const playButton = document.querySelector('.zoom-play-btn');
   if (playButton && playButton.disabled) {
+    console.log('confirmPlayCard: Play button is disabled');
     log('❌ Cannot play card - button is disabled');
     return;
   }
@@ -1410,8 +1576,11 @@ function confirmPlayCard(event) {
   const now = Date.now();
   if (!window.lastPanelShowTime) window.lastPanelShowTime = 0;
   if (now - window.lastPanelShowTime < 500) {
+    console.log('confirmPlayCard: Too soon after panel show');
     return;
   }
+  
+  console.log('confirmPlayCard: All checks passed, attempting to play card');
   
   if (gameState.selectedCard) {
     const panel = document.getElementById('cardZoomPanel');
@@ -1421,8 +1590,14 @@ function confirmPlayCard(event) {
       panel.style.display = 'none';
     }
     
-    // Move selected card to battlefield
-    moveCardToBattlefield(gameState.selectedCard);
+    // In multiplayer mode, play card directly instead of moving to battlefield
+    if (gameState.isMultiplayer) {
+      console.log('Multiplayer: Playing card directly:', gameState.selectedCard.data.name);
+      playCard(gameState.selectedCard);
+    } else {
+      // Single player mode: Move selected card to battlefield
+      moveCardToBattlefield(gameState.selectedCard);
+    }
   }
 }
 
@@ -1755,6 +1930,95 @@ window.closeCardZoom = closeCardZoom;
 window.confirmPlayCard = confirmPlayCard;
 window.executeBattle = executeBattle;
 window.returnCardsToHand = returnCardsToHand;
+
+console.log('Global functions exported:', {
+  confirmPlayCard: typeof window.confirmPlayCard,
+  closeCardZoom: typeof window.closeCardZoom
+});
+
+// Debug: Add a direct card play function for testing
+window.directPlayCard = function() {
+  console.log('Direct play card called!');
+  if (gameState.selectedCard) {
+    console.log('Playing selected card directly:', gameState.selectedCard.data.name);
+    
+    if (gameState.isMultiplayer) {
+      console.log('Multiplayer mode - calling playCard directly');
+      playCard(gameState.selectedCard);
+    } else {
+      console.log('Single player mode - moving to battlefield');
+      moveCardToBattlefield(gameState.selectedCard);
+    }
+    
+    // Hide the panel
+    const panel = document.getElementById('cardZoomPanel');
+    if (panel) panel.style.display = 'none';
+  } else {
+    console.log('No card selected');
+  }
+};
+
+// Debug function to check button state
+window.debugButtonState = function() {
+  const cardZoomPanel = document.getElementById('cardZoomPanel');
+  const cardZoomActions = document.getElementById('cardZoomActions');
+  const playButton = document.querySelector('.zoom-play-btn');
+  
+  console.log('=== BUTTON DEBUG ===');
+  console.log('Card zoom panel:', cardZoomPanel);
+  console.log('Panel display:', cardZoomPanel ? cardZoomPanel.style.display : 'not found');
+  console.log('Card zoom actions:', cardZoomActions);
+  console.log('Actions display:', cardZoomActions ? cardZoomActions.style.display : 'not found');
+  console.log('Play button:', playButton);
+  console.log('Button disabled:', playButton ? playButton.disabled : 'not found');
+  
+  if (playButton) {
+    const rect = playButton.getBoundingClientRect();
+    console.log('Button position:', rect);
+    console.log('Button visible:', rect.width > 0 && rect.height > 0);
+    
+    // Check if there are elements on top
+    const elementAtPosition = document.elementFromPoint(rect.left + rect.width/2, rect.top + rect.height/2);
+    console.log('Element at button center:', elementAtPosition);
+    console.log('Is button the top element?', elementAtPosition === playButton);
+  }
+  console.log('===================');
+};
+
+// Fix button event listeners - add proper event listeners
+function setupCardZoomEventListeners() {
+  console.log('Setting up card zoom event listeners...');
+  
+  // Remove any existing event listeners first
+  const playButton = document.querySelector('.zoom-play-btn');
+  const cancelButton = document.querySelector('.zoom-cancel-btn');
+  
+  if (playButton) {
+    // Remove onclick attribute and add proper event listener
+    playButton.removeAttribute('onclick');
+    playButton.addEventListener('click', function(event) {
+      console.log('Play button clicked via event listener!');
+      event.preventDefault();
+      event.stopPropagation();
+      confirmPlayCard(event);
+    });
+    console.log('Play button event listener added');
+  }
+  
+  if (cancelButton) {
+    cancelButton.removeAttribute('onclick');
+    cancelButton.addEventListener('click', function(event) {
+      console.log('Cancel button clicked via event listener!');
+      event.preventDefault();
+      event.stopPropagation();
+      closeCardZoom();
+    });
+    console.log('Cancel button event listener added');
+  }
+}
+
+// Call setup function when needed
+window.setupCardZoomEventListeners = setupCardZoomEventListeners;
 
 // Animation loop
 export function animate() {
@@ -2119,8 +2383,10 @@ async function playSpecialEffectCardFromSelection(card) {
 
 // Play a special effect card
 async function playSpecialEffectCard(card) {
+  const processor = getSpecialEffectProcessor();
+  
   // Check if player already has a special effect active (can't combine)
-  if (specialEffectProcessor.hasActiveEffect(card.data.effect)) {
+  if (processor.hasActiveEffect(card.data.effect)) {
     log(`Cannot play ${card.data.name} - similar effect already active!`);
     // Return card to hand
     gameState.player1.hand.push(card);
@@ -2133,7 +2399,7 @@ async function playSpecialEffectCard(card) {
   await animateCardToFieldEffects(card);
   
   // Apply the special effect using the new processor
-  const success = await specialEffectProcessor.applyEffect(card, {
+  const success = await processor.applyEffect(card, {
     currentPlayer: gameState.currentPlayer,
     gameState: gameState
   });
@@ -2203,8 +2469,9 @@ async function animateCardToFieldEffects(card) {
 // Legacy function - now handled by specialEffectProcessor
 // Kept for backwards compatibility but deprecated
 async function applySpecialEffect(card) {
-  console.warn('applySpecialEffect is deprecated - use specialEffectProcessor.applyEffect instead');
-  return await specialEffectProcessor.applyEffect(card, {
+  console.warn('applySpecialEffect is deprecated - use getSpecialEffectProcessor().applyEffect instead');
+  const processor = getSpecialEffectProcessor();
+  return await processor.applyEffect(card, {
     currentPlayer: gameState.currentPlayer,
     gameState: gameState
   });
@@ -2226,11 +2493,12 @@ function discardOpponentCards(count) {
 
 // Apply active effects to damage calculation
 function applyActiveEffects(damage, card) {
+  const processor = getSpecialEffectProcessor();
   const isFirstCard = gameState.battlefieldCards.length === 1;
-  const modifiedDamage = specialEffectProcessor.applyDamageModifiers(damage, isFirstCard);
+  const modifiedDamage = processor.applyDamageModifiers(damage, isFirstCard);
   
   if (modifiedDamage !== damage) {
-    const activeEffects = specialEffectProcessor.getActiveEffectNames();
+    const activeEffects = processor.getActiveEffectNames();
     log(`Effects applied: ${activeEffects.join(', ')} (${damage} → ${modifiedDamage})`);
   }
   
@@ -2239,8 +2507,10 @@ function applyActiveEffects(damage, card) {
 
 // Process turn-based effects (called at start of each turn)
 function processActiveEffects() {
+  const processor = getSpecialEffectProcessor();
+  
   // Use the new special effect processor
-  specialEffectProcessor.processTurnEffects(gameState.currentPlayer);
+  processor.processTurnEffects(gameState.currentPlayer);
   
   // Handle field effect cleanup for expired effects
   // Remove field effects that are no longer active
@@ -2315,8 +2585,457 @@ function skipPlayerTurn() {
   }, 1000);
 }
 
-// Export for global access
-window.initializeGame = initializeGame;
-window.loginPlayer = loginPlayer;
-window.toggleRefereeMode = toggleRefereeMode;
-window.skipPlayerTurn = skipPlayerTurn;
+// Card Picker Functions
+function enableCardPicker() {
+  window.CARD_PICKER_MODE = true;
+  log('📋 Card Picker enabled - choose cards manually');
+  
+  // Update button appearance
+  const button = document.getElementById('cardPickerToggle');
+  if (button) {
+    button.classList.add('active');
+    button.innerHTML = '📋 Card Picker ON';
+  }
+  
+  // Show card picker if it's player's turn
+  if (gameState.currentPlayer === 1 && gameState.isGameActive) {
+    showCardPicker();
+  }
+}
+
+function disableCardPicker() {
+  window.CARD_PICKER_MODE = false;
+  log('🎲 Card Picker disabled - random cards');
+  
+  // Update button appearance
+  const button = document.getElementById('cardPickerToggle');
+  if (button) {
+    button.classList.remove('active');
+    button.innerHTML = '📋 Card Picker';
+  }
+  
+  // Hide card picker
+  hideCardPicker();
+}
+
+function toggleCardPicker() {
+  if (window.CARD_PICKER_MODE) {
+    disableCardPicker();
+  } else {
+    enableCardPicker();
+  }
+}
+
+// Show card picker panel
+function showCardPicker() {
+  if (!gameState.isGameActive || gameState.currentPlayer !== 1) {
+    return;
+  }
+  
+  // Don't show if card picker mode is disabled
+  if (!window.CARD_PICKER_MODE) {
+    return;
+  }
+  
+  // Remove existing picker if present
+  hideCardPicker();
+  
+  const picker = document.createElement('div');
+  picker.id = 'card-picker';
+  picker.style.cssText = `
+    position: fixed;
+    left: 20px;
+    top: 120px;
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid #00BFFF;
+    border-radius: 10px;
+    padding: 15px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    z-index: 9999;
+    min-width: 250px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  `;
+  
+  picker.innerHTML = `
+    <div style="color: #00BFFF; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+      <span>📋 Choose Next Card</span>
+      <button onclick="hideCardPicker()" style="background: none; border: none; color: #ccc; font-size: 18px; cursor: pointer; padding: 2px 8px; border-radius: 3px;" onmouseover="this.style.background='#444'" onmouseout="this.style.background='none'">×</button>
+    </div>
+    <div id="card-list"></div>
+  `;
+  
+  const cardList = picker.querySelector('#card-list');
+  
+  // Separate cards by type
+  const regularCards = gameState.availableCards.filter(card => !isSpecialEffectCard(card));
+  let specialCards = gameState.availableCards.filter(card => isSpecialEffectCard(card));
+  
+  // Fallback: If no special effects found in availableCards, use the raw specialEffectCards array
+  if (specialCards.length === 0) {
+    console.warn('⚠️ No special effects in availableCards, using raw specialEffectCards');
+    specialCards = [...specialEffectCards];
+  }
+  
+  // Debug logging
+  console.log('📋 Card Picker Debug:');
+  console.log(`Total available cards: ${gameState.availableCards.length}`);
+  console.log(`Regular cards: ${regularCards.length}`);
+  console.log(`Special cards: ${specialCards.length}`);
+  console.log('Special cards found:', specialCards.map(c => c.name));
+  
+  // Add special effects section
+  if (specialCards.length > 0) {
+    const specialSection = document.createElement('div');
+    specialSection.innerHTML = `<div style="color: #FFD700; font-weight: bold; margin: 10px 0 5px 0;">✨ Special Effects (${specialCards.length})</div>`;
+    cardList.appendChild(specialSection);
+    
+    specialCards.forEach(card => {
+      const cardButton = document.createElement('button');
+      cardButton.textContent = card.name;
+      cardButton.style.cssText = `
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        margin: 2px 0;
+        background: linear-gradient(135deg, #FF6B6B, #FFD700);
+        border: 1px solid #FFD700;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        transition: all 0.2s;
+      `;
+      cardButton.onclick = () => drawSpecificCard(card);
+      cardButton.onmouseover = () => cardButton.style.background = 'linear-gradient(135deg, #FFD700, #FF6B6B)';
+      cardButton.onmouseout = () => cardButton.style.background = 'linear-gradient(135deg, #FF6B6B, #FFD700)';
+      cardList.appendChild(cardButton);
+    });
+  }
+  
+  // Add regular cards section
+  if (regularCards.length > 0) {
+    const regularSection = document.createElement('div');
+    regularSection.innerHTML = `<div style="color: #00BFFF; font-weight: bold; margin: 15px 0 5px 0;">⚔️ Battle Cards (${regularCards.length})</div>`;
+    cardList.appendChild(regularSection);
+    
+    regularCards.forEach(card => {
+      const cardButton = document.createElement('button');
+      cardButton.textContent = `${card.name} (${card.atk} ATK)`;
+      cardButton.style.cssText = `
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        margin: 2px 0;
+        background: linear-gradient(135deg, #0080FF, #00BFFF);
+        border: 1px solid #00BFFF;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        transition: all 0.2s;
+      `;
+      cardButton.onclick = () => drawSpecificCard(card);
+      cardButton.onmouseover = () => cardButton.style.background = 'linear-gradient(135deg, #00BFFF, #0080FF)';
+      cardButton.onmouseout = () => cardButton.style.background = 'linear-gradient(135deg, #0080FF, #00BFFF)';
+      cardList.appendChild(cardButton);
+    });
+  }
+  
+  document.body.appendChild(picker);
+  
+  // Additional debug info
+  if (specialCards.length === 0) {
+    console.warn('⚠️ No special effect cards found!');
+    console.log('Available cards:', gameState.availableCards.map(c => ({name: c.name, id: c.id, type: c.type})));
+  }
+}
+
+// Hide card picker
+function hideCardPicker() {
+  const picker = document.getElementById('card-picker');
+  if (picker) {
+    picker.remove();
+  }
+}
+
+// Draw a specific card chosen by the player
+function drawSpecificCard(cardData) {
+  if (!gameState.isGameActive || gameState.currentPlayer !== 1) {
+    log('❌ Can only draw cards on your turn');
+    return;
+  }
+  
+  const newCard = new Card(cardData, true);
+  gameState.player1.hand.push(newCard);
+  
+  // Position the card
+  const centerSpacing = 2.5;
+  const handIndex = gameState.player1.hand.length - 1;
+  const totalCards = gameState.player1.hand.length;
+  
+  newCard.targetPosition.set(
+    (handIndex - (totalCards - 1) / 2) * centerSpacing, 
+    -5, 
+    0.5
+  );
+  newCard.mesh.position.copy(newCard.targetPosition);
+  newCard.targetRotation.set(0, 0, 0);
+  newCard.targetScale.set(1, 1, 1);
+  
+  updateBoard();
+  hideCardPicker();
+  
+  const cardType = isSpecialEffectCard(cardData) ? '✨ Special Effect' : '⚔️ Battle Card';
+  log(`📋 Picked: ${cardData.name} (${cardType})`);
+}
+
+// Debug function to check special effects
+function debugSpecialEffects() {
+  const allCards = gameState.availableCards;
+  const specialCards = allCards.filter(card => isSpecialEffectCard(card));
+  
+  console.log('🔍 Special Effects Debug:');
+  console.log(`Total cards: ${allCards.length}`);
+  console.log(`Special effect cards: ${specialCards.length}`);
+  
+  if (specialCards.length > 0) {
+    console.log('Special effects found:');
+    specialCards.forEach(card => {
+      console.log(`- ${card.name} (${card.id}) - ${card.effect}`);
+    });
+  } else {
+    console.log('⚠️ No special effects found!');
+    console.log('All cards:', allCards.map(c => c.name));
+  }
+  
+  return specialCards;
+}
+
+// Multiplayer game state sync functions
+export function syncMultiplayerGameState(roomData) {
+  if (!gameState.isMultiplayer) return;
+  
+  console.log('Syncing multiplayer game state:', roomData);
+  gameState.roomState = roomData;
+  
+  if (roomData.game_state && roomData.game_state.gameState) {
+    const serverGameState = roomData.game_state.gameState;
+    console.log('Server game state:', serverGameState);
+    
+    // Update game status
+    if (serverGameState.gameActive && !gameState.isGameActive) {
+      // Game just started
+      console.log('Game just started, initializing multiplayer game');
+      startMultiplayerGame(serverGameState);
+    } else if (!serverGameState.gameActive && gameState.isGameActive) {
+      // Game ended
+      console.log('Game ended');
+      gameState.isGameActive = false;
+    }
+    
+    // Update player data
+    if (serverGameState.players && Array.isArray(serverGameState.players)) {
+      console.log('Updating players from server state:', serverGameState.players);
+      updatePlayersFromServerState(serverGameState.players);
+    }
+    
+    // Update turn information
+    console.log('Updating turn info - current turn:', serverGameState.currentTurn);
+    gameState.currentTurnPlayerId = serverGameState.currentTurn;
+    
+    // Update UI to reflect new state
+    updateUI();
+  } else {
+    console.log('No valid game state in room data');
+  }
+}
+
+function startMultiplayerGame(serverGameState) {
+  console.log('Starting multiplayer game:', serverGameState);
+  
+  // Set up players from server state
+  if (serverGameState.players && Array.isArray(serverGameState.players)) {
+    updatePlayersFromServerState(serverGameState.players);
+  }
+  
+  // Initialize game state
+  gameState.currentTurnPlayerId = serverGameState.currentTurn;
+  gameState.turnPhase = 'selecting';
+  gameState.selectedCards = [];
+  gameState.battlefieldCards = [];
+  gameState.isGameActive = true;
+  
+  // Deal cards if not already dealt
+  if (gameState.player1.hand.length === 0) {
+    dealInitialCards();
+  }
+  
+  updateBoard();
+  updateUI();
+  
+  log('Multiplayer game started! ' + (isPlayerTurn() ? 'Your turn!' : 'Waiting for your turn...'));
+}
+
+function updatePlayersFromServerState(serverPlayers) {
+  serverPlayers.forEach((serverPlayer, index) => {
+    const gamePlayer = index === 0 ? gameState.player1 : gameState.player2;
+    
+    // Update player info if this matches our player
+    if (serverPlayer.id === gameState.player1.id) {
+      gameState.player1.hp = serverPlayer.hp || gameState.player1.hp;
+      gameState.player1.username = serverPlayer.username || gameState.player1.username;
+    } else {
+      // This is the other player
+      gameState.player2.id = serverPlayer.id;
+      gameState.player2.username = serverPlayer.username;
+      gameState.player2.hp = serverPlayer.hp || 500;
+    }
+  });
+  
+  // Update player names in UI
+  updatePlayerNamesInUI();
+}
+
+function updatePlayerNamesInUI() {
+  const player1NameElement = document.getElementById('player1Name');
+  const player2NameElement = document.getElementById('player2Name');
+  
+  if (player1NameElement) {
+    player1NameElement.textContent = gameState.player1.username || 'Player 1';
+  }
+  
+  if (player2NameElement) {
+    player2NameElement.textContent = gameState.player2.username || 'Player 2';
+  }
+}
+
+// Function to update multiplayer game state after a card is played
+async function updateMultiplayerGameState(card, damage) {
+  if (!gameState.isMultiplayer || !gameState.roomState) {
+    console.error('Cannot update multiplayer state - not in multiplayer or no room state');
+    return;
+  }
+
+  try {
+    console.log('Updating multiplayer game state after card play:', {
+      card: card.data.name,
+      damage: damage,
+      newHP: gameState.player2.hp
+    });
+
+    // Get current game state from room
+    const currentGameState = gameState.roomState.game_state.gameState;
+    
+    // Find other players to switch turn to
+    const allPlayers = currentGameState.players;
+    const currentPlayerIndex = allPlayers.findIndex(p => p.id == gameState.player1.id);
+    const nextPlayerIndex = (currentPlayerIndex + 1) % allPlayers.length;
+    const nextPlayerId = allPlayers[nextPlayerIndex].id;
+    
+    // Update player HP in the game state
+    const updatedPlayers = allPlayers.map(player => {
+      if (player.id != gameState.player1.id) {
+        // This is the opponent, update their HP
+        return {
+          ...player,
+          hp: gameState.player2.hp
+        };
+      }
+      return player;
+    });
+    
+    // Create updated game state
+    const updatedGameState = {
+      ...currentGameState,
+      players: updatedPlayers,
+      currentTurn: nextPlayerId,
+      lastMove: {
+        playerId: gameState.player1.id,
+        playerName: gameState.player1.username,
+        cardName: card.data.name,
+        damage: damage,
+        timestamp: Date.now()
+      }
+    };
+
+    console.log('Sending updated game state:', updatedGameState);
+
+    // Update room state via API
+    const response = await fetch('./api/room_handler.php?action=update_room_state', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        room_id: gameState.roomState.room.id,
+        game_state: {
+          gameState: updatedGameState,
+          lastUpdate: Date.now()
+        }
+      })
+    });
+
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('Successfully updated room game state');
+      log(`Turn passed to next player`);
+    } else {
+      console.error('Failed to update room state:', result.error);
+      log('Failed to update game state');
+    }
+    
+  } catch (error) {
+    console.error('Error updating multiplayer game state:', error);
+    log('Error updating game state');
+  }
+}
+
+// Function to handle when a card is played in multiplayer
+export async function playCardMultiplayer(card) {
+  if (!gameState.isMultiplayer || !isPlayerTurn()) {
+    log("It's not your turn!");
+    return;
+  }
+  
+  // Play the card locally first
+  await playCard(card);
+}
+
+// Export for global access - all functions and variables
+if (typeof window !== 'undefined') {
+  // Core game functions
+  window.initializeGame = initializeGame;
+  window.loginPlayer = loginPlayer;
+  window.toggleRefereeMode = toggleRefereeMode;
+  window.skipPlayerTurn = skipPlayerTurn;
+  
+  // Multiplayer functions
+  window.syncMultiplayerGameState = syncMultiplayerGameState;
+  window.playCardMultiplayer = playCardMultiplayer;
+  window.isPlayerTurn = isPlayerTurn;
+  window.updateMultiplayerGameState = updateMultiplayerGameState;
+  
+  // Card picker functions
+  window.enableCardPicker = enableCardPicker;
+  window.disableCardPicker = disableCardPicker;
+  window.toggleCardPicker = toggleCardPicker;
+  window.showCardPicker = showCardPicker;
+  window.hideCardPicker = hideCardPicker;
+  window.drawSpecificCard = drawSpecificCard;
+  window.debugSpecialEffects = debugSpecialEffects;
+  
+  // Functions for special effects module
+  window.log = log;
+  window.updateBoard = updateBoard;
+  window.updateHPBars = updateHPBars;
+  window.updateUI = updateUI;
+  window.scene = scene;
+  window.gameState = gameState;
+  window.showPoisonDamageAnimation = showPoisonDamageAnimation;
+  window.Card = Card;
+  
+  // Initialize special effects processor after all functions are available
+  initializeSpecialEffectProcessor();
+}

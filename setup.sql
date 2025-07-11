@@ -1,4 +1,4 @@
--- Database setup for Card Battle Arena
+-- Database setup for Fluency Card Game
 -- Simple PvP card battle game with PHP/MySQL backend
 
 -- Create players table for user management
@@ -83,6 +83,58 @@ CREATE INDEX idx_game_sessions_status ON game_sessions(status);
 CREATE INDEX idx_game_sessions_players ON game_sessions(player1_id, player2_id);
 CREATE INDEX idx_game_moves_session ON game_moves(game_session_id);
 
+-- Create rooms table for teacher/student arena system
+CREATE TABLE IF NOT EXISTS game_rooms (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    room_number VARCHAR(10) NOT NULL UNIQUE, -- '01' to '20'
+    teacher_id INT NOT NULL,
+    room_name VARCHAR(255) DEFAULT NULL,
+    visibility ENUM('public', 'private') DEFAULT 'public',
+    max_players INT DEFAULT 2,
+    status ENUM('waiting', 'active', 'finished') DEFAULT 'waiting',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP + INTERVAL 24 HOUR),
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES players(id) ON DELETE CASCADE
+);
+
+-- Create room sessions table for player/spectator tracking  
+CREATE TABLE IF NOT EXISTS room_sessions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    room_id INT NOT NULL,
+    player_id INT NOT NULL,
+    role ENUM('teacher', 'player', 'spectator') NOT NULL,
+    session_token VARCHAR(255) NOT NULL,
+    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES game_rooms(id) ON DELETE CASCADE,
+    FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_player_room (room_id, player_id)
+);
+
+-- Extend game_sessions to link with rooms
+ALTER TABLE game_sessions ADD COLUMN room_id INT DEFAULT NULL;
+ALTER TABLE game_sessions ADD FOREIGN KEY (room_id) REFERENCES game_rooms(id) ON DELETE SET NULL;
+
+-- Create room game state table for real-time sync
+CREATE TABLE IF NOT EXISTS room_game_state (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    room_id INT NOT NULL UNIQUE,
+    game_state JSON NOT NULL,
+    last_command_timestamp BIGINT DEFAULT 0,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES game_rooms(id) ON DELETE CASCADE
+);
+
+-- Create additional indexes for room system
+CREATE INDEX idx_game_rooms_teacher ON game_rooms(teacher_id);
+CREATE INDEX idx_game_rooms_status ON game_rooms(status);
+CREATE INDEX idx_game_rooms_expires ON game_rooms(expires_at);
+CREATE INDEX idx_room_sessions_room ON room_sessions(room_id);
+CREATE INDEX idx_room_sessions_player ON room_sessions(player_id);
+CREATE INDEX idx_room_sessions_activity ON room_sessions(last_activity);
+CREATE INDEX idx_game_sessions_room ON game_sessions(room_id);
+
 -- Create a view for game statistics
 CREATE VIEW player_stats AS
 SELECT 
@@ -97,3 +149,24 @@ SELECT
         ELSE 0 
     END as win_percentage
 FROM players p;
+
+-- Create a view for active rooms with participant counts
+CREATE VIEW room_status AS
+SELECT 
+    r.id,
+    r.room_number,
+    r.teacher_id,
+    t.username as teacher_name,
+    r.room_name,
+    r.visibility,
+    r.max_players,
+    r.status,
+    r.created_at,
+    r.expires_at,
+    COUNT(CASE WHEN rs.role = 'player' THEN 1 END) as active_players,
+    COUNT(CASE WHEN rs.role = 'spectator' THEN 1 END) as spectators,
+    COUNT(rs.id) as total_participants
+FROM game_rooms r
+LEFT JOIN players t ON r.teacher_id = t.id
+LEFT JOIN room_sessions rs ON r.id = rs.room_id AND rs.last_activity > (NOW() - INTERVAL 2 MINUTE)
+GROUP BY r.id;

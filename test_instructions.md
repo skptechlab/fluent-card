@@ -1,4 +1,4 @@
-# Card Battle Arena - Testing Instructions
+# Fluency Card Game - Testing Instructions
 
 ## Setup Requirements
 

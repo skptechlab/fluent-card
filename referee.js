@@ -1,4 +1,4 @@
-// referee.js - Referee Dashboard for Card Battle Arena
+// referee.js - Referee Dashboard for Fluency Card Game
 
 // Referee state management
 const refereeState = {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
-    <title>Card Battle Arena - Simple PvP Card Game</title>
+    <title>Fluency Card Game - Simple PvP Card Game</title>
     <meta name="description" content="Simple turn-based PvP card battle game with beautiful 3D animations" />
     <link rel="icon" type="image/png" href="./assets/logo.gif" />
     <meta name="theme-color" content="#0B0B0B" />
@@ -25,13 +25,148 @@
     <!-- Legacy styles.css - can be removed after testing -->
     <!-- <link rel="stylesheet" href="styles.css"/> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    
+    <style>
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .role-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .role-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+        }
+        
+        .role-card:hover {
+            border-color: #4CAF50;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+        
+        .teacher-card:hover {
+            border-color: #FF9800;
+            box-shadow: 0 10px 30px rgba(255, 152, 0, 0.3);
+        }
+        
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .role-title {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .role-description {
+            color: #ccc;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+        
+        .role-features {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-align: left;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .classic-play {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .divider {
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .divider span {
+            background: linear-gradient(135deg, #0B0B0B 0%, #1a1a2e 50%, #16213e 100%);
+            padding: 0 1rem;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .btn.classic {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn.classic:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .classic-description {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .role-selection {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .role-card {
+                padding: 1.5rem;
+            }
+            
+            .role-icon {
+                font-size: 2.5rem;
+            }
+            
+            .role-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen" style="display: none;">
         <div class="loading-content">
             <img src="./assets/logo.gif" alt="Loading" class="loading-logo">
-            <div id="loadingText" class="loading-text">Loading Card Battle Arena...</div>
+            <div id="loadingText" class="loading-text">Loading Fluency Card Game...</div>
         </div>
     </div>
 
@@ -44,12 +179,43 @@
             <img src="./assets/logo.gif" alt="Logo" class="logo">
             
             <!-- Title -->
-            <h1 class="title">Card Battle Arena</h1>
+            <h1 class="title">Fluency Card Game</h1>
+            <p class="subtitle">Choose your role to get started</p>
             
-            <!-- Play Buttons -->
-            <div class="buttons">
-                <button class="btn play" onclick="handleGuestPlay()">Play</button>
-                <button class="btn login" onclick="showAuth()">Login</button>
+            <!-- Role Selection -->
+            <div class="role-selection">
+                <div class="role-card teacher-card" onclick="goToTeacherPortal()">
+                    <div class="role-icon">🎓</div>
+                    <div class="role-title">Teacher</div>
+                    <div class="role-description">Create and manage game arenas for your students</div>
+                    <div class="role-features">
+                        • Create numbered rooms (01-20)<br>
+                        • Monitor student progress<br>
+                        • Control game sessions<br>
+                        • Real-time classroom management
+                    </div>
+                </div>
+                
+                <div class="role-card student-card" onclick="goToStudentPortal()">
+                    <div class="role-icon">🎮</div>
+                    <div class="role-title">Student</div>
+                    <div class="role-description">Join game arenas as player or spectator</div>
+                    <div class="role-features">
+                        • Join teacher's rooms<br>
+                        • Play against classmates<br>
+                        • Watch games as spectator<br>
+                        • Real-time multiplayer battles
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alternative: Classic Solo Play -->
+            <div class="classic-play">
+                <div class="divider">
+                    <span>or</span>
+                </div>
+                <button class="btn classic" onclick="handleGuestPlay()">🎯 Classic Solo Play</button>
+                <p class="classic-description">Play the original single-player card game</p>
             </div>
         </div>
         
@@ -174,6 +340,26 @@
             <button class="control-btn" onclick="restartGame()">🔄 New Game</button>
             <button class="control-btn referee-toggle" id="refereeToggle" onclick="toggleRefereeMode()">⚖️ Referee</button>
             <button class="control-btn" onclick="openRefereeView()" title="Open Referee Dashboard">👁️ Referee View</button>
+            <button class="control-btn card-picker-toggle" id="cardPickerToggle" onclick="toggleCardPicker()" title="Toggle Card Picker">📋 Card Picker</button>
+        </div>
+        
+        <!-- Debug Panel (Hidden by default) -->
+        <div class="debug-panel" id="debugPanel" style="display: none;">
+            <div class="debug-header">
+                <h3>🔍 Debug Tools</h3>
+                <button class="debug-close" onclick="hideDebugPanel()">×</button>
+            </div>
+            <div class="debug-controls">
+                <button class="debug-btn" onclick="debugSpecialEffects()">
+                    🔍 Debug Special Effects
+                </button>
+                <button class="debug-btn" onclick="showEffectsList()">
+                    📋 List All Effects
+                </button>
+                <button class="debug-btn" onclick="console.log(gameState)">
+                    📊 Show Game State
+                </button>
+            </div>
         </div>
     </div>
 
@@ -201,6 +387,7 @@
     <script type="module">
         import { initializeGame, loginPlayer } from './game.js';
         import { initializeMobile } from './mobile.js';
+        import { fullscreenManager, injectFullscreenStyles } from './fullscreen.js';
 
         // Global state
         let currentPlayer = null;
@@ -235,14 +422,29 @@
             }
         };
 
-        // Handle guest play
+        // Handle guest play (classic solo mode)
         window.handleGuestPlay = function() {
             const username = "Guest" + Math.floor(Math.random() * 1000);
             startGameSession(username);
         };
 
+        // Navigate to teacher portal
+        window.goToTeacherPortal = function() {
+            window.location.href = './index-teacher.php';
+        };
+
+        // Navigate to student portal
+        window.goToStudentPortal = function() {
+            window.location.href = './index-student.php';
+        };
+
         // Return to menu
-        window.returnToMenu = function() {
+        window.returnToMenu = async function() {
+            // Exit fullscreen when returning to menu
+            if (fullscreenManager.isFullscreen) {
+                await fullscreenManager.exitFullscreen();
+            }
+            
             // Hide game
             document.getElementById("gameCanvas").style.display = "none";
             document.getElementById("gameUI").style.display = "none";
@@ -276,6 +478,41 @@
         window.openRefereeView = function() {
             window.open('./referee.html', '_blank', 'width=1200,height=800');
         };
+        
+        // Debug panel functions
+        window.showDebugPanel = function() {
+            document.getElementById('debugPanel').style.display = 'block';
+        };
+        
+        window.hideDebugPanel = function() {
+            document.getElementById('debugPanel').style.display = 'none';
+        };
+        
+        // Toggle debug panel with Ctrl+D
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'd') {
+                event.preventDefault();
+                const panel = document.getElementById('debugPanel');
+                if (panel.style.display === 'none') {
+                    showDebugPanel();
+                } else {
+                    hideDebugPanel();
+                }
+            }
+        });
+        
+        window.showEffectsList = function() {
+            import('./specialEffects.js').then(module => {
+                const effects = Object.keys(module.SPECIAL_EFFECTS);
+                const effectsList = effects.map(id => {
+                    const effect = module.SPECIAL_EFFECTS[id];
+                    return `${effect.name} (${effect.type}) - ${effect.description}`;
+                }).join('\n');
+                alert('Available Special Effects:\n\n' + effectsList);
+            }).catch(err => {
+                alert('Could not load effects list: ' + err.message);
+            });
+        };
 
         // Show loading screen
         function showLoadingScreen(text) {
@@ -297,7 +534,7 @@
         }
 
         // Start game session
-        function startGameSession(username) {
+        async function startGameSession(username) {
             showLoadingScreen("Starting battle...");
             
             // Hide homepage
@@ -309,6 +546,17 @@
             
             // Update player name
             document.getElementById("player1Name").textContent = username;
+            
+            // Enter fullscreen landscape mode
+            try {
+                await fullscreenManager.enterFullscreen();
+                // Show orientation hint for mobile users
+                fullscreenManager.showFullscreenHint();
+            } catch (error) {
+                console.log("Could not enter fullscreen:", error);
+                // Still show hint for mobile users
+                fullscreenManager.showFullscreenHint();
+            }
             
             // Initialize game
             setTimeout(async () => {
@@ -340,6 +588,9 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Inject fullscreen styles
+            injectFullscreenStyles();
+            
             // Make sure loading screen is hidden on homepage
             const loadingScreen = document.getElementById("loadingScreen");
             if (loadingScreen) {
@@ -352,7 +603,7 @@
                 console.log("Mobile device detected - touch controls enabled");
             }
             
-            console.log("Card Battle Arena loaded!");
+            console.log("Fluency Card Game loaded!");
         });
 
         // Legacy mobile detection removed - now using pure CSS media queries

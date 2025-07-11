@@ -1,5 +1,5 @@
 <?php
-// Login/Register API endpoint for Card Battle Arena
+// Login/Register API endpoint for Fluency Card Game
 require_once '../db_conn.php';
 
 // Handle preflight OPTIONS request

@@ -1,5 +1,5 @@
 <?php
-// Database connection for Card Battle Arena
+// Database connection for Fluency Card Game
 // Simple PvP card battle game
 
 // Database configuration
@@ -100,8 +100,11 @@ function get_or_create_player($username, $email = null) {
     }
     
     // Create new player
-    $email_part = $email ? ", email = '$email'" : "";
-    $query = "INSERT INTO players (username $email_part) VALUES ('$username')";
+    if ($email) {
+        $query = "INSERT INTO players (username, email) VALUES ('$username', '$email')";
+    } else {
+        $query = "INSERT INTO players (username) VALUES ('$username')";
+    }
     execute_query($query, false);
     
     $player_id = mysqli_insert_id($conn);

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Special Effects Test</title>
+</head>
+<body>
+    <h1>Special Effects Module Test</h1>
+    <div id="output"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    
+    <script type="module">
+        import { getSpecialEffectProcessor, SPECIAL_EFFECTS } from './specialEffects.js';
+        
+        // Mock window objects
+        window.gameState = {
+            activeEffects: [],
+            fieldEffects: [],
+            player1: { hp: 500, maxHp: 500, hand: [] },
+            player2: { hp: 500, maxHp: 500, hand: [] },
+            currentPlayer: 1
+        };
+        
+        window.log = (msg) => {
+            console.log(msg);
+            document.getElementById('output').innerHTML += '<p>' + msg + '</p>';
+        };
+        
+        window.updateBoard = () => console.log('updateBoard called');
+        window.updateHPBars = () => console.log('updateHPBars called');
+        window.scene = { remove: () => {} };
+        
+        // Test the special effects system
+        async function testSpecialEffects() {
+            try {
+                const processor = getSpecialEffectProcessor();
+                console.log('✅ Special Effects Processor initialized successfully');
+                
+                console.log('Available effects:', Object.keys(SPECIAL_EFFECTS));
+                
+                // Test a simple effect
+                const testCard = {
+                    data: {
+                        id: 'g1',
+                        name: 'Test Card',
+                        effect: 'heal',
+                        duration: 0
+                    }
+                };
+                
+                const gameData = {
+                    currentPlayer: 1,
+                    gameState: window.gameState
+                };
+                
+                await processor.applyEffect(testCard, gameData);
+                console.log('✅ Effect application test completed');
+                
+                document.getElementById('output').innerHTML += '<h2>✅ All tests passed!</h2>';
+                
+            } catch (error) {
+                console.error('❌ Test failed:', error);
+                document.getElementById('output').innerHTML += '<h2>❌ Test failed: ' + error.message + '</h2>';
+            }
+        }
+        
+        // Run test when page loads
+        testSpecialEffects();
+    </script>
+</body>
+</html>

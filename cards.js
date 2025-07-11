@@ -84,32 +84,37 @@ export const specialEffectCards = [
 
 // Additional special effect cards can be generated from specialEffects.js registry
 // Use SPECIAL_EFFECTS registry to add new effects programmatically
-export function createSpecialEffectCard(effectId, cardId, imagePath) {
-    // Dynamic import to avoid circular dependency
-    const { SPECIAL_EFFECTS } = require('./specialEffects.js');
-    const effect = SPECIAL_EFFECTS[effectId];
-    
-    if (!effect) {
-        console.error(`Unknown special effect: ${effectId}`);
+export async function createSpecialEffectCard(effectId, cardId, imagePath) {
+    try {
+        // Dynamic import to avoid circular dependency
+        const { SPECIAL_EFFECTS } = await import('./specialEffects.js');
+        const effect = SPECIAL_EFFECTS[effectId];
+        
+        if (!effect) {
+            console.error(`Unknown special effect: ${effectId}`);
+            return null;
+        }
+        
+        return {
+            id: cardId,
+            name: effect.name,
+            atk: 0,
+            imagePath: imagePath,
+            type: "special",
+            effect: effect.id,
+            description: effect.description,
+            duration: effect.duration
+        };
+    } catch (error) {
+        console.error('Could not create special effect card:', error);
         return null;
     }
-    
-    return {
-        id: cardId,
-        name: effect.name,
-        atk: 0,
-        imagePath: imagePath,
-        type: "special",
-        effect: effect.id,
-        description: effect.description,
-        duration: effect.duration
-    };
 }
 
 // Helper function to get all available special effects
-export function getAllSpecialEffects() {
+export async function getAllSpecialEffects() {
     try {
-        const { SPECIAL_EFFECTS } = require('./specialEffects.js');
+        const { SPECIAL_EFFECTS } = await import('./specialEffects.js');
         return Object.keys(SPECIAL_EFFECTS);
     } catch (error) {
         console.warn('Could not load SPECIAL_EFFECTS registry:', error);
@@ -123,9 +128,9 @@ export function isSpecialEffectCard(card) {
 }
 
 // Check if a special effect is available in the registry
-export function isValidSpecialEffect(effectId) {
+export async function isValidSpecialEffect(effectId) {
     try {
-        const { SPECIAL_EFFECTS } = require('./specialEffects.js');
+        const { SPECIAL_EFFECTS } = await import('./specialEffects.js');
         return effectId in SPECIAL_EFFECTS;
     } catch (error) {
         // Fallback to checking against existing cards

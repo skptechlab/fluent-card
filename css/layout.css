@@ -1,5 +1,123 @@
 /* Layout System Components */
 
+/* Debug Panel */
+.debug-panel {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  background: var(--bg-dark-secondary);
+  border: 2px solid var(--primary-electric);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  z-index: 9999;
+  min-width: 250px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.debug-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-neutral);
+  padding-bottom: var(--space-sm);
+}
+
+.debug-header h3 {
+  color: var(--primary-electric);
+  font-family: var(--font-primary);
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.debug-close {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-normal);
+}
+
+.debug-close:hover {
+  background: var(--bg-dark-tertiary);
+  color: var(--text-white);
+}
+
+.debug-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.debug-btn {
+  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-electric));
+  border: 1px solid var(--primary-electric);
+  color: var(--text-white);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-family: var(--font-secondary);
+  font-weight: 500;
+  transition: var(--transition-normal);
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.debug-btn:hover {
+  background: linear-gradient(135deg, var(--primary-electric), var(--primary-cyan));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 191, 255, 0.3);
+}
+
+/* Card Picker Panel Specific Styles */
+#card-picker {
+  font-family: var(--font-secondary);
+}
+
+#card-picker button:hover {
+  transform: translateX(5px);
+}
+
+/* Card Picker Toggle Button in Control Bar */
+.card-picker-toggle {
+  position: relative;
+}
+
+.card-picker-toggle.active {
+  background: linear-gradient(135deg, var(--success-green), var(--primary-electric)) !important;
+  color: var(--text-white) !important;
+}
+
+.card-picker-toggle.active::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, var(--success-green), var(--primary-electric));
+  border-radius: var(--radius-sm);
+  z-index: -1;
+  opacity: 0.3;
+}
+
+@media (max-width: 768px) {
+  .debug-panel {
+    width: 90%;
+    max-width: 300px;
+    right: 10px;
+  }
+  
+  .card-picker-toggle {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+}
+
 /* Navigation Bar */
 .masq-navbar {
   display: flex;
